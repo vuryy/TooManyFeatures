@@ -22,7 +22,10 @@ Players choose their own features from an in-game menu, and server admins contro
 
 ✅ = on by default · 👤 = each player can turn it off for themselves (*opt-in* = players turn it on themselves)
 
-### ⛏ Mining & tools
+Click a category to open it.
+
+<details>
+<summary><b>⛏ Mining & tools</b> (6)</summary>
 
 | Feature | How it works | |
 |---|---|---|
@@ -33,7 +36,10 @@ Players choose their own features from an in-game menu, and server admins contro
 | **Fast Leaf Decay** | After you chop a tree, the leaves left floating disappear within about a second, with normal sapling, stick and apple drops. | |
 | **Armor Warning** | A sound and a message when a piece of armor or your elytra has 20 or less durability left. | ✅ 👤 |
 
-### 🌾 Farming & building
+</details>
+
+<details>
+<summary><b>🌾 Farming & building</b> (8)</summary>
 
 | Feature | How it works | |
 |---|---|---|
@@ -46,7 +52,10 @@ Players choose their own features from an in-game menu, and server admins contro
 | **Cauldron Trash** | Throw items into a lava cauldron to destroy them, even netherite. | |
 | **Sapling Replant** | Saplings, azaleas and mangrove propagules lying on dirt, grass or moss for 30 seconds plant themselves. | |
 
-### 🎒 Inventory
+</details>
+
+<details>
+<summary><b>🎒 Inventory</b> (4)</summary>
 
 | Feature | How it works | |
 |---|---|---|
@@ -55,7 +64,10 @@ Players choose their own features from an in-game menu, and server admins contro
 | **Pickup Notices** | A short note above the hotbar shows what you just got, e.g. *+12 Cobblestone*. | ✅ 👤 |
 | **Shulker Preview** | Sneak while holding a shulker box to list its contents in chat, grouped by item, with hover tooltips. | ✅ 👤 |
 
-### 🐾 Pets & mobs
+</details>
+
+<details>
+<summary><b>🐾 Pets & mobs</b> (9)</summary>
 
 | Feature | How it works | |
 |---|---|---|
@@ -69,7 +81,10 @@ Players choose their own features from an in-game menu, and server admins contro
 | **Breeding Info** | Hold an animal's food and look at it to see if it's ready to breed, its breeding cooldown, or when a baby grows up. | ✅ 👤 |
 | **Wandering Trader Alert** | When a wandering trader appears within 200 blocks, you get a chat message with its rough distance and direction. | opt-in |
 
-### ⚔ Combat
+</details>
+
+<details>
+<summary><b>⚔ Combat</b> (5)</summary>
 
 | Feature | How it works | |
 |---|---|---|
@@ -79,7 +94,10 @@ Players choose their own features from an in-game menu, and server admins contro
 | **Campfire Regen** | Stand within 4 blocks of a lit campfire to feel its warmth and heal about one heart every 5 seconds. | ✅ |
 | **Arrow Counter** | Hold a bow or crossbow to see how many normal, spectral and tipped arrows you have left, and whether your bow has Infinity. | ✅ 👤 |
 
-### 🛡 Mob griefing
+</details>
+
+<details>
+<summary><b>🛡 Mob griefing</b> (4)</summary>
 
 | Feature | How it works | |
 |---|---|---|
@@ -89,7 +107,10 @@ Players choose their own features from an in-game menu, and server admins contro
 | **Enderman Anti-Grief** | Endermen can't pick up blocks any more. | |
 | *Vanilla mob griefing* | The admin page also has a switch for the `mob_griefing` game rule, which turns off griefing by all mobs at once. | |
 
-### 🔍 Info & HUD
+</details>
+
+<details>
+<summary><b>🔍 Info & HUD</b> (10)</summary>
 
 | Feature | How it works | |
 |---|---|---|
@@ -104,14 +125,20 @@ Players choose their own features from an in-game menu, and server admins contro
 | **Slime Chunk Checker** | Hold a slimeball to see whether you're standing in a slime chunk. An admin pastes the world seed once and TMF checks it. | 👤 |
 | **Compass Coordinates** | Hold a lodestone compass to see the coordinates and distance of its lodestone. A recovery compass shows where you last died. | 👤 |
 
-### 🧭 Movement
+</details>
+
+<details>
+<summary><b>🧭 Movement</b> (2)</summary>
 
 | Feature | How it works | |
 |---|---|---|
 | **Faster Paths** | +30 % walking speed on dirt paths. | opt-in |
 | **Fence Jumping** | Stand against a fence, wall or closed fence gate and jump to hop onto it and over. | opt-in |
 
-### 👥 Multiplayer
+</details>
+
+<details>
+<summary><b>👥 Multiplayer</b> (5)</summary>
 
 | Feature | How it works | |
 |---|---|---|
@@ -120,6 +147,8 @@ Players choose their own features from an in-game menu, and server admins contro
 | **Join & Leave Messages** | A welcome message, a first-join announcement, and each player's session length when they leave. | |
 | **Playtime Milestones** | A server-wide announcement when a player reaches 1, 5, 10, 25, 50, 100, 250, 500 or 1000 hours played. | ✅ |
 | **Entity Crowd Warning** | Every 30 seconds the chunks around each player are counted. Admins get a chat warning with a teleport button when one holds more entities than the limit (200 by default). | ✅ |
+
+</details>
 
 ---
 
