@@ -1,0 +1,1 @@
+$data modify entity @s CustomName set value {text:"",extra:[{text:"$(f)",color:"$(c)"},{text:"$(e)",color:"dark_gray"},{text:" $(hi).$(hd)",color:"white"},{text:"/$(mi)",color:"gray"},{text:" ❤",color:"red"}]}

@@ -1,0 +1,1 @@
+$data modify storage tmf:tmp pk.lines append value {text:"+$(n) ",color:"green",extra:[{translate:"item.minecraft.$(p)",fallback:"%s",with:[{translate:"block.minecraft.$(p)",fallback:"$(p)"}],color:"gray"}]}

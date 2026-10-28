@@ -1,0 +1,24 @@
+{
+  "criteria": {
+    "e": {
+      "trigger": "minecraft:default_block_use",
+      "conditions": {
+        "location": {
+          "type": "minecraft:location_check",
+          "predicate": {
+            "block": {
+              "blocks": "#tmf:doors",
+              "state": {
+                "open": "false",
+                "half": "upper"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "tmf:doors/closed_upper"
+  }
+}

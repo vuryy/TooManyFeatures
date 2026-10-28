@@ -1,0 +1,1 @@
+$data modify storage tmf:tmp sb.lines append value {text:"",extra:[{text:"$(count)× ",color:"gray"},{translate:"item.minecraft.$(p)",fallback:"%s",with:[{translate:"block.minecraft.$(p)",fallback:"$(p)"}],color:"white"}],hover_event:{action:"show_item",id:"$(id)"}}

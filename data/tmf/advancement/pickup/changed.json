@@ -1,0 +1,10 @@
+{
+  "criteria": {
+    "e": {
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "rewards": {
+    "function": "tmf:pickup/changed"
+  }
+}

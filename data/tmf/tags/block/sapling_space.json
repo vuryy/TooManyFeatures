@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:air",
+    "minecraft:cave_air",
+    "minecraft:short_grass",
+    "minecraft:short_dry_grass",
+    "minecraft:leaf_litter"
+  ]
+}

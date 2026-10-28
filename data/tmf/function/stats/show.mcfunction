@@ -1,0 +1,12 @@
+function tmf:stats/compute
+tellraw @s [{text:"━━━━━━━ ",color:"dark_gray"},{text:"📊 ",color:"gold"},{selector:"@s",color:"gold",bold:true},{text:" ━━━━━━━",color:"dark_gray"}]
+tellraw @s {text:"  (counted since TMF was added to this world)",color:"dark_gray",italic:true}
+tellraw @s [{text:"  ⏱ Playtime: ",color:"gray"},{score:{name:"#pd",objective:"tmf.tmp"},color:"yellow"},{text:"d ",color:"yellow"},{score:{name:"#ph",objective:"tmf.tmp"},color:"yellow"},{text:"h ",color:"yellow"},{score:{name:"#pm",objective:"tmf.tmp"},color:"yellow"},{text:"m",color:"yellow"}]
+tellraw @s [{text:"  ☠ Deaths: ",color:"gray"},{score:{name:"@s",objective:"tmf.s.deaths"},color:"white"},{text:"   since last death: ",color:"gray"},{score:{name:"#dh",objective:"tmf.tmp"},color:"white"},{text:"h ",color:"white"},{score:{name:"#dm",objective:"tmf.tmp"},color:"white"},{text:"m",color:"white"}]
+tellraw @s [{text:"  ⚔ Mob kills: ",color:"gray"},{score:{name:"@s",objective:"tmf.s.mobs"},color:"white"},{text:"   Player kills: ",color:"gray"},{score:{name:"@s",objective:"tmf.s.pk"},color:"white"}]
+tellraw @s [{text:"  ❤ Damage dealt: ",color:"gray"},{score:{name:"#dmgd",objective:"tmf.tmp"},color:"white"},{text:" hearts   taken: ",color:"gray"},{score:{name:"#dmgt",objective:"tmf.tmp"},color:"white"},{text:" hearts",color:"gray"}]
+tellraw @s [{text:"  👣 On foot: ",color:"gray"},{score:{name:"#fi",objective:"tmf.tmp"},color:"white"},{text:".",color:"white"},{score:{name:"#fd",objective:"tmf.tmp"},color:"white"},{text:" km   Riding/flying: ",color:"gray"},{score:{name:"#ri",objective:"tmf.tmp"},color:"white"},{text:".",color:"white"},{score:{name:"#rd",objective:"tmf.tmp"},color:"white"},{text:" km",color:"gray"}]
+tellraw @s [{text:"  ⇡ Jumps: ",color:"gray"},{score:{name:"@s",objective:"tmf.s.jump"},color:"white"},{text:"   🛏 Nights slept: ",color:"gray"},{score:{name:"@s",objective:"tmf.s.sleep"},color:"white"}]
+tellraw @s [{text:"  🐟 Fish caught: ",color:"gray"},{score:{name:"@s",objective:"tmf.s.fish"},color:"white"},{text:"   🐄 Animals bred: ",color:"gray"},{score:{name:"@s",objective:"tmf.s.bred"},color:"white"}]
+tellraw @s [{text:"  💰 Villager trades: ",color:"gray"},{score:{name:"@s",objective:"tmf.s.trade"},color:"white"},{text:"   ✨ Items enchanted: ",color:"gray"},{score:{name:"@s",objective:"tmf.s.ench"},color:"white"}]
+tellraw @s [{text:"  "},{text:"[Share in chat]",color:"aqua",click_event:{action:"run_command",command:"/trigger tmf.stats set 2"},hover_event:{action:"show_text",value:"Show a summary of your stats to everyone"}}]

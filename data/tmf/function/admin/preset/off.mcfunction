@@ -1,0 +1,50 @@
+scoreboard players set #tool_swap tmf.cfg 0
+scoreboard players set #shulker_preview tmf.cfg 0
+scoreboard players set #death_glow tmf.cfg 0
+execute if score #fast_paths tmf.cfg matches 1.. run execute as @a[tag=tmf.onpath] run function tmf:paths/remove
+scoreboard players set #fast_paths tmf.cfg 0
+scoreboard players set #horse_stats tmf.cfg 0
+scoreboard players set #pet_protect tmf.cfg 0
+scoreboard players set #no_phantoms tmf.cfg 0
+execute if score #enderman_guard tmf.cfg matches 1.. run function tmf:enderman/strip_all
+scoreboard players set #enderman_guard tmf.cfg 0
+execute if score #silence_mobs tmf.cfg matches 1.. run function tmf:silence/off_all
+scoreboard players set #silence_mobs tmf.cfg 0
+scoreboard players set #pet_teleport tmf.cfg 0
+scoreboard players set #ladder_drop tmf.cfg 0
+scoreboard players set #double_doors tmf.cfg 0
+scoreboard players set #cauldron_trash tmf.cfg 0
+execute if score #health_bars tmf.cfg matches 1.. run execute as @e[tag=tmf.hb] run function tmf:combat/hb_clear
+scoreboard players set #health_bars tmf.cfg 0
+execute if score #damage_numbers tmf.cfg matches 1.. run kill @e[type=minecraft:text_display,tag=tmf.dn]
+scoreboard players set #damage_numbers tmf.cfg 0
+execute if score #afk tmf.cfg matches 1.. run function tmf:afk/clear_all
+scoreboard players set #afk tmf.cfg 0
+scoreboard players set #stats_card tmf.cfg 0
+scoreboard players set #join_leave tmf.cfg 0
+scoreboard players set #harvest tmf.cfg 0
+scoreboard players set #invisible_frames tmf.cfg 0
+execute if score #no_trample tmf.cfg matches 1.. run execute as @a[tag=tmf.ntsf] run function tmf:trample/landed
+scoreboard players set #no_trample tmf.cfg 0
+execute if score #leaf_decay tmf.cfg matches 1.. run kill @e[type=minecraft:marker,tag=tmf.ld]
+scoreboard players set #leaf_decay tmf.cfg 0
+scoreboard players set #armor_warning tmf.cfg 0
+scoreboard players set #best_tool tmf.cfg 0
+scoreboard players set #coords_hud tmf.cfg 0
+scoreboard players set #spawn_checker tmf.cfg 0
+scoreboard players set #veinminer tmf.cfg 0
+scoreboard players set #tree_feller tmf.cfg 0
+scoreboard players set #trader_alert tmf.cfg 0
+scoreboard players set #sort_chest tmf.cfg 0
+scoreboard players set #pickup_notices tmf.cfg 0
+scoreboard players set #magnet tmf.cfg 0
+scoreboard players set #breed_info tmf.cfg 0
+scoreboard players set #sapling_replant tmf.cfg 0
+scoreboard players set #copper_info tmf.cfg 0
+scoreboard players set #milestones tmf.cfg 0
+scoreboard players set #day_counter tmf.cfg 0
+execute if score #fence_jump tmf.cfg matches 1.. run execute as @a[tag=tmf.fj] run function tmf:fence/remove
+scoreboard players set #fence_jump tmf.cfg 0
+function tmf:config/apply
+tellraw @a[tag=tmf.admin] [{text:"[TMF] ",color:"gold"},{text:"Preset applied: ",color:"gray"},{text:"All off",color:"aqua"}]
+function tmf:admin/open

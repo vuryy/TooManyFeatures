@@ -1,0 +1,10 @@
+{
+  "criteria": {
+    "e": {
+      "trigger": "minecraft:changed_dimension"
+    }
+  },
+  "rewards": {
+    "function": "tmf:pets/dim_change"
+  }
+}

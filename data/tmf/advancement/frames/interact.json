@@ -1,0 +1,33 @@
+{
+  "criteria": {
+    "e": {
+      "trigger": "minecraft:player_interacted_with_entity",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:flags": {
+              "is_sneaking": false
+            },
+            "minecraft:entity_tags": {
+              "all_of": [
+                "tmf.sh"
+              ]
+            }
+          }
+        },
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "#tmf:item_frames"
+          }
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "tmf:frames/interact"
+  }
+}

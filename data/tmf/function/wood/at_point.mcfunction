@@ -1,0 +1,2 @@
+execute if score #tree_feller tmf.cfg matches 1 if entity @s[tag=!tmf.off.tree_feller,predicate=tmf:sneaking,gamemode=!creative,gamemode=!spectator] if items entity @s weapon.mainhand #minecraft:axes align xyz if function tmf:wood/is_tree run function tmf:wood/fell with storage tmf:tmp wc
+execute if score #leaf_decay tmf.cfg matches 1 run function tmf:leaves/mark

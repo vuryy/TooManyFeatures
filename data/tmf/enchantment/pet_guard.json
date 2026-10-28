@@ -1,0 +1,90 @@
+{
+  "description": {
+    "text": "TMF Pet Guard"
+  },
+  "supported_items": "minecraft:barrier",
+  "weight": 1,
+  "max_level": 1,
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 0
+  },
+  "max_cost": {
+    "base": 1,
+    "per_level_above_first": 0
+  },
+  "anvil_cost": 0,
+  "slots": [
+    "feet"
+  ],
+  "effects": {
+    "minecraft:damage_immunity": [
+      {
+        "requirements": {
+          "type": "minecraft:all_of",
+          "terms": [
+            {
+              "type": "minecraft:int_value_check",
+              "value": {
+                "type": "minecraft:score",
+                "target": {
+                  "type": "minecraft:fixed",
+                  "name": "#pet_protect"
+                },
+                "score": "tmf.cfg"
+              },
+              "test": {
+                "min": 1
+              }
+            },
+            {
+              "type": "minecraft:entity_properties",
+              "entity": "attacker",
+              "predicate": {
+                "minecraft:entity_type": "minecraft:player"
+              }
+            },
+            {
+              "type": "minecraft:any_of",
+              "terms": [
+                {
+                  "type": "minecraft:int_value_check",
+                  "value": {
+                    "type": "minecraft:score",
+                    "target": {
+                      "type": "minecraft:fixed",
+                      "name": "#pet_protect"
+                    },
+                    "score": "tmf.cfg"
+                  },
+                  "test": {
+                    "min": 2
+                  }
+                },
+                {
+                  "type": "minecraft:entity_scores",
+                  "entity": "attacker",
+                  "scores": {
+                    "tmf.id": {
+                      "min": {
+                        "type": "minecraft:score",
+                        "target": "this",
+                        "score": "tmf.oid"
+                      },
+                      "max": {
+                        "type": "minecraft:score",
+                        "target": "this",
+                        "score": "tmf.oid"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "effect": {}
+      }
+    ]
+  }
+}

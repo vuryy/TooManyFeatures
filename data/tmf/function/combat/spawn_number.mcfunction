@@ -1,0 +1,2 @@
+$summon minecraft:text_display ~ ~ ~ {billboard:"center",Tags:["tmf.dn","tmf.dn_new"],text:{text:"$(txt)$(suffix)",color:"$(color)",bold:true},background:0,shadow:1b,brightness:{sky:15,block:15},transformation:{translation:[0f,0f,0f],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],scale:[0.8f,0.8f,0.8f]}}
+scoreboard players set @e[type=minecraft:text_display,tag=tmf.dn_new,distance=..0.1] tmf.dnt 0

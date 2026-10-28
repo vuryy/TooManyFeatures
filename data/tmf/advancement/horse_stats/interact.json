@@ -1,0 +1,28 @@
+{
+  "criteria": {
+    "e": {
+      "trigger": "minecraft:player_interacted_with_entity",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:flags": {
+              "is_sneaking": true
+            }
+          }
+        },
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "#tmf:horses"
+          }
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "tmf:horse/interact"
+  }
+}

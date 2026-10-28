@@ -1,0 +1,29 @@
+scoreboard players set #vbudget tmf.tmp 64
+function tmf:mine/tool_init
+$execute positioned ~-1 ~-1 ~-1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~-1 ~-1 ~0 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~-1 ~-1 ~1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~-1 ~0 ~-1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~-1 ~0 ~0 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~-1 ~0 ~1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~-1 ~1 ~-1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~-1 ~1 ~0 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~-1 ~1 ~1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~0 ~-1 ~-1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~0 ~-1 ~0 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~0 ~-1 ~1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~0 ~0 ~-1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~0 ~0 ~0 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~0 ~0 ~1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~0 ~1 ~-1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~0 ~1 ~0 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~0 ~1 ~1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~1 ~-1 ~-1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~1 ~-1 ~0 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~1 ~-1 ~1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~1 ~0 ~-1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~1 ~0 ~0 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~1 ~0 ~1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~1 ~1 ~-1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~1 ~1 ~0 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}
+$execute positioned ~1 ~1 ~1 run function tmf:vein/fill {tag:"$(tag)",xp:$(xp)}

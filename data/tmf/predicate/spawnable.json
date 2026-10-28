@@ -1,0 +1,69 @@
+{
+  "type": "minecraft:all_of",
+  "terms": [
+    {
+      "type": "minecraft:location_check",
+      "predicate": {
+        "block": {
+          "blocks": "#tmf:spawn_space"
+        },
+        "light": {
+          "light": {
+            "max": 0
+          }
+        }
+      }
+    },
+    {
+      "type": "minecraft:location_check",
+      "predicate": {
+        "block": {
+          "blocks": "#tmf:spawn_space"
+        }
+      },
+      "offsetY": 1
+    },
+    {
+      "type": "minecraft:inverted",
+      "term": {
+        "type": "minecraft:location_check",
+        "predicate": {
+          "block": {
+            "blocks": "#tmf:no_spawn_surface"
+          }
+        },
+        "offsetY": -1
+      }
+    },
+    {
+      "type": "minecraft:inverted",
+      "term": {
+        "type": "minecraft:location_check",
+        "predicate": {
+          "block": {
+            "blocks": "#minecraft:slabs",
+            "state": {
+              "type": "bottom"
+            }
+          }
+        },
+        "offsetY": -1
+      }
+    },
+    {
+      "type": "minecraft:inverted",
+      "term": {
+        "type": "minecraft:location_check",
+        "predicate": {
+          "block": {
+            "blocks": "#minecraft:stairs",
+            "state": {
+              "half": "bottom"
+            }
+          }
+        },
+        "offsetY": -1
+      }
+    }
+  ]
+}

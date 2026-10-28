@@ -1,0 +1,28 @@
+{
+  "criteria": {
+    "e": {
+      "trigger": "minecraft:player_hurt_entity",
+      "conditions": {
+        "damage": {
+          "taken": {
+            "min": 23.25,
+            "max": 23.7499
+          }
+        },
+        "entity": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:entity_type": "#tmf:no_bar"
+            }
+          }
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "tmf:combat/bin/47"
+  }
+}

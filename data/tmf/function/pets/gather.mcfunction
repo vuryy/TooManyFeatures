@@ -1,0 +1,1 @@
+$execute in $(dim) positioned $(x) $(y) $(z) as @e[type=#tmf:followers,distance=..32] unless data entity @s {Sitting:1b} unless function tmf:pets/leashed if function tmf:pets/owned_by_traveller run function tmf:pets/bring

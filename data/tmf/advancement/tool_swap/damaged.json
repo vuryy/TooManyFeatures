@@ -1,0 +1,18 @@
+{
+  "criteria": {
+    "e": {
+      "trigger": "minecraft:item_durability_changed",
+      "conditions": {
+        "durability": {
+          "max": 2
+        },
+        "delta": {
+          "max": -1
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "tmf:tool_swap/on_damage"
+  }
+}

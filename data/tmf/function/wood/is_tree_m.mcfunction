@@ -1,0 +1,29 @@
+scoreboard players set #up tmf.tmp 0
+$execute positioned ~0 ~0 ~0 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~0 ~0 ~1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~0 ~0 ~-1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~1 ~0 ~0 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~1 ~0 ~1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~1 ~0 ~-1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~-1 ~0 ~0 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~-1 ~0 ~1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~-1 ~0 ~-1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~0 ~1 ~0 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~0 ~1 ~1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~0 ~1 ~-1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~1 ~1 ~0 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~1 ~1 ~1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~1 ~1 ~-1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~-1 ~1 ~0 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~-1 ~1 ~1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~-1 ~1 ~-1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~0 ~-1 ~0 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~0 ~-1 ~1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~0 ~-1 ~-1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~1 ~-1 ~0 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~1 ~-1 ~1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~1 ~-1 ~-1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~-1 ~-1 ~0 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~-1 ~-1 ~1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+$execute positioned ~-1 ~-1 ~-1 if block ~ ~ ~ #$(tag) run return run function tmf:wood/climb {tag:"$(tag)"}
+return run function tmf:wood/leaves_near

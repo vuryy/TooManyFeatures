@@ -1,0 +1,29 @@
+{
+  "criteria": {
+    "e": {
+      "trigger": "minecraft:default_block_use",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:flags": {
+              "is_sneaking": true
+            }
+          }
+        },
+        "location": {
+          "type": "minecraft:location_check",
+          "predicate": {
+            "block": {
+              "blocks": "#tmf:sortable"
+            }
+          }
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "tmf:sort/use"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "values": [
+    "#minecraft:replaceable",
+    "#minecraft:fences",
+    "#minecraft:walls",
+    "#minecraft:trapdoors",
+    "#minecraft:doors",
+    "minecraft:ladder",
+    "minecraft:glass_pane",
+    "minecraft:iron_bars",
+    "minecraft:torch",
+    "minecraft:wall_torch",
+    "minecraft:lantern",
+    "minecraft:scaffolding"
+  ]
+}

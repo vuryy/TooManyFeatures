@@ -1,0 +1,22 @@
+{
+  "pack": {
+    "description": [
+      {
+        "text": "TMF",
+        "color": "gold",
+        "bold": true
+      },
+      {
+        "text": " – Too Many Features v1.1.0\n",
+        "color": "gray"
+      },
+      {
+        "text": "/trigger tmf",
+        "color": "yellow"
+      }
+    ],
+    "pack_format": 121,
+    "min_format": 121,
+    "max_format": 121
+  }
+}

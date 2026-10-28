@@ -1,0 +1,31 @@
+{
+  "values": [
+    "#minecraft:air",
+    "#minecraft:replaceable",
+    "#minecraft:leaves",
+    "#minecraft:impermeable",
+    "#minecraft:fences",
+    "#minecraft:walls",
+    "#minecraft:trapdoors",
+    "#minecraft:wool_carpets",
+    "#minecraft:rails",
+    "#minecraft:pressure_plates",
+    "#minecraft:buttons",
+    "#minecraft:all_signs",
+    "#minecraft:doors",
+    "minecraft:farmland",
+    "minecraft:dirt_path",
+    "minecraft:barrier",
+    "minecraft:bedrock",
+    "minecraft:glass_pane",
+    "minecraft:iron_bars",
+    "minecraft:chest",
+    "minecraft:trapped_chest",
+    "minecraft:ender_chest",
+    "minecraft:ladder",
+    "minecraft:scaffolding",
+    "minecraft:magma_block",
+    "minecraft:lava",
+    "minecraft:water"
+  ]
+}

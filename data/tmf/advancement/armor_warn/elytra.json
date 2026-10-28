@@ -1,0 +1,21 @@
+{
+  "criteria": {
+    "e": {
+      "trigger": "minecraft:item_durability_changed",
+      "conditions": {
+        "durability": {
+          "max": 20
+        },
+        "delta": {
+          "max": -1
+        },
+        "item": {
+          "items": "minecraft:elytra"
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "tmf:armor_warn/elytra"
+  }
+}

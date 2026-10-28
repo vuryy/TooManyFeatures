@@ -1,0 +1,24 @@
+{
+  "criteria": {
+    "e": {
+      "trigger": "minecraft:player_hurt_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:interaction",
+            "minecraft:entity_tags": {
+              "all_of": [
+                "tmf.ov.bt"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "rewards": {
+    "function": "tmf:bt/hit"
+  }
+}

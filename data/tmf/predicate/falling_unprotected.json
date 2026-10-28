@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:all_of",
+  "terms": [
+    {
+      "type": "minecraft:entity_properties",
+      "entity": "this",
+      "predicate": {
+        "minecraft:flags": {
+          "is_on_ground": false
+        },
+        "minecraft:movement": {
+          "fall_distance": {
+            "min": 0.6
+          }
+        }
+      }
+    },
+    {
+      "type": "minecraft:inverted",
+      "term": {
+        "type": "minecraft:entity_properties",
+        "entity": "this",
+        "predicate": {
+          "minecraft:effects": {
+            "minecraft:slow_falling": {}
+          }
+        }
+      }
+    }
+  ]
+}
