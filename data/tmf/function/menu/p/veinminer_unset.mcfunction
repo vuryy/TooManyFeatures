@@ -1,2 +1,2 @@
 tag @s remove tmf.off.veinminer
-function tmf:menu/open
+function tmf:menu/cat/mining

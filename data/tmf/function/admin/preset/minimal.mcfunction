@@ -44,6 +44,24 @@ scoreboard players set #milestones tmf.cfg 0
 scoreboard players set #day_counter tmf.cfg 0
 execute if score #fence_jump tmf.cfg matches 1.. run execute as @a[tag=tmf.fj] run function tmf:fence/remove
 scoreboard players set #fence_jump tmf.cfg 0
+execute if score #creeper_nogrief tmf.cfg matches 1.. run execute as @e[type=minecraft:creeper,tag=tmf.cng] run function tmf:creeper/restore
+scoreboard players set #creeper_nogrief tmf.cfg 0
+execute if score #ghast_nogrief tmf.cfg matches 1.. run execute as @e[type=minecraft:fireball,tag=tmf.gng] run function tmf:ghast/restore
+scoreboard players set #ghast_nogrief tmf.cfg 0
+execute if score #zombie_doors tmf.cfg matches 1.. run execute as @e[type=#tmf:door_breakers,tag=tmf.zd] run function tmf:zombie/restore
+scoreboard players set #zombie_doors tmf.cfg 0
+scoreboard players set #pet_health tmf.cfg 0
+scoreboard players set #animal_owners tmf.cfg 0
+scoreboard players set #crop_info tmf.cfg 0
+scoreboard players set #biome_info tmf.cfg 0
+scoreboard players set #campfire_info tmf.cfg 0
+scoreboard players set #furnace_info tmf.cfg 0
+scoreboard players set #slime_chunks tmf.cfg 0
+scoreboard players set #arrow_counter tmf.cfg 0
+scoreboard players set #lodestone_coords tmf.cfg 0
+scoreboard players set #waypoints tmf.cfg 0
+scoreboard players set #entity_warning tmf.cfg 0
+scoreboard players set #campfire_regen tmf.cfg 0
 function tmf:config/apply
 tellraw @a[tag=tmf.admin] [{text:"[TMF] ",color:"gold"},{text:"Preset applied: ",color:"gray"},{text:"Minimal",color:"aqua"}]
 function tmf:admin/open

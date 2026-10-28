@@ -1,5 +1,6 @@
 $execute if entity @a[scores={tmf.id=$(id)}] run return run data modify storage tmf:tmp lv.keep append from storage tmf:tmp lv.cur
-# player left: session length
+# player left: remember when (for the player inspector), then session length
+$execute store result storage tmf:data names[{id:$(id)}].left int 1 run scoreboard players get #tick tmf.c
 $scoreboard players set #st tmf.tmp $(start)
 scoreboard players operation #len tmf.tmp = #tick tmf.c
 scoreboard players operation #len tmf.tmp -= #st tmf.tmp

@@ -7,7 +7,7 @@ import json, os, shutil, textwrap, sys
 # Only <output>/data and <output>/pack.mcmeta are replaced; everything else is left alone.
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 NS = "tmf"
-VERSION = "1.10.0"
+VERSION = "1.11.2"
 
 if os.path.isdir(os.path.join(OUT, "data")):
     shutil.rmtree(os.path.join(OUT, "data"))
@@ -38,7 +38,7 @@ FEATURES = [
     ("tool_swap",       1,  "Tool Protector",       "When the tool in your hand is about to break, a spare copy from your inventory is swapped in (or you get a warning).", "in"),
     ("shulker_preview", 2,  "Shulker Preview",      "Sneak while holding a shulker box to list its contents in chat.", "out"),
     ("death_glow",      3,  "Death-Drop Glow",      "Items dropped when you die glow and stay for 10 minutes. Your death coordinates are shown.", None),
-    ("fast_paths",      4,  "Faster Paths",         "Walk 30% faster on dirt paths.", "out"),
+    ("fast_paths",      4,  "Faster Paths",         "Walk 30% faster on dirt paths.", "in"),
     ("horse_stats",     5,  "Horse Stats",          "Sneak + right-click a horse, donkey, mule, llama or camel to see its speed, jump and health.", "out"),
     ("pet_protect",     6,  "Pet Protection",       "Tamed pets can't be hurt by their owner (or by any player, depending on the server setting).", None),
     ("no_phantoms",     7,  "No Phantoms",          "Phantoms stop spawning.", None),
@@ -59,10 +59,10 @@ FEATURES = [
     ("leaf_decay",      24, "Fast Leaf Decay",      "After you chop a tree, its leftover leaves disappear within a second (with normal drops).", None),
     ("armor_warning",   25, "Armor Warning",        "Warns you when a worn armor piece or elytra has 20 or less durability left.", "out"),
     ("best_tool",       26, "Tool Auto-Swap",       "When you start breaking a block, the best tool for it is swapped into your hand. Sneak to stop it.", "in"),
-    ("coords_hud",      27, "Coordinates HUD",      "Shows your XYZ coordinates and facing direction above the hotbar.", "in"),
+    ("coords_hud",      27, "Coordinates HUD",      "Shows your XYZ coordinates and facing direction in a small bar at the top of the screen.", "in"),
     ("spawn_checker",   28, "Spawn-Proof Checker",  "Sneak while holding a torch to see a small flame on each block where monsters can spawn (light level 0).", "out"),
-    ("veinminer",       29, "Veinminer",            "Sneak while mining an ore with a pickaxe to mine the whole connected vein (up to 64 blocks).", "out"),
-    ("tree_feller",     30, "Tree Feller",          "Sneak while chopping a log with an axe to fell the whole tree (up to 200 logs).", "out"),
+    ("veinminer",       29, "Veinminer",            "Mine an ore with a pickaxe to mine the whole connected vein (up to 64 blocks). Each player picks Off, Sneaking (default) or Always.", "mode"),
+    ("tree_feller",     30, "Tree Feller",          "Chop a log of a natural tree with an axe to fell the whole tree (up to 200 logs). Each player picks Off, Sneaking (default) or Always.", "mode"),
     ("trader_alert",    32, "Wandering Trader Alert","Get a chat message with distance and direction when a wandering trader appears near you.", "in"),
     ("sort_chest",      33, "Sort Chest",           "Sneak + right-click a chest or barrel with empty hands to sort and stack its contents.", "in"),
     ("pickup_notices",  34, "Pickup Notices",       "A short note above the hotbar shows what you just got, e.g. +12 Cobblestone.", "out"),
@@ -72,29 +72,51 @@ FEATURES = [
     ("copper_info",     38, "Copper Oxidation Info","Sneak and look at a copper block to see its oxidation stage and whether it is waxed.", "out"),
     ("milestones",      39, "Playtime Milestones",  "Announces when a player reaches 1, 5, 10, 25, 50, 100, 250, 500 and 1000 hours played.", None),
     ("day_counter",     40, "Day Counter",          "Shows the day number above the hotbar at the start of every in-game day.", "out"),
-    ("fence_jump",      31, "Fence Jumping",        "Walk up against a fence, wall or closed fence gate and jump to get over it.", "out"),
+    ("fence_jump",      31, "Fence Jumping",        "Walk up against a fence, wall or closed fence gate and jump to get over it.", "in"),
+    ("creeper_nogrief", 41, "Creeper No-Grief",     "Creeper explosions no longer break blocks. They still hurt players and mobs nearby.", None),
+    ("ghast_nogrief",   42, "Ghast No-Grief",       "Ghast fireballs no longer break blocks or start fires. They still hurt.", None),
+    ("zombie_doors",    43, "No Zombie Door Breaking","Zombies, husks and zombie villagers can no longer break wooden doors on Hard difficulty.", None),
+    ("pet_health",      44, "Pet Health",           "Sneak and look at a tamed animal to see its health.", "out"),
+    ("animal_owners",   45, "Animal Owners",        "Sneak and look at a tamed animal to see who owns it.", "out"),
+    ("crop_info",       46, "Crop Growth Info",     "Sneak and look at a crop, sapling or stem to see how far it has grown and whether its farmland is dry.", "out"),
+    ("biome_info",      47, "Biome Change Info",    "A short note above the hotbar tells you when you walk into a different biome.", "in"),
+    ("campfire_info",   48, "Campfire Timer",       "Sneak and look at a campfire to see how long each item still needs to cook.", "out"),
+    ("furnace_info",    49, "Furnace Progress",     "Sneak and look at a furnace, smoker or blast furnace to see what it is smelting, the progress, time left, fuel and output.", "out"),
+    ("slime_chunks",    50, "Slime Chunk Checker",  "Hold a slimeball to see whether you are standing in a slime chunk. An admin has to enter the world seed once.", "out"),
+    ("arrow_counter",   51, "Arrow Counter",        "Hold a bow or crossbow to see how many arrows you have left.", "out"),
+    ("lodestone_coords",52, "Compass Coordinates",  "Hold a lodestone compass to see the coordinates and distance of its lodestone (a recovery compass shows your last death point).", "out"),
+    ("waypoints",       53, "Waypoints",            "Save up to 3 places from the menu and get direction and distance to the one you pick in the top bar.", "out"),
+    ("entity_warning",  54, "Entity Crowd Warning", "Admins get a chat warning when a chunk near a player holds more entities than the limit (checked every 30 seconds).", None),
+    ("campfire_regen",  55, "Campfire Regen",       "Standing within 4 blocks of a lit campfire heals you a little every 5 seconds (Regeneration II for 3 seconds).", None),
 ]
 FKEYS = [f[0] for f in FEATURES]
 DEFAULT_ON = {"shulker_preview", "horse_stats", "pet_protect", "silence_mobs", "pet_teleport", "double_doors", "ladder_drop",
-              "health_bars", "damage_numbers", "afk", "stats_card", "invisible_frames", "armor_warning", "fence_jump",
+              "health_bars", "damage_numbers", "stats_card", "invisible_frames", "armor_warning", "fence_jump",
               "fast_paths", "death_glow", "trader_alert", "sort_chest", "pickup_notices", "breed_info",
-              "copper_info", "milestones", "day_counter"}
+              "copper_info", "milestones", "day_counter", "pet_health", "animal_owners", "crop_info", "biome_info",
+              "campfire_info", "furnace_info", "arrow_counter", "entity_warning", "campfire_regen"}
 BYKEY = {f[0]: f for f in FEATURES}
 PERSONAL = [f for f in FEATURES if f[4]]
 CATEGORIES = [
     ("mining", "⛏ Mining & tools", ["best_tool", "tool_swap", "veinminer", "tree_feller", "leaf_decay", "armor_warning"]),
     ("farming", "🌾 Farming & building", ["harvest", "no_trample", "sapling_replant", "ladder_drop", "double_doors",
-                                          "invisible_frames", "spawn_checker", "copper_info", "cauldron_trash"]),
+                                          "invisible_frames", "spawn_checker", "cauldron_trash"]),
     ("inventory", "🎒 Inventory", ["sort_chest", "magnet", "pickup_notices", "shulker_preview"]),
-    ("mobs", "🐾 Pets & mobs", ["pet_protect", "pet_teleport", "horse_stats", "breed_info", "silence_mobs",
-                               "trader_alert", "enderman_guard", "no_phantoms"]),
-    ("combat", "⚔ Combat", ["health_bars", "damage_numbers", "death_glow"]),
-    ("movement", "🧭 Movement & info", ["fast_paths", "fence_jump", "coords_hud", "day_counter"]),
-    ("multiplayer", "👥 Multiplayer", ["afk", "stats_card", "join_leave", "milestones"]),
+    ("mobs", "🐾 Pets & mobs", ["pet_protect", "pet_teleport", "pet_health", "animal_owners", "horse_stats", "breed_info",
+                               "silence_mobs", "trader_alert", "no_phantoms"]),
+    ("griefing", "🛡 Mob griefing", ["creeper_nogrief", "ghast_nogrief", "zombie_doors", "enderman_guard"]),
+    ("combat", "⚔ Combat", ["health_bars", "damage_numbers", "death_glow", "arrow_counter", "campfire_regen"]),
+    ("info", "🔍 Info & HUD", ["coords_hud", "waypoints", "biome_info", "day_counter", "crop_info", "campfire_info",
+                              "furnace_info", "copper_info", "slime_chunks", "lodestone_coords"]),
+    ("movement", "🧭 Movement", ["fast_paths", "fence_jump"]),
+    ("multiplayer", "👥 Multiplayer", ["afk", "stats_card", "join_leave", "milestones", "entity_warning"]),
 ]
 _all = [k for _, _, ks in CATEGORIES for k in ks]
 assert sorted(_all) == sorted(FKEYS), set(_all) ^ set(FKEYS)
 CAT_OF = {k: cid for cid, _, ks in CATEGORIES for k in ks}
+# player menu order follows the categories
+PERSONAL = [BYKEY[k] for _, _, ks in CATEGORIES for k in ks if BYKEY[k][4]]
+LOCKABLE = [f for f in PERSONAL if f[4] in ("out", "in")]
 
 # ---------------------------------------------------------------------------
 # pack.mcmeta
@@ -309,7 +331,8 @@ STAT_OBJ = {
 DUMMIES = ["tmf.cfg", "tmf.tmp", "tmf.c", "tmf.id", "tmf.oid", "tmf.cd", "tmf.hp", "tmf.lhp", "tmf.hbt",
            "tmf.dnt", "tmf.hitt", "tmf.afk", "tmf.px", "tmf.py", "tmf.pz", "tmf.rx", "tmf.ry", "tmf.dim",
            "tmf.sess", "tmf.abt", "tmf.swapcd", "tmf.share", "tmf.mine", "tmf.fight", "tmf.ldt", "tmf.pcd",
-           "tmf.awh", "tmf.awc", "tmf.awl", "tmf.awf", "tmf.awe", "tmf.btsup", "tmf.ms"]
+           "tmf.awh", "tmf.awc", "tmf.awl", "tmf.awf", "tmf.awe", "tmf.btsup", "tmf.ms", "tmf.cr", "tmf.sl",
+           "tmf.wx", "tmf.wy", "tmf.wz", "tmf.wd", "tmf.wn", "tmf.ws", "tmf.bio", "tmf.bic", "tmf.slx", "tmf.slz", "tmf.slr"]
 LOGS = ['dark_oak_log', 'dark_oak_wood', 'stripped_dark_oak_log', 'stripped_dark_oak_wood', 'pale_oak_log', 'pale_oak_wood',
         'stripped_pale_oak_log', 'stripped_pale_oak_wood', 'oak_log', 'oak_wood', 'stripped_oak_log', 'stripped_oak_wood',
         'acacia_log', 'acacia_wood', 'stripped_acacia_log', 'stripped_acacia_wood', 'birch_log', 'birch_wood',
@@ -366,6 +389,7 @@ fn("load", f"""
     function tmf:sort/init_rank
     scoreboard players set #5 tmf.c 5
     scoreboard players set #10 tmf.c 10
+    scoreboard players set #16 tmf.c 16
     scoreboard players set #24 tmf.c 24
     scoreboard players set #60 tmf.c 60
     scoreboard players set #100 tmf.c 100
@@ -379,6 +403,8 @@ fn("load", f"""
 
     data modify storage tmf:data bars set value {json.dumps(bars).replace('"f"','f').replace('"e"','e').replace('"c"','c')}
     data modify storage tmf:data version set value "{VERSION}"
+    function tmf:slime/init
+    function tmf:util/init_block_items
 
     execute unless score #installed tmf.cfg matches 1 run function tmf:config/install
     # upgrades: features added in a newer version start switched on
@@ -389,10 +415,20 @@ fn("load", f"""
     # v1.9.2: Item Magnet is now off by default
     execute unless score #defaults_v3 tmf.cfg matches 1 run scoreboard players set #magnet tmf.cfg 0
     scoreboard players set #defaults_v3 tmf.cfg 1
+    # v1.11.1: features that give an edge over vanilla start off (Slime Chunk Checker, Waypoints, Compass Coordinates)
+    execute unless score #defaults_v4 tmf.cfg matches 1 run function tmf:config/defaults_v4
+    scoreboard players set #defaults_v4 tmf.cfg 1
+    # v1.11.2: AFK Detection off by default; Faster Paths, Fence Jumping and Biome Change Info are now opt-in per player
+    execute unless score #defaults_v5 tmf.cfg matches 1 run function tmf:config/defaults_v5
+    scoreboard players set #defaults_v5 tmf.cfg 1
+    execute unless score #ew_limit tmf.cfg matches 1.. run scoreboard players set #ew_limit tmf.cfg 200
     function tmf:config/apply
 
     execute unless data storage tmf:data online run data modify storage tmf:data online set value []
     execute as @a at @s run function tmf:join/ensure_online
+    execute unless data storage tmf:data names run data modify storage tmf:data names set value []
+    execute unless data storage tmf:data wp run data modify storage tmf:data wp set value []
+    execute as @a at @s run function tmf:names/ensure
 
     schedule function tmf:loop/t5 5t replace
     schedule function tmf:loop/t20 20t replace
@@ -413,9 +449,24 @@ fn("config/install", f"""
     execute store result score #sleep_pct tmf.cfg run gamerule players_sleeping_percentage
     execute store result score #phantoms_orig tmf.cfg run gamerule spawn_phantoms
 """)
+fn("config/defaults_v5", """
+    execute if score #afk tmf.cfg matches 1.. run function tmf:afk/clear_all
+    scoreboard players set #afk tmf.cfg 0
+    tag @a remove tmf.off.fast_paths
+    tag @a remove tmf.off.fence_jump
+    tag @a remove tmf.off.biome_info
+    execute as @a[tag=tmf.onpath] run function tmf:paths/remove
+    execute as @a[tag=tmf.fj] run function tmf:fence/remove
+""")
+fn("config/defaults_v4", """
+    scoreboard players set #slime_chunks tmf.cfg 0
+    scoreboard players set #waypoints tmf.cfg 0
+    scoreboard players set #lodestone_coords tmf.cfg 0
+""")
 fn("config/defaults_values", """
     scoreboard players set #perf tmf.cfg 0
     scoreboard players set #afk_min tmf.cfg 5
+    scoreboard players set #ew_limit tmf.cfg 200
 """)
 
 # apply: keep game rules in sync with toggles
@@ -448,7 +499,7 @@ fn("tick", """
     tag @a[tag=!tmf.sneaking,predicate=tmf:sneaking] add tmf.sneaking
 
     # --- faster paths ---
-    execute if score #fast_paths tmf.cfg matches 1 as @a[tag=!tmf.onpath,tag=!tmf.off.fast_paths,gamemode=!spectator] at @s if function tmf:paths/on_path run function tmf:paths/add
+    execute if score #fast_paths tmf.cfg matches 1 as @a[tag=!tmf.onpath,tag=tmf.on.fast_paths,gamemode=!spectator] at @s if function tmf:paths/on_path run function tmf:paths/add
     execute as @a[tag=tmf.onpath] at @s unless function tmf:paths/keep run function tmf:paths/remove
 
     # --- click overlays (ladder dropping, right-click harvest, tool auto-swap) ---
@@ -468,7 +519,7 @@ fn("tick", """
     execute if score #veinminer tmf.cfg matches 1 run function tmf:vein/check
 
     # --- fence jumping ---
-    execute if score #fence_jump tmf.cfg matches 1 as @a[tag=!tmf.fj,tag=!tmf.off.fence_jump,gamemode=!spectator,predicate=tmf:on_ground] at @s if function tmf:fence/facing run function tmf:fence/add
+    execute if score #fence_jump tmf.cfg matches 1 as @a[tag=!tmf.fj,tag=tmf.on.fence_jump,gamemode=!spectator,predicate=tmf:on_ground] at @s if function tmf:fence/facing run function tmf:fence/add
     execute as @a[tag=tmf.fj] at @s unless function tmf:fence/keep run function tmf:fence/remove
 
 
@@ -477,6 +528,10 @@ fn("tick", """
     tag @a[tag=tmf.invdirty] remove tmf.invdirty
     execute as @a[scores={tmf.drop=1..}] at @s run function tmf:magnet/dropped
     execute if score #magnet tmf.cfg matches 1 as @a[tag=tmf.on.magnet,gamemode=!spectator,predicate=!tmf:sneaking] at @s run function tmf:magnet/pull
+
+    # --- creeper / ghast no-grief: explosions are detected when the carried marker loses its ride ---
+    execute if score #ghast_nogrief tmf.cfg matches 1 as @e[type=minecraft:fireball,tag=!tmf.gng] at @s run function tmf:ghast/setup
+    execute as @e[type=minecraft:item_display,tag=tmf.bl] unless function tmf:blast/riding at @s run function tmf:blast/gone
 
     # --- damage number animation ---
     execute as @e[type=minecraft:text_display,tag=tmf.dn_new] run function tmf:combat/animate_number
@@ -506,12 +561,19 @@ fn("loop/t5", """
     # HUD + spawn checker (every 10 ticks)
     scoreboard players operation #m2 tmf.tmp = #t5 tmf.c
     scoreboard players operation #m2 tmf.tmp %= #2 tmf.c
-    execute if score #coords_hud tmf.cfg matches 1 if score #m2 tmf.tmp matches 0 as @a[tag=tmf.on.coords_hud] unless score @s tmf.abt matches 1.. at @s run function tmf:hud/show
+    execute if score #m2 tmf.tmp matches 0 as @a at @s run function tmf:hud/tick
     execute if score #spawn_checker tmf.cfg matches 1 if score #m2 tmf.tmp matches 0 as @a[tag=!tmf.off.spawn_checker,predicate=tmf:sneaking] if items entity @s weapon.mainhand #tmf:torches at @s align xyz positioned ~0.5 ~ ~0.5 run function tmf:spawn/scan
 
     # breeding info / copper info (4x per second)
     execute if score #breed_info tmf.cfg matches 1 as @a[tag=!tmf.off.breed_info,gamemode=!spectator] if items entity @s weapon.mainhand #tmf:animal_food at @s run function tmf:breed/check
-    execute if score #copper_info tmf.cfg matches 1 as @a[tag=!tmf.off.copper_info,gamemode=!spectator,predicate=tmf:sneaking] at @s anchored eyes positioned ^ ^ ^ run function tmf:copper/ray_start
+    # sneak + look: pet health / owner, copper, crops, campfires, furnaces
+    execute as @a[gamemode=!spectator,predicate=tmf:sneaking] at @s run function tmf:look/start
+    # held items (twice a second): arrows, compasses, slimeball
+    execute if score #m2 tmf.tmp matches 0 as @a[gamemode=!spectator] unless score @s tmf.abt matches 1.. at @s run function tmf:held/check
+
+    # creeper no-grief
+    execute if score #creeper_nogrief tmf.cfg matches 1 as @e[type=minecraft:creeper,tag=!tmf.cng] at @s run function tmf:creeper/setup
+    execute if score #creeper_nogrief tmf.cfg matches 1 as @a at @s as @e[type=minecraft:creeper,tag=tmf.cng,distance=..24] run function tmf:creeper/watch
 
     # fast leaf decay markers
     execute as @e[type=minecraft:marker,tag=tmf.ld] at @s run function tmf:leaves/marker_tick
@@ -541,6 +603,26 @@ fn("loop/t20", """
     scoreboard players operation #m60 tmf.tmp = #t20 tmf.c
     scoreboard players operation #m60 tmf.tmp %= #60 tmf.c
     execute if score #milestones tmf.cfg matches 1 if score #m60 tmf.tmp matches 0 as @a run function tmf:milestone/check
+
+    # mob griefing: zombies and door breaking; undo changes on mobs that load after a feature was switched off
+    execute if score #zombie_doors tmf.cfg matches 1 as @e[type=#tmf:door_breakers,tag=!tmf.zd] run function tmf:zombie/setup
+    execute unless score #zombie_doors tmf.cfg matches 1 as @e[type=#tmf:door_breakers,tag=tmf.zd] run function tmf:zombie/restore
+    execute unless score #creeper_nogrief tmf.cfg matches 1 as @e[type=minecraft:creeper,tag=tmf.cng] run function tmf:creeper/restore
+    execute unless score #ghast_nogrief tmf.cfg matches 1 as @e[type=minecraft:fireball,tag=tmf.gng] run function tmf:ghast/restore
+
+    # campfire regen (warmth message as soon as you are near, healing every 5 seconds)
+    scoreboard players operation #m5 tmf.tmp = #t20 tmf.c
+    scoreboard players operation #m5 tmf.tmp %= #5 tmf.c
+    execute if score #campfire_regen tmf.cfg matches 1 as @a[gamemode=!spectator,gamemode=!creative] at @s run function tmf:regen/check
+
+    # biome change info
+    execute if score #biome_info tmf.cfg matches 1 as @a[tag=tmf.on.biome_info,gamemode=!spectator] at @s run function tmf:biome/check
+
+    # entity crowd warning (every 30 seconds)
+    scoreboard players operation #m30 tmf.tmp = #t20 tmf.c
+    scoreboard players set #k tmf.tmp 30
+    scoreboard players operation #m30 tmf.tmp %= #k tmf.tmp
+    execute if score #entity_warning tmf.cfg matches 1 if score #m30 tmf.tmp matches 0 as @a at @s run function tmf:ew/player
 
     # leave detection
     function tmf:join/check_leaves
@@ -669,7 +751,7 @@ fn("paths/on_path", """
 """)
 fn("paths/keep", """
     execute unless score #fast_paths tmf.cfg matches 1 run return fail
-    execute if entity @s[tag=tmf.off.fast_paths] run return fail
+    execute unless entity @s[tag=tmf.on.fast_paths] run return fail
     execute if entity @s[gamemode=spectator] run return fail
     execute if function tmf:paths/on_path run return 1
     # keep the bonus while jumping
@@ -1169,12 +1251,6 @@ fn("combat/clear_all", """
 # ---------------------------------------------------------------------------
 # Coordinates HUD
 # ---------------------------------------------------------------------------
-fn("hud/show", """
-    data modify storage tmf:tmp hud set value []
-    execute if score #coords_hud tmf.cfg matches 1 if entity @s[tag=tmf.on.coords_hud] run function tmf:hud/coords
-    execute unless data storage tmf:tmp hud[0] run return 0
-    title @s actionbar {nbt:"hud[]",storage:"tmf:tmp",interpret:true,separator:{text:"   │   ",color:"dark_gray"}}
-""")
 DIRS = ["S", "SW", "W", "NW", "N", "NE", "E", "SE"]
 fn("hud/coords", "\n".join([
     "data modify storage tmf:tmp hc set value {x:0,y:0,z:0,d:\"?\",b:\"plains\"}",
@@ -1418,6 +1494,7 @@ fn("join/ensure_online_m", """
     execute store result storage tmf:tmp on.entry.start int 1 run scoreboard players get #tick tmf.c
     kill @e[type=minecraft:item_display,tag=tmf.namebuf]
     data modify storage tmf:data online append from storage tmf:tmp on.entry
+    function tmf:names/store with storage tmf:tmp on.entry
 """)
 fn("join/check_leaves", """
     data modify storage tmf:tmp lv set value {todo:[],keep:[]}
@@ -1433,7 +1510,8 @@ fn("join/check_one", """
 """)
 fn("join/check_one_m", """
     $execute if entity @a[scores={tmf.id=$(id)}] run return run data modify storage tmf:tmp lv.keep append from storage tmf:tmp lv.cur
-    # player left: session length
+    # player left: remember when (for the player inspector), then session length
+    $execute store result storage tmf:data names[{id:$(id)}].left int 1 run scoreboard players get #tick tmf.c
     $scoreboard players set #st tmf.tmp $(start)
     scoreboard players operation #len tmf.tmp = #tick tmf.c
     scoreboard players operation #len tmf.tmp -= #st tmf.tmp
@@ -1449,7 +1527,7 @@ fn("join/check_one_m", """
 # Locks
 # ---------------------------------------------------------------------------
 lock_lines = []
-for key, num, name, desc, mode in PERSONAL:
+for key, num, name, desc, mode in LOCKABLE:
     if mode == "out":
         lock_lines.append(f"execute if score #lock_{key} tmf.cfg matches 1 run tag @s remove tmf.off.{key}")
     else:
@@ -1472,23 +1550,58 @@ def dialog_base(title, body, columns=2, exit_label="Close", exit_cmd=None):
     return ('data modify storage tmf:tmp d set value {dialog:{type:"minecraft:multi_action",title:%s,body:[{type:"minecraft:plain_message",contents:%s,width:340}],columns:%d,pause:false,actions:[],exit_action:%s}}'
             % (title, body, columns, exit_action))
 
-# Player menu
+# Player menu: one button per category that has personal features the server has switched on
+PCATS = [(i, cid, cname, [k for k in ks if BYKEY[k][4]]) for i, (cid, cname, ks) in enumerate(CATEGORIES)]
+PCATS = [c for c in PCATS if c[3]]
+PCAT_OF = {k: cid for _, cid, _, ks in PCATS for k in ks}
+
+def personal_on_sel(key, mode):
+    return f"@s[tag=!tmf.off.{key}]" if mode in ("out", "mode") else f"@s[tag=tmf.on.{key}]"
+
 lines = ["playsound minecraft:ui.button.click master @s ~ ~ ~ 0.4 1.4",
          dialog_base('{text:"TMF Settings",color:"gold",bold:true}',
-                     '{text:"Switch your personal features on or off. 🔒 means an admin made the feature mandatory. Features switched off by the server are not listed.",color:"gray"}')]
-for key, num, name, desc, mode in PERSONAL:
-    cmd = f"/trigger tmf set {100 + num}"
-    default_on = mode == "out"
-    on_sel = f"@s[tag=!tmf.off.{key}]" if default_on else f"@s[tag=tmf.on.{key}]"
-    off_sel = f"@s[tag=tmf.off.{key}]" if default_on else f"@s[tag=!tmf.on.{key}]"
-    lines.append(f"execute if score #{key} tmf.cfg matches 1.. if score #lock_{key} tmf.cfg matches 1 run {APPEND}{button(label(name, 'On 🔒', 'dark_green'), desc + ' (Locked by an admin.)', cmd)}")
-    lines.append(f"execute if score #{key} tmf.cfg matches 1.. unless score #lock_{key} tmf.cfg matches 1 if entity {on_sel} run {APPEND}{button(label(name, 'ON', 'green'), desc, cmd)}")
-    lines.append(f"execute if score #{key} tmf.cfg matches 1.. unless score #lock_{key} tmf.cfg matches 1 if entity {off_sel} run {APPEND}{button(label(name, 'OFF', 'red'), desc, cmd)}")
+                     '{text:"Pick a category to switch your personal features on or off. Features switched off by the server are not listed.",color:"gray"}')]
+for i, cid, cname, ks in PCATS:
+    lines.append("scoreboard players set #cnt tmf.tmp 0")
+    lines.append("scoreboard players set #con tmf.tmp 0")
+    for k in ks:
+        lines.append(f"execute if score #{k} tmf.cfg matches 1.. run scoreboard players add #cnt tmf.tmp 1")
+        lines.append(f"execute if score #{k} tmf.cfg matches 1.. if entity {personal_on_sel(k, BYKEY[k][4])} run scoreboard players add #con tmf.tmp 1")
+    lines.append(f"execute store result storage tmf:tmp pm.n_{cid} int 1 run scoreboard players get #cnt tmf.tmp")
+    lines.append(f"execute store result storage tmf:tmp pm.o_{cid} int 1 run scoreboard players get #con tmf.tmp")
+lines.append("function tmf:menu/open_categories with storage tmf:tmp pm")
+lines.append(f"execute if score #waypoints tmf.cfg matches 1 if entity @s[tag=!tmf.off.waypoints] run {APPEND}{button('{text:\"📍 Waypoints…\",color:\"aqua\"}', 'Save places and get guided back to them', '/trigger tmf set 4000')}")
 lines.append(f"execute if score #stats_card tmf.cfg matches 1 run {APPEND}{button('{text:\"📊 My stats\",color:\"aqua\"}', 'Show your playtime and statistics', '/trigger tmf.stats')}")
 lines.append(f"{APPEND}{button('{text:\"🖥 Server features\",color:\"aqua\"}', 'See which TMF features are enabled on this server', '/trigger tmf set 3')}")
 lines.append(f"execute if entity @s[tag=tmf.admin] run {APPEND}{button('{text:\"⚙ Admin panel\",color:\"gold\"}', 'Server-wide settings', '/trigger tmf set 2')}")
 lines.append("function tmf:util/show_dialog with storage tmf:tmp d")
 fn("menu/open", "\n".join(lines))
+fn("menu/open_categories", "\n".join(
+    [f"$execute unless data storage tmf:tmp pm{{n_{cid}:0}} run " + APPEND +
+     button('{text:"",extra:[{text:%s,color:"gold"},{text:"  $(o_%s)/$(n_%s) on",color:"gray"}]}' % (q(cname), cid, cid),
+            "Open " + cname[2:], f"/trigger tmf set {300 + i}") for i, cid, cname, ks in PCATS]))
+for i, cid, cname, ks in PCATS:
+    cl = ["playsound minecraft:ui.button.click master @s ~ ~ ~ 0.4 1.4",
+          dialog_base('{text:%s,color:"gold",bold:true}' % q("TMF – " + cname[2:]),
+                      '{text:"Click a feature to switch it on or off for yourself. Hover for a description. 🔒 means an admin made it mandatory.",color:"gray"}',
+                      exit_label="Back", exit_cmd="/trigger tmf set 1")]
+    for key in ks:
+        _, num, name, desc, mode = BYKEY[key]
+        cmd = f"/trigger tmf set {100 + num}"
+        if mode == "mode":
+            t = desc + " Click to cycle."
+            cl.append(f"execute if score #{key} tmf.cfg matches 1.. if entity @s[tag=!tmf.off.{key},tag=!tmf.on.{key}] run {APPEND}{button(label(name, 'Sneaking', 'green'), t, cmd)}")
+            cl.append(f"execute if score #{key} tmf.cfg matches 1.. if entity @s[tag=tmf.on.{key}] run {APPEND}{button(label(name, 'Always', 'aqua'), t, cmd)}")
+            cl.append(f"execute if score #{key} tmf.cfg matches 1.. if entity @s[tag=tmf.off.{key}] run {APPEND}{button(label(name, 'OFF', 'red'), t, cmd)}")
+            continue
+        on_sel = personal_on_sel(key, mode)
+        off_sel = f"@s[tag=tmf.off.{key}]" if mode == "out" else f"@s[tag=!tmf.on.{key}]"
+        cl.append(f"execute if score #{key} tmf.cfg matches 1.. if score #lock_{key} tmf.cfg matches 1 run {APPEND}{button(label(name, 'On 🔒', 'dark_green'), desc + ' (Locked by an admin.)', cmd)}")
+        cl.append(f"execute if score #{key} tmf.cfg matches 1.. unless score #lock_{key} tmf.cfg matches 1 if entity {on_sel} run {APPEND}{button(label(name, 'ON', 'green'), desc, cmd)}")
+        cl.append(f"execute if score #{key} tmf.cfg matches 1.. unless score #lock_{key} tmf.cfg matches 1 if entity {off_sel} run {APPEND}{button(label(name, 'OFF', 'red'), desc, cmd)}")
+    cl.append(f'execute unless data storage tmf:tmp d.dialog.actions[0] run return run function tmf:menu/open')
+    cl.append("function tmf:util/show_dialog with storage tmf:tmp d")
+    fn(f"menu/cat/{cid}", "\n".join(cl))
 
 # Server features (read-only notice)
 lines = ['data modify storage tmf:tmp d set value {dialog:{type:"minecraft:notice",title:{text:"TMF – Server features",color:"gold",bold:true},body:[{type:"minecraft:plain_message",contents:{text:"",extra:[]},width:340}],pause:false,action:{label:{text:"Back"},action:{type:"minecraft:run_command",command:"/trigger tmf set 1"}}}}']
@@ -1507,16 +1620,17 @@ lines = [
     "scoreboard players set @s tmf 0",
     "execute if score #v tmf.tmp matches 1 run return run function tmf:menu/open",
     "execute if score #v tmf.tmp matches 3 run return run function tmf:menu/server_features",
-]
+] + [f"execute if score #v tmf.tmp matches {300 + i} run return run function tmf:menu/cat/{cid}" for i, cid, _, _ in PCATS]
 for key, num, name, desc, mode in PERSONAL:
     lines.append(f"execute if score #v tmf.tmp matches {100 + num} run return run function tmf:menu/p/{key}")
 lines += [
+    "execute if score #v tmf.tmp matches 4000..4999 run return run function tmf:wp/trigger",
     'execute if score #v tmf.tmp matches 2.. unless score #v tmf.tmp matches 3..999 unless entity @s[tag=tmf.admin] run return run tellraw @s [{text:"[TMF] ",color:"gold"},{text:"Only TMF admins can do that. An operator becomes an admin by running ",color:"red"},{text:"/function tmf:admin",color:"yellow"},{text:" once.",color:"red"}]',
     "execute if score #v tmf.tmp matches 2 run return run function tmf:admin/open",
 ]
 for key, num, name, desc, mode in FEATURES:
     lines.append(f"execute if score #v tmf.tmp matches {1000 + num} run return run function tmf:admin/t/{key}")
-for key, num, name, desc, mode in PERSONAL:
+for key, num, name, desc, mode in LOCKABLE:
     lines.append(f"execute if score #v tmf.tmp matches {1100 + num} run return run function tmf:admin/l/{key}")
 lines += [
     "execute if score #v tmf.tmp matches 1200 run return run function tmf:admin/presets",
@@ -1527,6 +1641,12 @@ lines += [
     "execute if score #v tmf.tmp matches 1210 run return run function tmf:admin/set/perf",
     "execute if score #v tmf.tmp matches 1211 run return run function tmf:admin/set/afk_min",
     "execute if score #v tmf.tmp matches 1213 run return run function tmf:admin/set/sleep_pct",
+    "execute if score #v tmf.tmp matches 1214 run return run function tmf:admin/set/mob_griefing",
+    "execute if score #v tmf.tmp matches 1215 run return run function tmf:admin/set/ew_limit",
+    "execute if score #v tmf.tmp matches 5000..5004 run return run function tmf:lag/trigger",
+    "execute if score #v tmf.tmp matches 5100 run return run function tmf:admin/slime_seed",
+    "execute if score #v tmf.tmp matches 6000 run return run function tmf:insp/list",
+    "execute if score #v tmf.tmp matches 100001..199999 run return run function tmf:insp/show",
     "execute if score #v tmf.tmp matches 1220 run return run function tmf:admin/locks",
 ] + [f"execute if score #v tmf.tmp matches {1250 + i} run return run function tmf:admin/cat/{cid}" for i, (cid, _, _) in enumerate(CATEGORIES)] + [
     "execute if score #v tmf.tmp matches 1230 run return run function tmf:admin/changelog",
@@ -1537,20 +1657,44 @@ fn("menu/trigger", "\n".join(lines))
 
 # Personal toggles
 for key, num, name, desc, mode in PERSONAL:
+    if mode == "mode":
+        # cycle: Sneaking (no tag) -> Always (tmf.on) -> Off (tmf.off) -> Sneaking
+        fn(f"menu/p/{key}", f"""
+            execute if score #{key} tmf.cfg matches 0 run return run function tmf:menu/cat/{PCAT_OF[key]}
+            execute if entity @s[tag=tmf.off.{key}] run return run function tmf:menu/p/{key}_unset
+            execute if entity @s[tag=tmf.on.{key}] run return run function tmf:menu/p/{key}_off
+            tag @s add tmf.on.{key}
+            function tmf:menu/cat/{PCAT_OF[key]}
+        """)
+        fn(f"menu/p/{key}_off", f"""
+            tag @s remove tmf.on.{key}
+            tag @s add tmf.off.{key}
+            function tmf:menu/cat/{PCAT_OF[key]}
+        """)
+        fn(f"menu/p/{key}_unset", f"""
+            tag @s remove tmf.off.{key}
+            function tmf:menu/cat/{PCAT_OF[key]}
+        """)
+        continue
     tag = f"tmf.off.{key}" if mode == "out" else f"tmf.on.{key}"
     extra = ""
+    off_extra = ""
     if key == "fast_paths":
-        extra = "execute if entity @s[tag=tmf.onpath] run function tmf:paths/remove\n"
+        # remove the speed bonus when the player switches it off
+        if mode == "out":
+            extra = "execute if entity @s[tag=tmf.onpath] run function tmf:paths/remove\n"
+        else:
+            off_extra = "execute if entity @s[tag=tmf.onpath] run function tmf:paths/remove\n"
     fn(f"menu/p/{key}", f"""
-        execute if score #{key} tmf.cfg matches 0 run return run function tmf:menu/open
-        execute if score #lock_{key} tmf.cfg matches 1 run return run function tmf:menu/open
+        execute if score #{key} tmf.cfg matches 0 run return run function tmf:menu/cat/{PCAT_OF[key]}
+        execute if score #lock_{key} tmf.cfg matches 1 run return run function tmf:menu/cat/{PCAT_OF[key]}
         execute if entity @s[tag={tag}] run return run function tmf:menu/p/{key}_unset
         tag @s add {tag}
-        {extra}function tmf:menu/open
+        {extra}function tmf:menu/cat/{PCAT_OF[key]}
     """)
     fn(f"menu/p/{key}_unset", f"""
         tag @s remove {tag}
-        function tmf:menu/open
+        {off_extra}function tmf:menu/cat/{PCAT_OF[key]}
     """)
 
 # ---------------------------------------------------------------------------
@@ -1573,6 +1717,9 @@ ON_DISABLE = {
     "no_trample": "execute as @a[tag=tmf.ntsf] run function tmf:trample/landed",
     "leaf_decay": "kill @e[type=minecraft:marker,tag=tmf.ld]",
     "fence_jump": "execute as @a[tag=tmf.fj] run function tmf:fence/remove",
+    "creeper_nogrief": "execute as @e[type=minecraft:creeper,tag=tmf.cng] run function tmf:creeper/restore",
+    "ghast_nogrief": "execute as @e[type=minecraft:fireball,tag=tmf.gng] run function tmf:ghast/restore",
+    "zombie_doors": "execute as @e[type=#tmf:door_breakers,tag=tmf.zd] run function tmf:zombie/restore",
 }
 
 # main admin page: one button per category (with how many of its features are on) + settings
@@ -1589,7 +1736,11 @@ lines.append(f"execute if score #perf tmf.cfg matches 1 run {APPEND}{button(labe
 lines.append(f"execute if score #perf tmf.cfg matches 0 run {APPEND}{button(label('⚡ Performance mode', 'OFF', 'gray'), 'Pauses health bars and damage numbers and slows down the enderman and cauldron scans.', '/trigger tmf set 1210')}")
 lines.append("execute store result storage tmf:tmp a.afk int 1 run scoreboard players get #afk_min tmf.cfg")
 lines.append("execute store result storage tmf:tmp a.sleep int 1 run scoreboard players get #sleep_pct tmf.cfg")
+lines.append("execute store result storage tmf:tmp a.ew int 1 run scoreboard players get #ew_limit tmf.cfg")
 lines.append("function tmf:admin/open_settings with storage tmf:tmp a")
+lines.append(f"{APPEND}{button('{text:\"🔍 Player inspector…\",color:\"aqua\"}', 'Look up playtime, position and status of any player', '/trigger tmf set 6000')}")
+lines.append(f"{APPEND}{button('{text:\"🧹 Lag helper…\",color:\"aqua\"}', 'Count loaded entities and clear dropped items, XP orbs, arrows or hostile mobs', '/trigger tmf set 5000')}")
+lines.append(f"{APPEND}{button('{text:\"🟢 Slime chunk seed…\",color:\"aqua\"}', 'Enter the world seed once so the Slime Chunk Checker works', '/trigger tmf set 5100')}")
 lines.append(f"{APPEND}{button('{text:\"🎛 Presets…\",color:\"aqua\"}', 'Apply a ready-made set of features', '/trigger tmf set 1200')}")
 lines.append(f"{APPEND}{button('{text:\"🔒 Player locks…\",color:\"aqua\"}', 'Force personal features on for everyone', '/trigger tmf set 1220')}")
 lines.append(f"{APPEND}{button('{text:\"📜 Changelog\",color:\"aqua\"}', 'What is in this version', '/trigger tmf set 1230')}")
@@ -1615,11 +1766,17 @@ for i, (cid, cname, keys) in enumerate(CATEGORIES):
             continue
         cl.append(f"execute if score #{key} tmf.cfg matches 1.. run {APPEND}{button(label(name, 'ON', 'green'), desc, cmd)}")
         cl.append(f"execute if score #{key} tmf.cfg matches 0 run {APPEND}{button(label(name, 'OFF', 'red'), desc, cmd)}")
+    if cid == "griefing":
+        t = "The vanilla mob_griefing game rule for ALL mobs (also stops villagers farming, sheep eating grass, withers and ravagers breaking blocks). Click to toggle."
+        cl.append("execute store result score #mg tmf.tmp run gamerule mob_griefing")
+        cl.append(f"execute if score #mg tmf.tmp matches 1 run {APPEND}{button(label('🌍 Vanilla mob griefing', 'ON', 'green'), t, '/trigger tmf set 1214')}")
+        cl.append(f"execute if score #mg tmf.tmp matches 0 run {APPEND}{button(label('🌍 Vanilla mob griefing', 'OFF', 'red'), t, '/trigger tmf set 1214')}")
     cl.append("function tmf:util/show_dialog with storage tmf:tmp d")
     fn(f"admin/cat/{cid}", "\n".join(cl))
 fn("admin/open_settings", "\n".join([
     "$" + APPEND + button(label("💤 AFK after", "$(afk) min", "yellow"), "How long a player must be idle before being marked AFK. Click to cycle.", "/trigger tmf set 1211"),
     "$" + APPEND + button(label("🛏 Players needed to sleep", "$(sleep)%", "yellow"), "Base players_sleeping_percentage. AFK players are left out of the count. Click to cycle.", "/trigger tmf set 1213"),
+    "$" + APPEND + button(label("⚠ Entity warning at", "$(ew)", "yellow"), "Entity Crowd Warning: how many entities in one chunk trigger a warning. Click to cycle.", "/trigger tmf set 1215"),
 ]))
 
 for key, num, name, desc, mode in FEATURES:
@@ -1713,13 +1870,13 @@ fn("admin/preset/recommended_silent", "\n".join(_body))
 
 # Locks page
 lines = ['data modify storage tmf:tmp d set value {dialog:{type:"minecraft:multi_action",title:{text:"TMF Player Locks",color:"gold",bold:true},body:[{type:"minecraft:plain_message",contents:{text:"A locked feature is forced on for every player and can\'t be switched off in their menu.",color:"gray"},width:340}],columns:2,pause:false,actions:[],exit_action:{label:{text:"Back"},width:150,action:{type:"minecraft:run_command",command:"/trigger tmf set 2"}}}}']
-for key, num, name, desc, mode in PERSONAL:
+for key, num, name, desc, mode in LOCKABLE:
     cmd = f"/trigger tmf set {1100 + num}"
     lines.append(f"execute if score #lock_{key} tmf.cfg matches 1 run {APPEND}{button(label(name, '🔒 Locked', 'gold'), 'Click to unlock', cmd)}")
     lines.append(f"execute unless score #lock_{key} tmf.cfg matches 1 run {APPEND}{button(label(name, 'Player choice', 'gray'), 'Click to force this on for everyone', cmd)}")
 lines.append("function tmf:util/show_dialog with storage tmf:tmp d")
 fn("admin/locks", "\n".join(lines))
-for key, num, name, desc, mode in PERSONAL:
+for key, num, name, desc, mode in LOCKABLE:
     apply = f"tag @a remove tmf.off.{key}" if mode == "out" else f"tag @a add tmf.on.{key}"
     fn(f"admin/l/{key}", f"""
         execute if score #lock_{key} tmf.cfg matches 1 run return run function tmf:admin/l/{key}_off
@@ -1733,6 +1890,23 @@ for key, num, name, desc, mode in PERSONAL:
     """)
 
 CHANGELOG = (f"TMF v{VERSION} (for Minecraft Java 26.3)\n\n"
+             "v1.11.2\n"
+             "• AFK Detection is now off by default.\n"
+             "• Faster Paths, Fence Jumping and Biome Change Info are now opt-in: each player switches them on in /trigger tmf.\n"
+             "• Campfire Regen tells you when you step into a campfire's warmth.\n\n"
+             "v1.11.1\n"
+             "• New: Campfire Regen.\n"
+             "• The player menu is split into categories, like the admin panel.\n"
+             "• Waypoint guiding works (the top bar stayed empty).\n"
+             "• Campfire Timer groups identical items, e.g. 4× Raw Beef 0:12.\n"
+             "• Slime Chunk Checker, Waypoints and Compass Coordinates are now off by default.\n\n"
+             "v1.11.0\n"
+             "• New: Creeper No-Grief, Ghast No-Grief, No Zombie Door Breaking (new Mob griefing category, together with Enderman Anti-Grief and a switch for the vanilla mob_griefing game rule).\n"
+             "• New: Pet Health, Animal Owners, Crop Growth Info, Biome Change Info, Campfire Timer, Furnace Progress, Slime Chunk Checker, Arrow Counter, Compass Coordinates, Waypoints, Entity Crowd Warning.\n"
+             "• New admin tools: Player inspector, Lag helper, Slime chunk seed.\n"
+             "• Veinminer and Tree Feller: each player picks Off, Sneaking or Always.\n"
+             "• The Coordinates HUD moved from above the hotbar to a small bar at the top of the screen.\n"
+             "• New admin category Info & HUD; Movement & info is now Movement.\n\n"
              "v1.10.0\n"
              "• Admin panel: features are grouped into categories (Mining & tools, Farming & building, Inventory, Pets & mobs, Combat, Movement & info, Multiplayer), each showing how many of its features are on.\n\n"
              "v1.9.2\n"
@@ -1942,7 +2116,7 @@ fn("wood/ray", """
     execute positioned ^ ^ ^0.1 run function tmf:wood/ray
 """)
 fn("wood/at_point", """
-    execute if score #tree_feller tmf.cfg matches 1 if entity @s[tag=!tmf.off.tree_feller,predicate=tmf:sneaking,gamemode=!creative,gamemode=!spectator] if items entity @s weapon.mainhand #minecraft:axes align xyz if function tmf:wood/is_tree run function tmf:wood/fell with storage tmf:tmp wc
+    execute if score #tree_feller tmf.cfg matches 1 if entity @s[tag=!tmf.off.tree_feller,gamemode=!creative,gamemode=!spectator] unless entity @s[tag=!tmf.on.tree_feller,predicate=!tmf:sneaking] if items entity @s weapon.mainhand #minecraft:axes align xyz if function tmf:wood/is_tree run function tmf:wood/fell with storage tmf:tmp wc
     execute if score #leaf_decay tmf.cfg matches 1 run function tmf:leaves/mark
 """)
 def scan27(call):
@@ -2026,7 +2200,8 @@ fn("vein/check", "\n".join(
 fn("vein/mined", "\n".join(
     [f"scoreboard players set @s tmf.or.{i} 0" for i in range(len(ORES))] + [
     "execute if entity @s[tag=tmf.off.veinminer] run return 0",
-    "execute unless entity @s[predicate=tmf:sneaking,gamemode=!creative,gamemode=!spectator] run return 0",
+    "execute unless entity @s[gamemode=!creative,gamemode=!spectator] run return 0",
+    "execute if entity @s[tag=!tmf.on.veinminer,predicate=!tmf:sneaking] run return 0",
     "execute unless items entity @s weapon.mainhand #minecraft:pickaxes run return 0",
     '$data modify storage tmf:tmp vm set value {tag:"$(tag)",xp:$(xp)}',
     "scoreboard players set #r tmf.tmp 0",
@@ -2071,7 +2246,7 @@ fn("fence/jumpable_here", """
 """)
 fn("fence/keep", """
     execute unless score #fence_jump tmf.cfg matches 1 run return fail
-    execute if entity @s[tag=tmf.off.fence_jump] run return fail
+    execute unless entity @s[tag=tmf.on.fence_jump] run return fail
     execute unless entity @s[predicate=tmf:on_ground] run return 1
     execute if function tmf:fence/facing run return 1
     return fail
@@ -2662,15 +2837,6 @@ js(f"data/{NS}/tags/block/copper/exposed.json", {"values": _cp(lambda b: "expose
 js(f"data/{NS}/tags/block/copper/weathered.json", {"values": _cp(lambda b: "weathered" in b)})
 js(f"data/{NS}/tags/block/copper/oxidized.json", {"values": _cp(lambda b: "oxidized" in b)})
 js(f"data/{NS}/tags/block/copper/waxed.json", {"values": _cp(lambda b: b.startswith("waxed"))})
-fn("copper/ray_start", """
-    scoreboard players set #r tmf.tmp 0
-    function tmf:copper/ray
-""")
-fn("copper/ray", """
-    execute unless block ~ ~ ~ #tmf:ray_pass run return run function tmf:copper/hit
-    scoreboard players add #r tmf.tmp 1
-    execute if score #r tmf.tmp matches ..50 positioned ^ ^ ^0.1 run function tmf:copper/ray
-""")
 fn("copper/hit", """
     execute unless block ~ ~ ~ #tmf:copper/any run return fail
     data modify storage tmf:tmp cu set value {s:"Unaffected",c:"gold",w:"not waxed",wc:"gray"}
@@ -2716,6 +2882,1458 @@ fn("day/announce", """
     playsound minecraft:block.note_block.chime player @s ~ ~ ~ 0.4 1.4
 """)
 # ---------------------------------------------------------------------------
+# Slime chunk math: an op list that is emitted as scoreboard commands. The same ops can be
+# simulated in Python (Prog.run) to check them against Java's Random.
+# ---------------------------------------------------------------------------
+
+OBJ = "tmf.sl"
+M48 = (1 << 48) - 1
+MULT = 0x5DEECE66D
+SALT = 987234911
+
+
+def i32(v):
+    v &= 0xFFFFFFFF
+    return v - (1 << 32) if v >= 1 << 31 else v
+
+
+def floordiv(a, b):
+    return a // b
+
+
+def floormod(a, b):
+    return a % b
+
+
+class Prog:
+    def __init__(self):
+        self.ops = []
+        self.consts = set()
+
+    def set(self, a, v):
+        self.ops.append(("set", a, v))
+
+    def op(self, a, o, b):
+        self.ops.append(("op", a, o, b))
+
+    def opc(self, a, o, v):
+        """operation with a constant (stored as fake player #k<v> in tmf.sl)."""
+        self.consts.add(v)
+        self.ops.append(("op", a, o, f"#k{v}".replace("-", "m")))
+
+    def isneg(self, dst, a):
+        self.ops.append(("isneg", dst, a))
+
+    # -- emit
+    def emit(self):
+        out = []
+        for o in self.ops:
+            if o[0] == "set":
+                out.append(f"scoreboard players set {o[1]} {OBJ} {o[2]}")
+            elif o[0] == "op":
+                out.append(f"scoreboard players operation {o[1]} {OBJ} {o[2]} {o[3]} {OBJ}")
+            elif o[0] == "isneg":
+                out.append(f"execute store result score {o[1]} {OBJ} if score {o[2]} {OBJ} matches ..-1")
+        return out
+
+    def const_lines(self):
+        return [f"scoreboard players set #k{v} {OBJ} {v}".replace("#k-", "#km") for v in sorted(self.consts)]
+
+    # -- simulate
+    def run(self, s):
+        for v in self.consts:
+            s[f"#k{v}".replace("-", "m")] = v
+        for o in self.ops:
+            if o[0] == "set":
+                s[o[1]] = i32(o[2])
+            elif o[0] == "isneg":
+                s[o[1]] = 1 if s.get(o[2], 0) < 0 else 0
+            else:
+                a, op, b = o[1], o[2], o[3]
+                x, y = s.get(a, 0), s.get(b, 0)
+                if op == "=": r = y
+                elif op == "+=": r = x + y
+                elif op == "-=": r = x - y
+                elif op == "*=": r = x * y
+                elif op == "/=":
+                    assert x >= 0 and y > 0, (a, x, b, y)   # only ever used on non-negative values
+                    r = floordiv(x, y)
+                elif op == "%=":
+                    assert x >= 0 and y > 0, (a, x, b, y)
+                    r = floormod(x, y)
+                s[a] = i32(r)
+        return s
+
+
+def limbs_of(v):
+    return [(v >> (12 * i)) & 0xFFF for i in range(4)]
+
+
+def build_hash():
+    """seed limbs #s0..#s3 + chunk #cx,#cz  ->  random state limbs #r0..#r3 (already scrambled)."""
+    p = Prog()
+
+    # int32 -> 48-bit limbs (sign-extended) into prefix
+    def sext(src, pre):
+        p.isneg("#neg", src)
+        p.op("#u", "=", src)
+        p.op("#t", "=", "#neg")
+        p.opc("#t", "*=", 2147483647)
+        p.op("#u", "+=", "#t")
+        p.op("#u", "+=", "#neg")              # u = v + 2^31 if negative
+        p.op(pre + "0", "=", "#u"); p.opc(pre + "0", "%=", 4096)
+        p.opc("#u", "/=", 4096)
+        p.op(pre + "1", "=", "#u"); p.opc(pre + "1", "%=", 4096)
+        p.opc("#u", "/=", 4096)
+        p.op(pre + "2", "=", "#u")            # <= 127
+        p.op("#t", "=", "#neg"); p.opc("#t", "*=", 0xF80); p.op(pre + "2", "+=", "#t")
+        p.op(pre + "3", "=", "#neg"); p.opc(pre + "3", "*=", 0xFFF)
+
+    def carry(pre):
+        for i in range(3):
+            p.op("#t", "=", f"{pre}{i}"); p.opc("#t", "/=", 4096)
+            p.op(f"{pre}{i + 1}", "+=", "#t")
+            p.opc(f"{pre}{i}", "%=", 4096)
+        p.opc(f"{pre}3", "%=", 4096)
+
+    def add_into(dst, src):
+        for i in range(4):
+            p.op(f"{dst}{i}", "+=", f"{src}{i}")
+
+    def mul_const(src, c, dst):
+        cl = limbs_of(c & M48)
+        for k in range(4):
+            p.set(f"{dst}{k}", 0)
+            for i in range(k + 1):
+                j = k - i
+                if cl[j] == 0:
+                    continue
+                p.op("#t", "=", f"{src}{i}")
+                p.opc("#t", "*=", cl[j])
+                p.op(f"{dst}{k}", "+=", "#t")
+            # keep partial sums small enough: carry after each limb
+        carry(dst)
+
+    # accumulator = seed
+    for i in range(4):
+        p.op(f"#a{i}", "=", f"#s{i}")
+    # t1 = (long)(x*x*4987142)
+    p.op("#v", "=", "#cx"); p.op("#v", "*=", "#cx"); p.opc("#v", "*=", 4987142)
+    sext("#v", "#b"); add_into("#a", "#b")
+    # t2 = (long)(x*5947611)
+    p.op("#v", "=", "#cx"); p.opc("#v", "*=", 5947611)
+    sext("#v", "#b"); add_into("#a", "#b")
+    carry("#a")
+    # t3 = (long)(z*z) * 4392871L
+    p.op("#v", "=", "#cz"); p.op("#v", "*=", "#cz")
+    sext("#v", "#b"); mul_const("#b", 4392871, "#c"); add_into("#a", "#c")
+    # t4 = (long)(z*389711)
+    p.op("#v", "=", "#cz"); p.opc("#v", "*=", 389711)
+    sext("#v", "#b"); add_into("#a", "#b")
+    carry("#a")
+    # xor with salt, then Random scramble (xor multiplier) -> one combined constant
+    xc = (SALT ^ MULT) & M48
+    for i, cl in enumerate(limbs_of(xc)):
+        for bit in range(12):
+            if cl >> bit & 1:
+                P = 1 << bit
+                p.op("#t", "=", f"#a{i}")
+                if P > 1:
+                    p.opc("#t", "/=", P)
+                p.opc("#t", "%=", 2)
+                p.opc("#t", "*=", -2 * P)
+                p.op(f"#a{i}", "+=", "#t")
+                p.opc(f"#a{i}", "+=", P)
+    for i in range(4):
+        p.op(f"#r{i}", "=", f"#a{i}")
+    return p
+
+
+def build_next():
+    """#r = #r * MULT + 0xB ; #out = (int)(#r >>> 17) ; #u = #out ; #out %= 10"""
+    p = Prog()
+    cl = limbs_of(MULT)
+    for k in range(4):
+        p.set(f"#n{k}", 0)
+        for i in range(k + 1):
+            j = k - i
+            if cl[j] == 0:
+                continue
+            p.op("#t", "=", f"#r{i}")
+            p.opc("#t", "*=", cl[j])
+            p.op(f"#n{k}", "+=", "#t")
+    p.opc("#n0", "+=", 0xB)
+    for i in range(3):
+        p.op("#t", "=", f"#n{i}"); p.opc("#t", "/=", 4096)
+        p.op(f"#n{i + 1}", "+=", "#t")
+        p.opc(f"#n{i}", "%=", 4096)
+    p.opc("#n3", "%=", 4096)
+    for i in range(4):
+        p.op(f"#r{i}", "=", f"#n{i}")
+    # bits 17..47
+    p.op("#out", "=", "#r1"); p.opc("#out", "/=", 32)
+    p.op("#t", "=", "#r2"); p.opc("#t", "*=", 128); p.op("#out", "+=", "#t")
+    p.op("#t", "=", "#r3"); p.opc("#t", "*=", 524288); p.op("#out", "+=", "#t")
+    p.op("#u", "=", "#out")
+    p.opc("#out", "%=", 10)
+    return p
+
+
+def java_is_slime(seed, x, z):
+    t = (seed + i32(x * x * 4987142) + i32(x * 5947611) + i32(z * z) * 4392871 + i32(z * 389711)) ^ SALT
+    st = (t ^ MULT) & M48
+    while True:
+        st = (st * MULT + 0xB) & M48
+        u = st >> 17
+        r = u % 10
+        if u - r + 9 < (1 << 31):
+            return r == 0
+
+
+def sim_is_slime(H, N, seed, x, z):
+    s = {}
+    for i, l in enumerate(limbs_of(seed & M48)):
+        s[f"#s{i}"] = l
+    s["#cx"], s["#cz"] = x, z
+    H.run(s)
+    while True:
+        N.run(s)
+        if s["#u"] < 2147483640:
+            return s["#out"] == 0
+
+
+def build_parse_digit():
+    """#p = #p * 10 + #d   (48-bit limbs)"""
+    p = Prog()
+    for i in range(4):
+        p.opc(f"#p{i}", "*=", 10)
+    p.op("#p0", "+=", "#d")
+    for i in range(3):
+        p.op("#t", "=", f"#p{i}"); p.opc("#t", "/=", 4096)
+        p.op(f"#p{i + 1}", "+=", "#t")
+        p.opc(f"#p{i}", "%=", 4096)
+    p.opc("#p3", "%=", 4096)
+    return p
+
+
+def build_negate():
+    """#p = -#p mod 2^48"""
+    p = Prog()
+    for i in range(4):
+        p.op("#t", "=", f"#p{i}")
+        p.set(f"#p{i}", 4095)
+        p.op(f"#p{i}", "-=", "#t")
+    p.opc("#p0", "+=", 1)
+    for i in range(3):
+        p.op("#t", "=", f"#p{i}"); p.opc("#t", "/=", 4096)
+        p.op(f"#p{i + 1}", "+=", "#t")
+        p.opc(f"#p{i}", "%=", 4096)
+    p.opc("#p3", "%=", 4096)
+    return p
+
+
+def build_low32():
+    """#lo = (int) low 32 bits of #p"""
+    p = Prog()
+    p.op("#lo", "=", "#p0")
+    p.op("#t", "=", "#p1"); p.opc("#t", "*=", 4096); p.op("#lo", "+=", "#t")
+    p.op("#t", "=", "#p2"); p.opc("#t", "%=", 256); p.opc("#t", "*=", 16777216); p.op("#lo", "+=", "#t")
+    return p
+
+
+def sim_parse(text):
+    P, N, L = build_parse_digit(), build_negate(), build_low32()
+    s = {f"#p{i}": 0 for i in range(4)}
+    neg = text.startswith("-")
+    for ch in text.lstrip("-"):
+        s["#d"] = int(ch)
+        P.run(s)
+    if neg:
+        N.run(s)
+    L.run(s)
+    return [s[f"#p{i}"] for i in range(4)], s["#lo"]
+
+SL_build_hash, SL_build_next, SL_build_parse_digit, SL_build_negate, SL_build_low32 = build_hash, build_next, build_parse_digit, build_negate, build_low32
+
+
+_BLOCK_ITEM_IDS = ["acacia_button", "acacia_door", "acacia_fence", "acacia_fence_gate", "acacia_hanging_sign", "acacia_leaves", "acacia_log", "acacia_planks", "acacia_pressure_plate", "acacia_sapling", "acacia_shelf", "acacia_sign", "acacia_slab", "acacia_stairs", "acacia_trapdoor", "acacia_wood", "activator_rail", "allium", "amethyst_block", "amethyst_cluster", "ancient_debris", "andesite", "andesite_slab", "andesite_stairs", "andesite_wall", "anvil", "azalea", "azalea_leaves", "azure_bluet", "bamboo", "bamboo_block", "bamboo_button", "bamboo_door", "bamboo_fence", "bamboo_fence_gate", "bamboo_hanging_sign", "bamboo_mosaic", "bamboo_mosaic_slab", "bamboo_mosaic_stairs", "bamboo_planks", "bamboo_pressure_plate", "bamboo_shelf", "bamboo_sign", "bamboo_slab", "bamboo_stairs", "bamboo_trapdoor", "barrel", "barrier", "basalt", "beacon", "bedrock", "bee_nest", "beehive", "bell", "big_dripleaf", "birch_button", "birch_door", "birch_fence", "birch_fence_gate", "birch_hanging_sign", "birch_leaves", "birch_log", "birch_planks", "birch_pressure_plate", "birch_sapling", "birch_shelf", "birch_sign", "birch_slab", "birch_stairs", "birch_trapdoor", "birch_wood", "black_banner", "black_bed", "black_candle", "black_carpet", "black_concrete", "black_concrete_powder", "black_concrete_slab", "black_concrete_stairs", "black_glazed_terracotta", "black_shulker_box", "black_stained_glass", "black_stained_glass_pane", "black_terracotta", "black_wool", "black_wool_slab", "black_wool_stairs", "blackstone", "blackstone_slab", "blackstone_stairs", "blackstone_wall", "blast_furnace", "blue_banner", "blue_bed", "blue_candle", "blue_carpet", "blue_concrete", "blue_concrete_powder", "blue_concrete_slab", "blue_concrete_stairs", "blue_glazed_terracotta", "blue_ice", "blue_orchid", "blue_shulker_box", "blue_stained_glass", "blue_stained_glass_pane", "blue_terracotta", "blue_wool", "blue_wool_slab", "blue_wool_stairs", "bone_block", "bookshelf", "brain_coral", "brain_coral_block", "brain_coral_fan", "brewing_stand", "brick_slab", "brick_stairs", "brick_wall", "bricks", "brown_banner", "brown_bed", "brown_candle", "brown_carpet", "brown_concrete", "brown_concrete_powder", "brown_concrete_slab", "brown_concrete_stairs", "brown_glazed_terracotta", "brown_mushroom", "brown_mushroom_block", "brown_shulker_box", "brown_stained_glass", "brown_stained_glass_pane", "brown_terracotta", "brown_wool", "brown_wool_slab", "brown_wool_stairs", "bubble_coral", "bubble_coral_block", "bubble_coral_fan", "budding_amethyst", "bush", "cactus", "cactus_flower", "cake", "calcite", "calibrated_sculk_sensor", "campfire", "candle", "cartography_table", "carved_pumpkin", "cauldron", "chain_command_block", "cherry_button", "cherry_door", "cherry_fence", "cherry_fence_gate", "cherry_hanging_sign", "cherry_leaves", "cherry_log", "cherry_planks", "cherry_pressure_plate", "cherry_sapling", "cherry_shelf", "cherry_sign", "cherry_slab", "cherry_stairs", "cherry_trapdoor", "cherry_wood", "chest", "chipped_anvil", "chiseled_bookshelf", "chiseled_cinnabar", "chiseled_copper", "chiseled_deepslate", "chiseled_nether_bricks", "chiseled_polished_blackstone", "chiseled_quartz_block", "chiseled_red_sandstone", "chiseled_resin_bricks", "chiseled_sandstone", "chiseled_stone_bricks", "chiseled_sulfur", "chiseled_tuff", "chiseled_tuff_bricks", "chorus_flower", "chorus_plant", "cinnabar", "cinnabar_brick_slab", "cinnabar_brick_stairs", "cinnabar_brick_wall", "cinnabar_bricks", "cinnabar_slab", "cinnabar_stairs", "cinnabar_wall", "clay", "closed_eyeblossom", "coal_block", "coal_ore", "coarse_dirt", "cobbled_deepslate", "cobbled_deepslate_slab", "cobbled_deepslate_stairs", "cobbled_deepslate_wall", "cobblestone", "cobblestone_slab", "cobblestone_stairs", "cobblestone_wall", "cobweb", "command_block", "comparator", "composter", "conduit", "copper_bars", "copper_block", "copper_bulb", "copper_chain", "copper_chest", "copper_door", "copper_golem_statue", "copper_grate", "copper_lantern", "copper_ore", "copper_torch", "copper_trapdoor", "cornflower", "cracked_deepslate_bricks", "cracked_deepslate_tiles", "cracked_nether_bricks", "cracked_polished_blackstone_bricks", "cracked_stone_bricks", "crafter", "crafting_table", "creaking_heart", "creeper_head", "crimson_button", "crimson_door", "crimson_fence", "crimson_fence_gate", "crimson_fungus", "crimson_hanging_sign", "crimson_hyphae", "crimson_nylium", "crimson_planks", "crimson_pressure_plate", "crimson_roots", "crimson_shelf", "crimson_sign", "crimson_slab", "crimson_stairs", "crimson_stem", "crimson_trapdoor", "crying_obsidian", "cut_copper", "cut_copper_slab", "cut_copper_stairs", "cut_red_sandstone", "cut_red_sandstone_slab", "cut_sandstone", "cut_sandstone_slab", "cyan_banner", "cyan_bed", "cyan_candle", "cyan_carpet", "cyan_concrete", "cyan_concrete_powder", "cyan_concrete_slab", "cyan_concrete_stairs", "cyan_glazed_terracotta", "cyan_shulker_box", "cyan_stained_glass", "cyan_stained_glass_pane", "cyan_terracotta", "cyan_wool", "cyan_wool_slab", "cyan_wool_stairs", "damaged_anvil", "dandelion", "dark_oak_button", "dark_oak_door", "dark_oak_fence", "dark_oak_fence_gate", "dark_oak_hanging_sign", "dark_oak_leaves", "dark_oak_log", "dark_oak_planks", "dark_oak_pressure_plate", "dark_oak_sapling", "dark_oak_shelf", "dark_oak_sign", "dark_oak_slab", "dark_oak_stairs", "dark_oak_trapdoor", "dark_oak_wood", "dark_prismarine", "dark_prismarine_slab", "dark_prismarine_stairs", "daylight_detector", "dead_brain_coral", "dead_brain_coral_block", "dead_brain_coral_fan", "dead_bubble_coral", "dead_bubble_coral_block", "dead_bubble_coral_fan", "dead_bush", "dead_fire_coral", "dead_fire_coral_block", "dead_fire_coral_fan", "dead_horn_coral", "dead_horn_coral_block", "dead_horn_coral_fan", "dead_tube_coral", "dead_tube_coral_block", "dead_tube_coral_fan", "decorated_pot", "deepslate", "deepslate_brick_slab", "deepslate_brick_stairs", "deepslate_brick_wall", "deepslate_bricks", "deepslate_coal_ore", "deepslate_copper_ore", "deepslate_diamond_ore", "deepslate_emerald_ore", "deepslate_gold_ore", "deepslate_iron_ore", "deepslate_lapis_ore", "deepslate_redstone_ore", "deepslate_tile_slab", "deepslate_tile_stairs", "deepslate_tile_wall", "deepslate_tiles", "detector_rail", "diamond_block", "diamond_ore", "diorite", "diorite_slab", "diorite_stairs", "diorite_wall", "dirt", "dirt_path", "dispenser", "dragon_egg", "dragon_head", "dried_ghast", "dried_kelp_block", "dripstone_block", "dropper", "emerald_block", "emerald_ore", "enchanting_table", "end_portal_frame", "end_rod", "end_stone", "end_stone_brick_slab", "end_stone_brick_stairs", "end_stone_brick_wall", "end_stone_bricks", "ender_chest", "exposed_chiseled_copper", "exposed_copper", "exposed_copper_bars", "exposed_copper_bulb", "exposed_copper_chain", "exposed_copper_chest", "exposed_copper_door", "exposed_copper_golem_statue", "exposed_copper_grate", "exposed_copper_lantern", "exposed_copper_trapdoor", "exposed_cut_copper", "exposed_cut_copper_slab", "exposed_cut_copper_stairs", "exposed_lightning_rod", "farmland", "fern", "fire_coral", "fire_coral_block", "fire_coral_fan", "firefly_bush", "fletching_table", "flower_pot", "flowering_azalea", "flowering_azalea_leaves", "frogspawn", "furnace", "gilded_blackstone", "glass", "glass_pane", "glow_lichen", "glowstone", "gold_block", "gold_ore", "golden_dandelion", "granite", "granite_slab", "granite_stairs", "granite_wall", "grass_block", "gravel", "gray_banner", "gray_bed", "gray_candle", "gray_carpet", "gray_concrete", "gray_concrete_powder", "gray_concrete_slab", "gray_concrete_stairs", "gray_glazed_terracotta", "gray_shulker_box", "gray_stained_glass", "gray_stained_glass_pane", "gray_terracotta", "gray_wool", "gray_wool_slab", "gray_wool_stairs", "green_banner", "green_bed", "green_candle", "green_carpet", "green_concrete", "green_concrete_powder", "green_concrete_slab", "green_concrete_stairs", "green_glazed_terracotta", "green_shulker_box", "green_stained_glass", "green_stained_glass_pane", "green_terracotta", "green_wool", "green_wool_slab", "green_wool_stairs", "grindstone", "hanging_roots", "hay_block", "heavy_core", "heavy_weighted_pressure_plate", "honey_block", "honeycomb_block", "hopper", "horn_coral", "horn_coral_block", "horn_coral_fan", "ice", "infested_chiseled_stone_bricks", "infested_cobblestone", "infested_cracked_stone_bricks", "infested_deepslate", "infested_mossy_stone_bricks", "infested_stone", "infested_stone_bricks", "iron_bars", "iron_block", "iron_chain", "iron_door", "iron_ore", "iron_trapdoor", "jack_o_lantern", "jigsaw", "jukebox", "jungle_button", "jungle_door", "jungle_fence", "jungle_fence_gate", "jungle_hanging_sign", "jungle_leaves", "jungle_log", "jungle_planks", "jungle_pressure_plate", "jungle_sapling", "jungle_shelf", "jungle_sign", "jungle_slab", "jungle_stairs", "jungle_trapdoor", "jungle_wood", "kelp", "ladder", "lantern", "lapis_block", "lapis_ore", "large_amethyst_bud", "large_fern", "leaf_litter", "lectern", "lever", "light", "light_blue_banner", "light_blue_bed", "light_blue_candle", "light_blue_carpet", "light_blue_concrete", "light_blue_concrete_powder", "light_blue_concrete_slab", "light_blue_concrete_stairs", "light_blue_glazed_terracotta", "light_blue_shulker_box", "light_blue_stained_glass", "light_blue_stained_glass_pane", "light_blue_terracotta", "light_blue_wool", "light_blue_wool_slab", "light_blue_wool_stairs", "light_gray_banner", "light_gray_bed", "light_gray_candle", "light_gray_carpet", "light_gray_concrete", "light_gray_concrete_powder", "light_gray_concrete_slab", "light_gray_concrete_stairs", "light_gray_glazed_terracotta", "light_gray_shulker_box", "light_gray_stained_glass", "light_gray_stained_glass_pane", "light_gray_terracotta", "light_gray_wool", "light_gray_wool_slab", "light_gray_wool_stairs", "light_weighted_pressure_plate", "lightning_rod", "lilac", "lily_of_the_valley", "lily_pad", "lime_banner", "lime_bed", "lime_candle", "lime_carpet", "lime_concrete", "lime_concrete_powder", "lime_concrete_slab", "lime_concrete_stairs", "lime_glazed_terracotta", "lime_shulker_box", "lime_stained_glass", "lime_stained_glass_pane", "lime_terracotta", "lime_wool", "lime_wool_slab", "lime_wool_stairs", "lodestone", "loom", "magenta_banner", "magenta_bed", "magenta_candle", "magenta_carpet", "magenta_concrete", "magenta_concrete_powder", "magenta_concrete_slab", "magenta_concrete_stairs", "magenta_glazed_terracotta", "magenta_shulker_box", "magenta_stained_glass", "magenta_stained_glass_pane", "magenta_terracotta", "magenta_wool", "magenta_wool_slab", "magenta_wool_stairs", "magma_block", "mangrove_button", "mangrove_door", "mangrove_fence", "mangrove_fence_gate", "mangrove_hanging_sign", "mangrove_leaves", "mangrove_log", "mangrove_planks", "mangrove_pressure_plate", "mangrove_propagule", "mangrove_roots", "mangrove_shelf", "mangrove_sign", "mangrove_slab", "mangrove_stairs", "mangrove_trapdoor", "mangrove_wood", "medium_amethyst_bud", "melon", "moss_block", "moss_carpet", "mossy_cobblestone", "mossy_cobblestone_slab", "mossy_cobblestone_stairs", "mossy_cobblestone_wall", "mossy_stone_brick_slab", "mossy_stone_brick_stairs", "mossy_stone_brick_wall", "mossy_stone_bricks", "mud", "mud_brick_slab", "mud_brick_stairs", "mud_brick_wall", "mud_bricks", "muddy_mangrove_roots", "mushroom_stem", "mycelium", "nether_brick_fence", "nether_brick_slab", "nether_brick_stairs", "nether_brick_wall", "nether_bricks", "nether_gold_ore", "nether_quartz_ore", "nether_sprouts", "nether_wart", "nether_wart_block", "netherite_block", "netherrack", "note_block", "oak_button", "oak_door", "oak_fence", "oak_fence_gate", "oak_hanging_sign", "oak_leaves", "oak_log", "oak_planks", "oak_pressure_plate", "oak_sapling", "oak_shelf", "oak_sign", "oak_slab", "oak_stairs", "oak_trapdoor", "oak_wood", "observer", "obsidian", "ochre_froglight", "open_eyeblossom", "orange_banner", "orange_bed", "orange_candle", "orange_carpet", "orange_concrete", "orange_concrete_powder", "orange_concrete_slab", "orange_concrete_stairs", "orange_glazed_terracotta", "orange_poplar_leaves", "orange_shulker_box", "orange_stained_glass", "orange_stained_glass_pane", "orange_terracotta", "orange_tulip", "orange_wool", "orange_wool_slab", "orange_wool_stairs", "oxeye_daisy", "oxidized_chiseled_copper", "oxidized_copper", "oxidized_copper_bars", "oxidized_copper_bulb", "oxidized_copper_chain", "oxidized_copper_chest", "oxidized_copper_door", "oxidized_copper_golem_statue", "oxidized_copper_grate", "oxidized_copper_lantern", "oxidized_copper_trapdoor", "oxidized_cut_copper", "oxidized_cut_copper_slab", "oxidized_cut_copper_stairs", "oxidized_lightning_rod", "packed_ice", "packed_mud", "pale_hanging_moss", "pale_moss_block", "pale_moss_carpet", "pale_oak_button", "pale_oak_door", "pale_oak_fence", "pale_oak_fence_gate", "pale_oak_hanging_sign", "pale_oak_leaves", "pale_oak_log", "pale_oak_planks", "pale_oak_pressure_plate", "pale_oak_sapling", "pale_oak_shelf", "pale_oak_sign", "pale_oak_slab", "pale_oak_stairs", "pale_oak_trapdoor", "pale_oak_wood", "pearlescent_froglight", "peony", "petrified_oak_slab", "piglin_head", "pink_banner", "pink_bed", "pink_candle", "pink_carpet", "pink_concrete", "pink_concrete_powder", "pink_concrete_slab", "pink_concrete_stairs", "pink_glazed_terracotta", "pink_petals", "pink_shulker_box", "pink_stained_glass", "pink_stained_glass_pane", "pink_terracotta", "pink_tulip", "pink_wool", "pink_wool_slab", "pink_wool_stairs", "piston", "pitcher_plant", "player_head", "podzol", "pointed_dripstone", "polished_andesite", "polished_andesite_slab", "polished_andesite_stairs", "polished_basalt", "polished_blackstone", "polished_blackstone_brick_slab", "polished_blackstone_brick_stairs", "polished_blackstone_brick_wall", "polished_blackstone_bricks", "polished_blackstone_button", "polished_blackstone_pressure_plate", "polished_blackstone_slab", "polished_blackstone_stairs", "polished_blackstone_wall", "polished_cinnabar", "polished_cinnabar_slab", "polished_cinnabar_stairs", "polished_cinnabar_wall", "polished_deepslate", "polished_deepslate_slab", "polished_deepslate_stairs", "polished_deepslate_wall", "polished_diorite", "polished_diorite_slab", "polished_diorite_stairs", "polished_granite", "polished_granite_slab", "polished_granite_stairs", "polished_sulfur", "polished_sulfur_slab", "polished_sulfur_stairs", "polished_sulfur_wall", "polished_tuff", "polished_tuff_slab", "polished_tuff_stairs", "polished_tuff_wall", "poplar_button", "poplar_door", "poplar_fence", "poplar_fence_gate", "poplar_hanging_sign", "poplar_log", "poplar_planks", "poplar_pressure_plate", "poplar_sapling", "poplar_shelf", "poplar_sign", "poplar_slab", "poplar_stairs", "poplar_trapdoor", "poplar_wood", "poppy", "potent_sulfur", "powered_rail", "prismarine", "prismarine_brick_slab", "prismarine_brick_stairs", "prismarine_bricks", "prismarine_slab", "prismarine_stairs", "prismarine_wall", "pumpkin", "purple_banner", "purple_bed", "purple_candle", "purple_carpet", "purple_concrete", "purple_concrete_powder", "purple_concrete_slab", "purple_concrete_stairs", "purple_glazed_terracotta", "purple_shulker_box", "purple_stained_glass", "purple_stained_glass_pane", "purple_terracotta", "purple_wool", "purple_wool_slab", "purple_wool_stairs", "purpur_block", "purpur_pillar", "purpur_slab", "purpur_stairs", "quartz_block", "quartz_bricks", "quartz_pillar", "quartz_slab", "quartz_stairs", "rail", "raw_copper_block", "raw_gold_block", "raw_iron_block", "red_banner", "red_bed", "red_candle", "red_carpet", "red_concrete", "red_concrete_powder", "red_concrete_slab", "red_concrete_stairs", "red_glazed_terracotta", "red_mushroom", "red_mushroom_block", "red_nether_brick_slab", "red_nether_brick_stairs", "red_nether_brick_wall", "red_nether_bricks", "red_poplar_leaves", "red_sand", "red_sandstone", "red_sandstone_slab", "red_sandstone_stairs", "red_sandstone_wall", "red_shrub", "red_shulker_box", "red_stained_glass", "red_stained_glass_pane", "red_terracotta", "red_tulip", "red_wool", "red_wool_slab", "red_wool_stairs", "redstone_block", "redstone_lamp", "redstone_ore", "redstone_torch", "reinforced_deepslate", "repeater", "repeating_command_block", "resin_block", "resin_brick_slab", "resin_brick_stairs", "resin_brick_wall", "resin_bricks", "resin_clump", "respawn_anchor", "rooted_dirt", "rose_bush", "sand", "sandstone", "sandstone_slab", "sandstone_stairs", "sandstone_wall", "scaffolding", "sculk", "sculk_catalyst", "sculk_sensor", "sculk_shrieker", "sculk_vein", "sea_lantern", "sea_pickle", "seagrass", "shelf_mushroom", "short_dry_grass", "short_grass", "shroomlight", "shulker_box", "skeleton_skull", "slime_block", "small_amethyst_bud", "small_dripleaf", "smithing_table", "smoker", "smooth_basalt", "smooth_quartz", "smooth_quartz_slab", "smooth_quartz_stairs", "smooth_red_sandstone", "smooth_red_sandstone_slab", "smooth_red_sandstone_stairs", "smooth_sandstone", "smooth_sandstone_slab", "smooth_sandstone_stairs", "smooth_stone", "smooth_stone_slab", "sniffer_egg", "snow", "snow_block", "soul_campfire", "soul_lantern", "soul_sand", "soul_soil", "soul_torch", "spawner", "sponge", "spore_blossom", "spruce_button", "spruce_door", "spruce_fence", "spruce_fence_gate", "spruce_hanging_sign", "spruce_leaves", "spruce_log", "spruce_planks", "spruce_pressure_plate", "spruce_sapling", "spruce_shelf", "spruce_sign", "spruce_slab", "spruce_stairs", "spruce_trapdoor", "spruce_wood", "sticky_piston", "stone", "stone_brick_slab", "stone_brick_stairs", "stone_brick_wall", "stone_bricks", "stone_button", "stone_pressure_plate", "stone_slab", "stone_stairs", "stonecutter", "straw_bed", "stripped_acacia_log", "stripped_acacia_wood", "stripped_bamboo_block", "stripped_birch_log", "stripped_birch_wood", "stripped_cherry_log", "stripped_cherry_wood", "stripped_crimson_hyphae", "stripped_crimson_stem", "stripped_dark_oak_log", "stripped_dark_oak_wood", "stripped_jungle_log", "stripped_jungle_wood", "stripped_mangrove_log", "stripped_mangrove_wood", "stripped_oak_log", "stripped_oak_wood", "stripped_pale_oak_log", "stripped_pale_oak_wood", "stripped_poplar_log", "stripped_poplar_wood", "stripped_spruce_log", "stripped_spruce_wood", "stripped_warped_hyphae", "stripped_warped_stem", "structure_block", "structure_void", "sugar_cane", "sulfur", "sulfur_brick_slab", "sulfur_brick_stairs", "sulfur_brick_wall", "sulfur_bricks", "sulfur_slab", "sulfur_spike", "sulfur_stairs", "sulfur_wall", "sunflower", "suspicious_gravel", "suspicious_sand", "tall_dry_grass", "tall_grass", "target", "terracotta", "test_block", "test_instance_block", "tinted_glass", "tnt", "torch", "torchflower", "trapped_chest", "trial_spawner", "tripwire_hook", "tube_coral", "tube_coral_block", "tube_coral_fan", "tuff", "tuff_brick_slab", "tuff_brick_stairs", "tuff_brick_wall", "tuff_bricks", "tuff_slab", "tuff_stairs", "tuff_wall", "turtle_egg", "twisting_vines", "vault", "verdant_froglight", "vine", "warped_button", "warped_door", "warped_fence", "warped_fence_gate", "warped_fungus", "warped_hanging_sign", "warped_hyphae", "warped_nylium", "warped_planks", "warped_pressure_plate", "warped_roots", "warped_shelf", "warped_sign", "warped_slab", "warped_stairs", "warped_stem", "warped_trapdoor", "warped_wart_block", "waxed_chiseled_copper", "waxed_copper_bars", "waxed_copper_block", "waxed_copper_bulb", "waxed_copper_chain", "waxed_copper_chest", "waxed_copper_door", "waxed_copper_golem_statue", "waxed_copper_grate", "waxed_copper_lantern", "waxed_copper_trapdoor", "waxed_cut_copper", "waxed_cut_copper_slab", "waxed_cut_copper_stairs", "waxed_exposed_chiseled_copper", "waxed_exposed_copper", "waxed_exposed_copper_bars", "waxed_exposed_copper_bulb", "waxed_exposed_copper_chain", "waxed_exposed_copper_chest", "waxed_exposed_copper_door", "waxed_exposed_copper_golem_statue", "waxed_exposed_copper_grate", "waxed_exposed_copper_lantern", "waxed_exposed_copper_trapdoor", "waxed_exposed_cut_copper", "waxed_exposed_cut_copper_slab", "waxed_exposed_cut_copper_stairs", "waxed_exposed_lightning_rod", "waxed_lightning_rod", "waxed_oxidized_chiseled_copper", "waxed_oxidized_copper", "waxed_oxidized_copper_bars", "waxed_oxidized_copper_bulb", "waxed_oxidized_copper_chain", "waxed_oxidized_copper_chest", "waxed_oxidized_copper_door", "waxed_oxidized_copper_golem_statue", "waxed_oxidized_copper_grate", "waxed_oxidized_copper_lantern", "waxed_oxidized_copper_trapdoor", "waxed_oxidized_cut_copper", "waxed_oxidized_cut_copper_slab", "waxed_oxidized_cut_copper_stairs", "waxed_oxidized_lightning_rod", "waxed_weathered_chiseled_copper", "waxed_weathered_copper", "waxed_weathered_copper_bars", "waxed_weathered_copper_bulb", "waxed_weathered_copper_chain", "waxed_weathered_copper_chest", "waxed_weathered_copper_door", "waxed_weathered_copper_golem_statue", "waxed_weathered_copper_grate", "waxed_weathered_copper_lantern", "waxed_weathered_copper_trapdoor", "waxed_weathered_cut_copper", "waxed_weathered_cut_copper_slab", "waxed_weathered_cut_copper_stairs", "waxed_weathered_lightning_rod", "weathered_chiseled_copper", "weathered_copper", "weathered_copper_bars", "weathered_copper_bulb", "weathered_copper_chain", "weathered_copper_chest", "weathered_copper_door", "weathered_copper_golem_statue", "weathered_copper_grate", "weathered_copper_lantern", "weathered_copper_trapdoor", "weathered_cut_copper", "weathered_cut_copper_slab", "weathered_cut_copper_stairs", "weathered_lightning_rod", "weeping_vines", "wet_sponge", "white_banner", "white_bed", "white_candle", "white_carpet", "white_concrete", "white_concrete_powder", "white_concrete_slab", "white_concrete_stairs", "white_glazed_terracotta", "white_shulker_box", "white_stained_glass", "white_stained_glass_pane", "white_terracotta", "white_tulip", "white_wool", "white_wool_slab", "white_wool_stairs", "wildflowers", "wither_rose", "wither_skeleton_skull", "yellow_banner", "yellow_bed", "yellow_candle", "yellow_carpet", "yellow_concrete", "yellow_concrete_powder", "yellow_concrete_slab", "yellow_concrete_stairs", "yellow_glazed_terracotta", "yellow_poplar_leaves", "yellow_shulker_box", "yellow_stained_glass", "yellow_stained_glass_pane", "yellow_terracotta", "yellow_wool", "yellow_wool_slab", "yellow_wool_stairs", "zombie_head"]
+_BIOME_LIST = ["badlands", "bamboo_jungle", "basalt_deltas", "beach", "birch_forest", "cherry_grove", "cold_ocean", "crimson_forest", "dappled_forest", "dark_forest", "deep_cold_ocean", "deep_dark", "deep_frozen_ocean", "deep_lukewarm_ocean", "deep_ocean", "desert", "dripstone_caves", "end_barrens", "end_highlands", "end_midlands", "eroded_badlands", "flower_forest", "forest", "frozen_ocean", "frozen_peaks", "frozen_river", "grove", "ice_spikes", "jagged_peaks", "jungle", "lukewarm_ocean", "lush_caves", "mangrove_swamp", "meadow", "mushroom_fields", "nether_wastes", "ocean", "old_growth_birch_forest", "old_growth_pine_taiga", "old_growth_spruce_taiga", "pale_garden", "plains", "river", "savanna", "savanna_plateau", "small_end_islands", "snowy_beach", "snowy_plains", "snowy_slopes", "snowy_taiga", "soul_sand_valley", "sparse_jungle", "stony_peaks", "stony_shore", "sulfur_caves", "sunflower_plains", "swamp", "taiga", "the_end", "the_void", "warm_ocean", "warped_forest", "windswept_forest", "windswept_gravelly_hills", "windswept_hills", "windswept_savanna", "wooded_badlands"]
+
+# ===========================================================================
+# v1.11.0 modules
+# ===========================================================================
+
+# ---------------------------------------------------------------------------
+# Shared helpers: item names, time formatting, dimension codes, names map
+# ---------------------------------------------------------------------------
+# Item ids that are block items use "block.minecraft.<id>" as translation key, all others "item.minecraft.<id>".
+BLOCK_ITEMS = sorted(k for k in _BLOCK_ITEM_IDS)
+fn("util/init_block_items", "data modify storage tmf:data bk set value {" + ",".join(f"{b}:1b" for b in BLOCK_ITEMS) + "}")
+fn("util/item_name", """
+    # in: storage tmf:tmp it.id ("minecraft:iron_ore")  out: it.n ("iron_ore"), it.p ("item" / "block")
+    data modify storage tmf:tmp it.n set string storage tmf:tmp it.id 10
+    data modify storage tmf:tmp it.p set value "item"
+    function tmf:util/item_kind with storage tmf:tmp it
+""")
+fn("util/item_kind", "$execute if data storage tmf:data bk.$(n) run data modify storage tmf:tmp it.p set value \"block\"")
+fn("util/fmt_time", """
+    # in: #sec tmf.tmp (>= 0)  out: storage tmf:tmp tf.t ("45s" or "3:07")
+    scoreboard players operation #fm tmf.tmp = #sec tmf.tmp
+    scoreboard players operation #fm tmf.tmp /= #60 tmf.c
+    scoreboard players operation #fs tmf.tmp = #sec tmf.tmp
+    scoreboard players operation #fs tmf.tmp %= #60 tmf.c
+    data modify storage tmf:tmp tf set value {z:""}
+    execute if score #fs tmf.tmp matches ..9 run data modify storage tmf:tmp tf.z set value "0"
+    execute store result storage tmf:tmp tf.m int 1 run scoreboard players get #fm tmf.tmp
+    execute store result storage tmf:tmp tf.s int 1 run scoreboard players get #fs tmf.tmp
+    execute if score #fm tmf.tmp matches 0 run return run function tmf:util/fmt_s with storage tmf:tmp tf
+    function tmf:util/fmt_ms with storage tmf:tmp tf
+""")
+fn("util/fmt_s", '$data modify storage tmf:tmp tf.t set value "$(s)s"')
+fn("util/fmt_ms", '$data modify storage tmf:tmp tf.t set value "$(m):$(z)$(s)"')
+fn("util/dim_code", """
+    scoreboard players set #cd tmf.tmp 3
+    execute if dimension minecraft:overworld run scoreboard players set #cd tmf.tmp 0
+    execute if dimension minecraft:the_nether run scoreboard players set #cd tmf.tmp 1
+    execute if dimension minecraft:the_end run scoreboard players set #cd tmf.tmp 2
+""")
+DIM_NAMES = ["Overworld", "The Nether", "The End", "another dimension"]
+DIM_IDS = ["minecraft:overworld", "minecraft:the_nether", "minecraft:the_end"]
+fn("util/dim_from_string", "\n".join(
+    ["# in: storage tmf:tmp dm.s (dimension id)  out: #dc tmf.tmp", "scoreboard players set #dc tmf.tmp 3"] +
+    [f'execute if data storage tmf:tmp dm{{s:"{d}"}} run scoreboard players set #dc tmf.tmp {i}' for i, d in enumerate(DIM_IDS)]))
+
+# persistent map of every player seen: {id, name, uuid, left (tick they last left)}
+fn("names/store", """
+    $data remove storage tmf:data names[{id:$(id)}]
+    $data modify storage tmf:tmp nm set value {id:$(id),name:"$(name)"}
+    data modify storage tmf:tmp nm.uuid set from entity @s UUID
+    data modify storage tmf:data names append from storage tmf:tmp nm
+""")
+fn("names/ensure", """
+    execute unless score @s tmf.id matches 1.. run return 0
+    execute store result storage tmf:tmp ne.id int 1 run scoreboard players get @s tmf.id
+    function tmf:names/ensure_m with storage tmf:tmp ne
+""")
+fn("names/ensure_m", """
+    $execute if data storage tmf:data names[{id:$(id)}] run return 0
+    summon minecraft:item_display ~ ~ ~ {Tags:["tmf.namebuf"]}
+    loot replace entity @n[type=minecraft:item_display,tag=tmf.namebuf] contents loot tmf:player_head
+    $data modify storage tmf:tmp ne.e set value {id:$(id),name:"?"}
+    data modify storage tmf:tmp ne.e.name set from entity @n[type=minecraft:item_display,tag=tmf.namebuf] item.components."minecraft:profile".name
+    kill @e[type=minecraft:item_display,tag=tmf.namebuf]
+    function tmf:names/store with storage tmf:tmp ne.e
+""")
+
+# ---------------------------------------------------------------------------
+# Navigation helper: distance + direction arrow from the player to #tx #ty #tz
+# ---------------------------------------------------------------------------
+ARROWS = ["↑", "↗", "→", "↘", "↓", "↙", "←", "↖"]
+fn("nav/compute", """
+    execute store result score #px tmf.tmp run data get entity @s Pos[0]
+    execute store result score #py tmf.tmp run data get entity @s Pos[1]
+    execute store result score #pz tmf.tmp run data get entity @s Pos[2]
+    scoreboard players operation #dx tmf.tmp = #tx tmf.tmp
+    scoreboard players operation #dx tmf.tmp -= #px tmf.tmp
+    scoreboard players operation #dy tmf.tmp = #ty tmf.tmp
+    scoreboard players operation #dy tmf.tmp -= #py tmf.tmp
+    scoreboard players operation #dz tmf.tmp = #tz tmf.tmp
+    scoreboard players operation #dz tmf.tmp -= #pz tmf.tmp
+    scoreboard players operation #ax tmf.tmp = #dx tmf.tmp
+    execute if score #ax tmf.tmp matches ..-1 run scoreboard players operation #ax tmf.tmp *= #m1 tmf.c
+    scoreboard players operation #az tmf.tmp = #dz tmf.tmp
+    execute if score #az tmf.tmp matches ..-1 run scoreboard players operation #az tmf.tmp *= #m1 tmf.c
+    scoreboard players operation #mx tmf.tmp = #ax tmf.tmp
+    scoreboard players operation #mx tmf.tmp > #az tmf.tmp
+    scoreboard players operation #mn tmf.tmp = #ax tmf.tmp
+    scoreboard players operation #mn tmf.tmp < #az tmf.tmp
+    scoreboard players set #dist tmf.tmp 0
+    execute if score #mx tmf.tmp matches 1..30000 run function tmf:nav/isqrt
+    execute if score #mx tmf.tmp matches 30001.. run function tmf:nav/approx
+    data modify storage tmf:tmp nv set value {a:"✔",y:""}
+    execute store result storage tmf:tmp nv.d int 1 run scoreboard players get #dist tmf.tmp
+    execute if score #dist tmf.tmp matches 3.. run function tmf:nav/dir
+    execute if score #dy tmf.tmp matches 3.. run function tmf:nav/height {s:"▲"}
+    execute if score #dy tmf.tmp matches ..-3 run function tmf:nav/height_down
+""")
+fn("nav/height_down", """
+    scoreboard players operation #dy tmf.tmp *= #m1 tmf.c
+    function tmf:nav/height {s:"▼"}
+""")
+_ns = ["scoreboard players operation #d2 tmf.tmp = #ax tmf.tmp", "scoreboard players operation #d2 tmf.tmp *= #ax tmf.tmp",
+       "scoreboard players operation #t tmf.tmp = #az tmf.tmp", "scoreboard players operation #t tmf.tmp *= #az tmf.tmp",
+       "scoreboard players operation #d2 tmf.tmp += #t tmf.tmp",
+       "# Newton's method starting above the root",
+       "scoreboard players operation #dist tmf.tmp = #mn tmf.tmp", "scoreboard players operation #dist tmf.tmp /= #2 tmf.c",
+       "scoreboard players operation #dist tmf.tmp += #mx tmf.tmp"]
+for _ in range(8):
+    _ns += ["scoreboard players operation #t tmf.tmp = #d2 tmf.tmp", "scoreboard players operation #t tmf.tmp /= #dist tmf.tmp",
+            "scoreboard players operation #dist tmf.tmp += #t tmf.tmp", "scoreboard players operation #dist tmf.tmp /= #2 tmf.c"]
+fn("nav/isqrt", "\n".join(_ns))
+fn("nav/approx", """
+    scoreboard players operation #dist tmf.tmp = #mn tmf.tmp
+    scoreboard players set #k tmf.tmp 3
+    scoreboard players operation #dist tmf.tmp *= #k tmf.tmp
+    scoreboard players set #k tmf.tmp 8
+    scoreboard players operation #dist tmf.tmp /= #k tmf.tmp
+    scoreboard players operation #dist tmf.tmp += #mx tmf.tmp
+""")
+fn("nav/dir", "\n".join([
+    "scoreboard players operation #t tmf.tmp = #tx tmf.tmp",
+    "scoreboard players operation #t tmf.tmp *= #10 tmf.c",
+    "execute store result storage tmf:tmp nf.x double 0.1 run scoreboard players add #t tmf.tmp 5",
+    "scoreboard players operation #t tmf.tmp = #tz tmf.tmp",
+    "scoreboard players operation #t tmf.tmp *= #10 tmf.c",
+    "execute store result storage tmf:tmp nf.z double 0.1 run scoreboard players add #t tmf.tmp 5",
+    'summon minecraft:marker ~ ~ ~ {Tags:["tmf.nav"]}',
+    "function tmf:nav/face with storage tmf:tmp nf",
+    "execute store result score #tyaw tmf.tmp run data get entity @n[type=minecraft:marker,tag=tmf.nav] Rotation[0] 10",
+    "kill @e[type=minecraft:marker,tag=tmf.nav]",
+    "execute store result score #rel tmf.tmp run data get entity @s Rotation[0] 10",
+    "scoreboard players operation #rel tmf.tmp *= #m1 tmf.c",
+    "scoreboard players operation #rel tmf.tmp += #tyaw tmf.tmp",
+    "# +225 to round to the nearest of 8 directions, plus a large multiple of 360 degrees to stay positive",
+    "scoreboard players add #rel tmf.tmp 360000225",
+    "scoreboard players set #k tmf.tmp 3600",
+    "scoreboard players operation #rel tmf.tmp %= #k tmf.tmp",
+    "scoreboard players set #k tmf.tmp 450",
+    "scoreboard players operation #rel tmf.tmp /= #k tmf.tmp",
+] + [f'execute if score #rel tmf.tmp matches {i} run data modify storage tmf:tmp nv.a set value "{a}"' for i, a in enumerate(ARROWS)]))
+fn("nav/face", "$execute as @n[type=minecraft:marker,tag=tmf.nav] at @s run tp @s ~ ~ ~ facing $(x) ~ $(z)")
+fn("nav/height", """
+    execute store result storage tmf:tmp nh.v int 1 run scoreboard players get #dy tmf.tmp
+    $data modify storage tmf:tmp nh.s set value "$(s)"
+    function tmf:nav/height_m with storage tmf:tmp nh
+""")
+fn("nav/height_m", '$data modify storage tmf:tmp nv.y set value "  $(s)$(v)"')
+
+# ---------------------------------------------------------------------------
+# Coordinates + waypoint bar (a per-player boss bar at the top of the screen)
+# ---------------------------------------------------------------------------
+fn("hud/tick", """
+    execute if function tmf:hud/wants run return run function tmf:hud/show
+    execute if entity @s[tag=tmf.hudbar] run function tmf:hud/hide
+""")
+fn("hud/wants", """
+    execute if score #coords_hud tmf.cfg matches 1 if entity @s[tag=tmf.on.coords_hud] run return 1
+    execute if score #waypoints tmf.cfg matches 1 if entity @s[tag=!tmf.off.waypoints] if score @s tmf.ws matches 1.. run return 1
+    return fail
+""")
+fn("hud/show", """
+    data modify storage tmf:tmp hud set value []
+    execute if score #coords_hud tmf.cfg matches 1 if entity @s[tag=tmf.on.coords_hud] run function tmf:hud/coords
+    execute if score #waypoints tmf.cfg matches 1 if entity @s[tag=!tmf.off.waypoints] if score @s tmf.ws matches 1.. run function tmf:wp/hud
+    execute store result storage tmf:tmp hb.id int 1 run scoreboard players get @s tmf.id
+    function tmf:hud/bar with storage tmf:tmp hb
+""")
+fn("hud/bar", """
+    $execute unless entity @s[tag=tmf.hudbar] run bossbar add tmf:hud_$(id) ""
+    $bossbar set tmf:hud_$(id) players @s
+    $bossbar set tmf:hud_$(id) name {nbt:"hud[]",storage:"tmf:tmp",interpret:true,separator:{text:"     ",color:"dark_gray"}}
+    tag @s add tmf.hudbar
+""")
+fn("hud/hide", """
+    execute store result storage tmf:tmp hb.id int 1 run scoreboard players get @s tmf.id
+    function tmf:hud/hide_m with storage tmf:tmp hb
+    tag @s remove tmf.hudbar
+""")
+fn("hud/hide_m", "$bossbar remove tmf:hud_$(id)")
+fn("hud/remove_all", """
+    # removes every TMF boss bar (ids 1 .. highest player id)
+    scoreboard players set #i tmf.tmp 0
+    function tmf:hud/remove_next
+    tag @a remove tmf.hudbar
+""")
+fn("hud/remove_next", """
+    scoreboard players add #i tmf.tmp 1
+    execute if score #i tmf.tmp > #next tmf.id run return 0
+    execute store result storage tmf:tmp hb.id int 1 run scoreboard players get #i tmf.tmp
+    function tmf:hud/hide_m with storage tmf:tmp hb
+    function tmf:hud/remove_next
+""")
+
+# ---------------------------------------------------------------------------
+# Waypoints
+# ---------------------------------------------------------------------------
+WP_LABELS = ["Home", "Base", "Farm", "Mine", "Portal", "Village", "Spawn", "Outpost", "Shop", "Treasure", "Friend", "Camp"]
+ALL_LABELS = WP_LABELS + ["Last death"]
+fn("wp/label", "\n".join(
+    ['# in: #wl tmf.tmp  out: storage tmf:tmp nv.n', 'data modify storage tmf:tmp nv.n set value "Waypoint"'] +
+    [f'execute if score #wl tmf.tmp matches {i + 1} run data modify storage tmf:tmp nv.n set value "{l}"' for i, l in enumerate(ALL_LABELS)]))
+fn("wp/hud", "\n".join([
+    "scoreboard players operation #tx tmf.tmp = @s tmf.wx",
+    "scoreboard players operation #ty tmf.tmp = @s tmf.wy",
+    "scoreboard players operation #tz tmf.tmp = @s tmf.wz",
+    "scoreboard players operation #wl tmf.tmp = @s tmf.wn",
+    "function tmf:wp/label",
+    "function tmf:util/dim_code",
+    "execute unless score @s tmf.wd = #cd tmf.tmp run return run function tmf:wp/hud_other",
+    "# nav/compute resets tmf:tmp nv, so keep the name elsewhere meanwhile",
+    "data modify storage tmf:tmp wpn set from storage tmf:tmp nv.n",
+    "function tmf:nav/compute",
+    "data modify storage tmf:tmp nv.n set from storage tmf:tmp wpn",
+    "function tmf:wp/hud_m with storage tmf:tmp nv",
+]))
+fn("wp/hud_m", """
+    $data modify storage tmf:tmp hud append value {text:"",color:"gray",extra:[{text:"📍 ",color:"gold"},{text:"$(n)  ",color:"white"},{text:"$(a) ",color:"yellow"},{text:"$(d) m"},{text:"$(y)",color:"dark_gray"}]}
+""")
+fn("wp/hud_other", "\n".join(
+    [f'execute if score @s tmf.wd matches {i} run data modify storage tmf:tmp nv.dn set value "{d}"' for i, d in enumerate(DIM_NAMES)] +
+    ["function tmf:wp/hud_other_m with storage tmf:tmp nv"]))
+fn("wp/hud_other_m", """
+    $data modify storage tmf:tmp hud append value {text:"",color:"gray",extra:[{text:"📍 ",color:"gold"},{text:"$(n) ",color:"white"},{text:"is in $(dn)"}]}
+""")
+
+_inputs = ('[{type:"minecraft:single_option",key:"slot",label:{text:"Slot"},width:100,options:[' +
+           ",".join('{id:"%d",display:{text:"%d"}%s}' % (i, i, ",initial:true" if i == 1 else "") for i in (1, 2, 3)) + ']},'
+           '{type:"minecraft:single_option",key:"lbl",label:{text:"Name"},width:200,options:[' +
+           ",".join('{id:"%02d",display:{text:%s}%s}' % (i + 1, q(l), ",initial:true" if i == 0 else "") for i, l in enumerate(WP_LABELS)) + ']}]')
+fn("wp/open", "\n".join([
+    "execute unless score #waypoints tmf.cfg matches 1 run return run function tmf:menu/open",
+    "execute if entity @s[tag=tmf.off.waypoints] run return run function tmf:menu/open",
+    "playsound minecraft:ui.button.click master @s ~ ~ ~ 0.4 1.3",
+    "execute store result storage tmf:tmp w.id int 1 run scoreboard players get @s tmf.id",
+    "data modify storage tmf:tmp w.e set value {}",
+    "function tmf:wp/load with storage tmf:tmp w",
+    'data modify storage tmf:tmp d set value {dialog:{type:"minecraft:multi_action",title:{text:"📍 Waypoints",color:"gold",bold:true},'
+    'body:[{type:"minecraft:plain_message",contents:{text:"",color:"gray",extra:[{text:"Pick a slot and a name, then save to remember the spot you are standing on. Guiding shows direction and distance in the bar at the top of the screen.\\n\\n"}]},width:340}],'
+    'inputs:' + _inputs + ',columns:2,pause:false,actions:[],'
+    'exit_action:{label:{text:"Back"},width:150,action:{type:"minecraft:run_command",command:"/trigger tmf set 1"}}}}',
+    APPEND + '{label:{text:"💾 Save my position",color:"green"},tooltip:{text:"Saves where you stand into the chosen slot with the chosen name"},width:200,action:{type:"minecraft:dynamic/run_command",template:"/trigger tmf set 4$(slot)$(lbl)"}}',
+    'execute if score @s tmf.ws matches 1.. run ' + APPEND + button('{text:"⏹ Stop guiding",color:"yellow"}', "Hide the waypoint from the top bar", "/trigger tmf set 4004"),
+] + [l for i in (1, 2, 3) for l in (
+    f'execute if data storage tmf:tmp w.e.s{i} run function tmf:wp/list_slot {{slot:{i}}}',
+    f'execute unless data storage tmf:tmp w.e.s{i} run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {{text:"{i}. (empty)\\n",color:"dark_gray"}}')] + [
+    "execute if data entity @s LastDeathLocation run " + APPEND + button('{text:"💀 Guide to last death",color:"gray"}', "Guide you back to where you last died", "/trigger tmf set 4005"),
+    "function tmf:util/show_dialog with storage tmf:tmp d",
+]))
+fn("wp/load", "$data modify storage tmf:tmp w.e set from storage tmf:data wp[{id:$(id)}]")
+fn("wp/list_slot", "\n".join([
+    "$data modify storage tmf:tmp ws set from storage tmf:tmp w.e.s$(slot)",
+    "$data modify storage tmf:tmp ws.slot set value $(slot)",
+    'data modify storage tmf:tmp ws.act set value ""',
+    '$execute if score @s tmf.ws matches $(slot) run data modify storage tmf:tmp ws.act set value "  (guiding)"',
+    "execute store result score #wl tmf.tmp run data get storage tmf:tmp ws.l",
+    "function tmf:wp/label",
+    "data modify storage tmf:tmp ws.n set from storage tmf:tmp nv.n",
+] + [f'execute if data storage tmf:tmp ws{{d:{i}}} run data modify storage tmf:tmp ws.dn set value "{d}"' for i, d in enumerate(DIM_NAMES)] + [
+    "function tmf:wp/list_slot_m with storage tmf:tmp ws",
+]))
+fn("wp/list_slot_m", "\n".join([
+    '$data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"$(slot). $(n) – $(x) $(y) $(z) ($(dn))$(act)\\n",color:"white"}',
+    "$" + APPEND + '{label:{text:"🧭 Guide to $(n)",color:"aqua"},tooltip:{text:"Show direction and distance to this waypoint"},width:200,action:{type:"minecraft:run_command",command:"/trigger tmf set 400$(slot)"}}',
+    "$" + APPEND + '{label:{text:"✖ Delete $(n)",color:"red"},tooltip:{text:"Forget this waypoint"},width:150,action:{type:"minecraft:run_command",command:"/trigger tmf set 401$(slot)"}}',
+]))
+fn("wp/trigger", """
+    # 4000 open | 4001-4003 guide | 4004 stop | 4005 guide to last death | 4011-4013 delete | 4101-4312 save (slot, name)
+    execute unless score #waypoints tmf.cfg matches 1 run return run function tmf:menu/open
+    execute if entity @s[tag=tmf.off.waypoints] run return run function tmf:menu/open
+    execute if score #v tmf.tmp matches 4000 run return run function tmf:wp/open
+    execute if score #v tmf.tmp matches 4001..4003 run return run function tmf:wp/guide
+    execute if score #v tmf.tmp matches 4004 run return run function tmf:wp/stop
+    execute if score #v tmf.tmp matches 4005 run return run function tmf:wp/guide_death
+    execute if score #v tmf.tmp matches 4011..4013 run return run function tmf:wp/delete
+    execute if score #v tmf.tmp matches 4101..4312 run return run function tmf:wp/save
+""")
+fn("wp/args", """
+    # #v -> storage tmf:tmp w2 {id, slot}
+    execute store result storage tmf:tmp w2.id int 1 run scoreboard players get @s tmf.id
+    scoreboard players operation #s tmf.tmp = #v tmf.tmp
+    scoreboard players remove #s tmf.tmp 4000
+    scoreboard players operation #s tmf.tmp %= #10 tmf.c
+    execute store result storage tmf:tmp w2.slot int 1 run scoreboard players get #s tmf.tmp
+""")
+fn("wp/save", """
+    scoreboard players operation #s tmf.tmp = #v tmf.tmp
+    scoreboard players remove #s tmf.tmp 4000
+    scoreboard players operation #l tmf.tmp = #s tmf.tmp
+    scoreboard players operation #l tmf.tmp %= #100 tmf.c
+    scoreboard players operation #s tmf.tmp /= #100 tmf.c
+    execute unless score #l tmf.tmp matches 1..12 run return run function tmf:wp/open
+    execute unless score #s tmf.tmp matches 1..3 run return run function tmf:wp/open
+    data modify storage tmf:tmp w2 set value {}
+    execute store result storage tmf:tmp w2.id int 1 run scoreboard players get @s tmf.id
+    execute store result storage tmf:tmp w2.slot int 1 run scoreboard players get #s tmf.tmp
+    execute store result storage tmf:tmp w2.l int 1 run scoreboard players get #l tmf.tmp
+    execute store result storage tmf:tmp w2.x int 1 run data get entity @s Pos[0]
+    execute store result storage tmf:tmp w2.y int 1 run data get entity @s Pos[1]
+    execute store result storage tmf:tmp w2.z int 1 run data get entity @s Pos[2]
+    function tmf:util/dim_code
+    execute store result storage tmf:tmp w2.d int 1 run scoreboard players get #cd tmf.tmp
+    function tmf:wp/save_m with storage tmf:tmp w2
+    # keep guiding to the slot if it was overwritten
+    execute if score @s tmf.ws = #s tmf.tmp run function tmf:wp/guide_m with storage tmf:tmp w2
+    playsound minecraft:block.note_block.bell master @s ~ ~ ~ 0.5 1.5
+    function tmf:wp/open
+""")
+fn("wp/save_m", """
+    $execute unless data storage tmf:data wp[{id:$(id)}] run data modify storage tmf:data wp append value {id:$(id)}
+    $data modify storage tmf:data wp[{id:$(id)}].s$(slot) set value {l:$(l),x:$(x),y:$(y),z:$(z),d:$(d)}
+""")
+fn("wp/guide", """
+    function tmf:wp/args
+    function tmf:wp/guide_m with storage tmf:tmp w2
+    dialog clear @s
+""")
+fn("wp/guide_m", """
+    $execute unless data storage tmf:data wp[{id:$(id)}].s$(slot) run return fail
+    $execute store result score @s tmf.wx run data get storage tmf:data wp[{id:$(id)}].s$(slot).x
+    $execute store result score @s tmf.wy run data get storage tmf:data wp[{id:$(id)}].s$(slot).y
+    $execute store result score @s tmf.wz run data get storage tmf:data wp[{id:$(id)}].s$(slot).z
+    $execute store result score @s tmf.wd run data get storage tmf:data wp[{id:$(id)}].s$(slot).d
+    $execute store result score @s tmf.wn run data get storage tmf:data wp[{id:$(id)}].s$(slot).l
+    $scoreboard players set @s tmf.ws $(slot)
+""")
+fn("wp/guide_death", f"""
+    execute unless data entity @s LastDeathLocation run return run function tmf:wp/open
+    execute store result score @s tmf.wx run data get entity @s LastDeathLocation.pos[0]
+    execute store result score @s tmf.wy run data get entity @s LastDeathLocation.pos[1]
+    execute store result score @s tmf.wz run data get entity @s LastDeathLocation.pos[2]
+    data modify storage tmf:tmp dm.s set from entity @s LastDeathLocation.dimension
+    function tmf:util/dim_from_string
+    scoreboard players operation @s tmf.wd = #dc tmf.tmp
+    scoreboard players set @s tmf.wn {len(ALL_LABELS)}
+    scoreboard players set @s tmf.ws 4
+    dialog clear @s
+""")
+fn("wp/stop", """
+    scoreboard players set @s tmf.ws 0
+    function tmf:wp/open
+""")
+fn("wp/delete", """
+    function tmf:wp/args
+    scoreboard players operation #s tmf.tmp = #v tmf.tmp
+    scoreboard players remove #s tmf.tmp 4010
+    function tmf:wp/delete_m with storage tmf:tmp w2
+    execute if score @s tmf.ws = #s tmf.tmp run scoreboard players set @s tmf.ws 0
+    function tmf:wp/open
+""")
+fn("wp/delete_m", "$data remove storage tmf:data wp[{id:$(id)}].s$(slot)")
+
+# ---------------------------------------------------------------------------
+# Mob griefing: creepers, ghast fireballs, zombies breaking doors
+#   Creepers / fireballs get an explosion size of 0 (no block damage) and carry an invisible
+#   item_display. When they disappear without dying, the explosion damage is applied by TMF.
+# ---------------------------------------------------------------------------
+js(f"data/{NS}/tags/entity_type/no_blast.json", {"values": [
+    "minecraft:item", "minecraft:experience_orb", "minecraft:marker", "minecraft:interaction", "minecraft:text_display",
+    "minecraft:item_display", "minecraft:block_display", "minecraft:item_frame", "minecraft:glow_item_frame",
+    "minecraft:painting", "minecraft:armor_stand", "minecraft:leash_knot", "#minecraft:boat", "minecraft:minecart",
+    "minecraft:chest_minecart", "minecraft:hopper_minecart", "minecraft:tnt_minecart", "minecraft:furnace_minecart",
+    "minecraft:spawner_minecart", "minecraft:command_block_minecart", "minecraft:end_crystal", "minecraft:area_effect_cloud",
+    "minecraft:falling_block", "minecraft:tnt", "#minecraft:arrows", "#minecraft:impact_projectiles",
+    "minecraft:lightning_bolt", "minecraft:eye_of_ender", "minecraft:fishing_bobber", "minecraft:evoker_fangs",
+    "minecraft:firework_rocket", "minecraft:trident", "minecraft:ender_pearl", "minecraft:egg", "minecraft:snowball",
+    "minecraft:potion", "minecraft:experience_bottle", "minecraft:ominous_item_spawner"]})
+js(f"data/{NS}/tags/entity_type/door_breakers.json", {"values": ["minecraft:zombie", "minecraft:husk", "minecraft:zombie_villager"]})
+
+def _blast_damage(D, d):
+    imp = 1 - d / D
+    return round((imp * imp + imp) / 2 * 7 * D + 1, 1)
+
+for R in range(1, 13):
+    D = 2 * R
+    bl = ["# explosion damage of a radius-%d explosion (Normal difficulty values; the game scales them by difficulty)" % R,
+          f"particle minecraft:{'explosion_emitter' if R >= 2 else 'explosion'} ~ ~0.5 ~ 0 0 0 0 1 force",
+          f"playsound minecraft:entity.generic.explode hostile @a ~ ~ ~ 4 0.8"]
+    for k in range(D):
+        sel = f"@e[type=!#tmf:no_blast,tag=!tmf.bh,distance=..{k + 1}]"
+        bl.append(f"execute as {sel} run damage @s {_blast_damage(D, k + 0.5)} minecraft:explosion")
+        bl.append(f"tag {sel} add tmf.bh")
+    bl.append(f"tag @e[tag=tmf.bh,distance=..{D + 2}] remove tmf.bh")
+    fn(f"blast/r{R}", "\n".join(bl))
+fn("blast/dispatch", "\n".join(
+    [f"execute if score #r tmf.tmp matches {R} run return run function tmf:blast/r{R}" for R in range(1, 12)] +
+    ["execute if score #r tmf.tmp matches 12.. run function tmf:blast/r12"]))
+fn("blast/attach", """
+    # as the creeper / fireball; #r tmf.tmp = explosion size; #bt = 1 creeper, 2 fireball
+    summon minecraft:item_display ~ ~ ~ {Tags:["tmf.bl","tmf.bl_new"]}
+    scoreboard players operation @n[type=minecraft:item_display,tag=tmf.bl_new] tmf.cr = #r tmf.tmp
+    execute if score #bt tmf.tmp matches 1 run tag @n[type=minecraft:item_display,tag=tmf.bl_new] add tmf.bl_c
+    execute if score #bt tmf.tmp matches 2 run tag @n[type=minecraft:item_display,tag=tmf.bl_new] add tmf.bl_f
+    ride @n[type=minecraft:item_display,tag=tmf.bl_new] mount @s
+    tag @e[type=minecraft:item_display,tag=tmf.bl_new] remove tmf.bl_new
+""")
+fn("blast/riding", """
+    execute on vehicle run return 1
+    return fail
+""")
+fn("blast/gone", """
+    # the creeper / fireball this display was riding is gone
+    execute if entity @s[tag=tmf.bl_dead] run return run kill @s
+    # despawned far from players, or the difficulty was set to Peaceful
+    execute unless entity @a[distance=..12] run return run kill @s
+    execute store result score #diff tmf.tmp run difficulty
+    execute if score #diff tmf.tmp matches 0 run return run kill @s
+    scoreboard players operation #r tmf.tmp = @s tmf.cr
+    execute if entity @s[tag=tmf.bl_pow] run scoreboard players operation #r tmf.tmp *= #2 tmf.c
+    execute if score #r tmf.tmp matches 1.. if entity @s[tag=tmf.bl_c] positioned ~ ~-1.7 ~ run function tmf:blast/dispatch
+    execute if score #r tmf.tmp matches 1.. if entity @s[tag=tmf.bl_f] positioned ~ ~-1 ~ run function tmf:blast/dispatch
+    kill @s
+""")
+fn("creeper/setup", """
+    tag @s add tmf.cng
+    scoreboard players set @s tmf.cr 3
+    execute if data entity @s ExplosionRadius store result score @s tmf.cr run data get entity @s ExplosionRadius
+    data modify entity @s ExplosionRadius set value 0b
+    scoreboard players operation #r tmf.tmp = @s tmf.cr
+    scoreboard players set #bt tmf.tmp 1
+    function tmf:blast/attach
+""")
+fn("creeper/watch", """
+    # dying creepers must not explode later; charged creepers explode twice as big
+    execute unless data entity @s {DeathTime:0s} on passengers run tag @s[tag=tmf.bl] add tmf.bl_dead
+    execute if entity @s[tag=!tmf.cpow] if data entity @s {powered:1b} run function tmf:creeper/powered
+""")
+fn("creeper/powered", """
+    tag @s add tmf.cpow
+    execute on passengers run tag @s[tag=tmf.bl] add tmf.bl_pow
+""")
+fn("creeper/restore", """
+    execute unless score @s tmf.cr matches 0..127 run scoreboard players set @s tmf.cr 3
+    execute store result entity @s ExplosionRadius byte 1 run scoreboard players get @s tmf.cr
+    execute on passengers if entity @s[tag=tmf.bl] run kill @s
+    tag @s remove tmf.cng
+    tag @s remove tmf.cpow
+    scoreboard players reset @s tmf.cr
+""")
+fn("ghast/setup", """
+    tag @s add tmf.gng
+    scoreboard players set @s tmf.cr 1
+    execute if data entity @s ExplosionPower store result score @s tmf.cr run data get entity @s ExplosionPower
+    data modify entity @s ExplosionPower set value 0
+    scoreboard players operation #r tmf.tmp = @s tmf.cr
+    scoreboard players set #bt tmf.tmp 2
+    function tmf:blast/attach
+""")
+fn("ghast/restore", """
+    execute unless score @s tmf.cr matches 0.. run scoreboard players set @s tmf.cr 1
+    execute store result entity @s ExplosionPower int 1 run scoreboard players get @s tmf.cr
+    execute on passengers if entity @s[tag=tmf.bl] run kill @s
+    tag @s remove tmf.gng
+    scoreboard players reset @s tmf.cr
+""")
+fn("zombie/setup", """
+    tag @s add tmf.zd
+    execute store result score @s tmf.cr run data get entity @s CanBreakDoors
+    data modify entity @s CanBreakDoors set value 0b
+""")
+fn("zombie/restore", """
+    execute if score @s tmf.cr matches 1 run data modify entity @s CanBreakDoors set value 1b
+    tag @s remove tmf.zd
+    scoreboard players reset @s tmf.cr
+""")
+fn("griefing/restore_all", """
+    execute as @e[type=minecraft:creeper,tag=tmf.cng] run function tmf:creeper/restore
+    execute as @e[type=minecraft:fireball,tag=tmf.gng] run function tmf:ghast/restore
+    execute as @e[type=#tmf:door_breakers,tag=tmf.zd] run function tmf:zombie/restore
+    kill @e[type=minecraft:item_display,tag=tmf.bl]
+""")
+fn("admin/set/mob_griefing", """
+    execute store result score #mg tmf.tmp run gamerule mob_griefing
+    execute if score #mg tmf.tmp matches 1 run gamerule mob_griefing false
+    execute if score #mg tmf.tmp matches 0 run gamerule mob_griefing true
+    function tmf:admin/cat/griefing
+""")
+
+# ---------------------------------------------------------------------------
+# Look-at info (sneak): pets, copper, crops, campfires, furnaces
+# ---------------------------------------------------------------------------
+js(f"data/{NS}/tags/entity_type/tamable.json", {"values": [
+    "minecraft:wolf", "minecraft:cat", "minecraft:parrot", "minecraft:horse", "minecraft:donkey", "minecraft:mule",
+    "minecraft:llama", "minecraft:trader_llama", "minecraft:camel", "minecraft:camel_husk", "minecraft:skeleton_horse",
+    "minecraft:zombie_horse", "minecraft:nautilus", "minecraft:zombie_nautilus"]})
+js(f"data/{NS}/tags/block/furnaces.json", {"values": ["minecraft:furnace", "minecraft:smoker", "minecraft:blast_furnace"]})
+SAPLINGS = ["oak_sapling", "spruce_sapling", "birch_sapling", "jungle_sapling", "acacia_sapling", "dark_oak_sapling",
+            "pale_oak_sapling", "cherry_sapling", "poplar_sapling", "mangrove_propagule"]
+CROPS = [  # block, property, highest value present, value meaning "fully grown"
+    ("wheat", "age", 7, 7), ("carrots", "age", 7, 7), ("potatoes", "age", 7, 7), ("beetroots", "age", 3, 3),
+    ("nether_wart", "age", 3, 3), ("cocoa", "age", 2, 2), ("sweet_berry_bush", "age", 3, 3),
+    ("torchflower_crop", "age", 1, 2), ("pitcher_crop", "age", 4, 4), ("melon_stem", "age", 7, 7),
+    ("pumpkin_stem", "age", 7, 7)] + [(s, "stage", 1, 2) for s in SAPLINGS]
+js(f"data/{NS}/tags/block/crop_info.json", {"values": ["minecraft:" + c[0] for c in CROPS] + [
+    "minecraft:attached_melon_stem", "minecraft:attached_pumpkin_stem", "minecraft:cave_vines", "minecraft:cave_vines_plant"]})
+
+fn("look/start", """
+    # as a sneaking player
+    scoreboard players set #fp tmf.tmp 0
+    scoreboard players set #fo tmf.tmp 0
+    execute if score #pet_health tmf.cfg matches 1 if entity @s[tag=!tmf.off.pet_health] run scoreboard players set #fp tmf.tmp 1
+    execute if score #animal_owners tmf.cfg matches 1 if entity @s[tag=!tmf.off.animal_owners] run scoreboard players set #fo tmf.tmp 1
+    execute if score #fp tmf.tmp matches 1 if function tmf:pets/look run return 1
+    execute if score #fp tmf.tmp matches 0 if score #fo tmf.tmp matches 1 if function tmf:pets/look run return 1
+    scoreboard players set #lk tmf.tmp 0
+    scoreboard players set #fcu tmf.tmp 0
+    scoreboard players set #fcr tmf.tmp 0
+    scoreboard players set #fcf tmf.tmp 0
+    scoreboard players set #ffu tmf.tmp 0
+    execute if score #copper_info tmf.cfg matches 1 if entity @s[tag=!tmf.off.copper_info] run scoreboard players set #fcu tmf.tmp 1
+    execute if score #crop_info tmf.cfg matches 1 if entity @s[tag=!tmf.off.crop_info] run scoreboard players set #fcr tmf.tmp 1
+    execute if score #campfire_info tmf.cfg matches 1 if entity @s[tag=!tmf.off.campfire_info] run scoreboard players set #fcf tmf.tmp 1
+    execute if score #furnace_info tmf.cfg matches 1 if entity @s[tag=!tmf.off.furnace_info] run scoreboard players set #ffu tmf.tmp 1
+    scoreboard players operation #lk tmf.tmp += #fcu tmf.tmp
+    scoreboard players operation #lk tmf.tmp += #fcr tmf.tmp
+    scoreboard players operation #lk tmf.tmp += #fcf tmf.tmp
+    scoreboard players operation #lk tmf.tmp += #ffu tmf.tmp
+    execute if score #lk tmf.tmp matches 0 run return 0
+    scoreboard players set #r tmf.tmp 0
+    execute anchored eyes positioned ^ ^ ^ run function tmf:look/ray
+""")
+fn("look/ray", """
+    execute unless block ~ ~ ~ #tmf:ray_pass run return run function tmf:look/hit
+    scoreboard players add #r tmf.tmp 1
+    execute if score #r tmf.tmp matches ..50 positioned ^ ^ ^0.1 run function tmf:look/ray
+""")
+fn("look/hit", """
+    execute if score #fcu tmf.tmp matches 1 if block ~ ~ ~ #tmf:copper/any run return run function tmf:copper/hit
+    execute if score #fcr tmf.tmp matches 1 if block ~ ~ ~ #tmf:crop_info run return run function tmf:crop/show
+    execute if score #fcf tmf.tmp matches 1 if block ~ ~ ~ #minecraft:campfires run return run function tmf:campfire/show
+    execute if score #ffu tmf.tmp matches 1 if block ~ ~ ~ #tmf:furnaces run return run function tmf:furnace/show
+""")
+
+# --- pets: health + owner
+fn("pets/look", """
+    tag @s add tmf.hs_player
+    scoreboard players set #found tmf.tmp 0
+    execute as @e[type=#tmf:tamable,distance=..8] run function tmf:pets/look_cand
+    tag @s remove tmf.hs_player
+    execute if score #found tmf.tmp matches 1 run return 1
+    return fail
+""")
+fn("pets/look_cand", """
+    execute if score #found tmf.tmp matches 1 run return 0
+    execute unless data entity @s Owner run return 0
+    tag @s add tmf.hs_cand
+    execute if entity @a[tag=tmf.hs_player,limit=1,predicate=tmf:looking_at_candidate] run function tmf:pets/look_show
+    tag @s remove tmf.hs_cand
+""")
+fn("pets/look_show", """
+    scoreboard players set #found tmf.tmp 1
+    data modify storage tmf:tmp pl set value {o:"an offline player",h:"",oc:"gray"}
+    execute store result score #h tmf.tmp run data get entity @s Health 10
+    scoreboard players operation #hi tmf.tmp = #h tmf.tmp
+    scoreboard players operation #hi tmf.tmp /= #10 tmf.c
+    scoreboard players operation #hf tmf.tmp = #h tmf.tmp
+    scoreboard players operation #hf tmf.tmp %= #10 tmf.c
+    execute store result storage tmf:tmp pl.hi int 1 run scoreboard players get #hi tmf.tmp
+    execute store result storage tmf:tmp pl.hf int 1 run scoreboard players get #hf tmf.tmp
+    execute store result storage tmf:tmp pl.mx int 1 run attribute @s minecraft:max_health get
+    data modify storage tmf:tmp pl.u set from entity @s Owner
+    function tmf:pets/owner_name with storage tmf:tmp pl
+    execute on owner run data modify storage tmf:tmp pl.oc set value "white"
+    scoreboard players set @a[tag=tmf.hs_player] tmf.abt 10
+    execute if score #fp tmf.tmp matches 1 if score #fo tmf.tmp matches 1 run return run function tmf:pets/show_both with storage tmf:tmp pl
+    execute if score #fp tmf.tmp matches 1 run return run function tmf:pets/show_health with storage tmf:tmp pl
+    function tmf:pets/show_owner with storage tmf:tmp pl
+""")
+fn("pets/owner_name", "$data modify storage tmf:tmp pl.o set from storage tmf:data names[{uuid:$(u)}].name")
+fn("pets/show_both", '$title @a[tag=tmf.hs_player] actionbar [{selector:"@s",color:"white"},{text:"  ❤ ",color:"red"},{text:"$(hi).$(hf)",color:"white"},{text:" / $(mx)",color:"gray"},{text:"  ·  owner ",color:"dark_gray"},{text:"$(o)",color:"$(oc)"}]')
+fn("pets/show_health", '$title @a[tag=tmf.hs_player] actionbar [{selector:"@s",color:"white"},{text:"  ❤ ",color:"red"},{text:"$(hi).$(hf)",color:"white"},{text:" / $(mx)",color:"gray"}]')
+fn("pets/show_owner", '$title @a[tag=tmf.hs_player] actionbar [{selector:"@s",color:"white"},{text:"  ·  owner ",color:"dark_gray"},{text:"$(o)",color:"$(oc)"}]')
+
+# --- crops
+_cl = ['data modify storage tmf:tmp cr set value {dry:""}',
+       'execute if block ~ ~-1 ~ minecraft:farmland[moisture=0] run data modify storage tmf:tmp cr.dry set value "  ·  💧 dry farmland, grows slower"']
+for blk, prop, top, full in CROPS:
+    for v in range(top + 1):
+        pct = v * 100 // full
+        _cl.append(f'execute if block ~ ~ ~ minecraft:{blk}[{prop}={v}] run return run function tmf:crop/show_m {{k:"{blk}",s:{v},m:{full},p:{pct}}}')
+_cl += ['execute if block ~ ~ ~ minecraft:attached_melon_stem run return run function tmf:crop/fruit {k:"melon_stem",f:"melon"}',
+        'execute if block ~ ~ ~ minecraft:attached_pumpkin_stem run return run function tmf:crop/fruit {k:"pumpkin_stem",f:"pumpkin"}',
+        'execute if block ~ ~ ~ #minecraft:cave_vines[berries=true] run return run function tmf:crop/berries {b:"glow berries ready to pick",c:"green"}',
+        'execute if block ~ ~ ~ #minecraft:cave_vines[berries=false] run return run function tmf:crop/berries {b:"no glow berries yet",c:"gray"}']
+fn("crop/show", "\n".join(_cl))
+fn("crop/show_m", """
+    $data modify storage tmf:tmp cr merge value {k:"$(k)",s:$(s),m:$(m),p:$(p)}
+    scoreboard players set @s tmf.abt 10
+    $execute if data storage tmf:tmp cr{s:$(m)} run return run function tmf:crop/full with storage tmf:tmp cr
+    function tmf:crop/growing with storage tmf:tmp cr
+""")
+fn("crop/growing", '$title @s actionbar [{text:"🌱 ",color:"green"},{translate:"block.minecraft.$(k)",color:"white"},{text:"  $(p)%",color:"yellow"},{text:"  (stage $(s)/$(m))",color:"gray"},{text:"$(dry)",color:"aqua"}]')
+fn("crop/full", '$title @s actionbar [{text:"✔ ",color:"green"},{translate:"block.minecraft.$(k)",color:"white"},{text:"  fully grown",color:"green"}]')
+fn("crop/fruit", """
+    scoreboard players set @s tmf.abt 10
+    $title @s actionbar [{text:"✔ ",color:"green"},{translate:"block.minecraft.$(k)",color:"white"},{text:"  has grown a $(f)",color:"green"}]
+""")
+fn("crop/berries", """
+    scoreboard players set @s tmf.abt 10
+    $title @s actionbar [{text:"🌱 ",color:"green"},{translate:"block.minecraft.cave_vines",color:"white"},{text:"  $(b)",color:"$(c)"}]
+""")
+
+# --- campfires (identical items are grouped: "4× Raw Beef 0:12" or "2× Raw Cod 5s–12s")
+fn("campfire/show", "\n".join([
+    'data modify storage tmf:tmp cf set value {l:[],e:[]}',
+] + [f"execute if data block ~ ~ ~ Items[{{Slot:{i}b}}] run function tmf:campfire/slot {{i:{i}}}" for i in range(4)] + [
+    "function tmf:campfire/group",
+    'execute unless data storage tmf:tmp cf.l[0] run data modify storage tmf:tmp cf.l append value {text:"nothing cooking",color:"gray"}',
+    'execute if block ~ ~ ~ #minecraft:campfires[lit=false] run data modify storage tmf:tmp cf.l append value {text:"not lit",color:"red"}',
+    "scoreboard players set @s tmf.abt 10",
+    'title @s actionbar [{text:"🔥 ",color:"gold"},{nbt:"cf.l[]",storage:"tmf:tmp",interpret:true,separator:{text:" · ",color:"dark_gray"}}]',
+]))
+fn("campfire/slot", """
+    data modify storage tmf:tmp ce set value {}
+    $data modify storage tmf:tmp ce.id set from block ~ ~ ~ Items[{Slot:$(i)b}].id
+    $execute store result score #a tmf.tmp run data get block ~ ~ ~ CookingTimes[$(i)]
+    $execute store result score #sec tmf.tmp run data get block ~ ~ ~ CookingTotalTimes[$(i)]
+    scoreboard players operation #sec tmf.tmp -= #a tmf.tmp
+    scoreboard players add #sec tmf.tmp 19
+    scoreboard players operation #sec tmf.tmp /= #20 tmf.c
+    execute if score #sec tmf.tmp matches ..-1 run scoreboard players set #sec tmf.tmp 0
+    execute store result storage tmf:tmp ce.s int 1 run scoreboard players get #sec tmf.tmp
+    data modify storage tmf:tmp cf.e append from storage tmf:tmp ce
+""")
+fn("campfire/group", """
+    # takes the first item type, counts it and finds its shortest / longest time, then repeats with the rest
+    execute unless data storage tmf:tmp cf.e[0] run return 0
+    data modify storage tmf:tmp cg set value {}
+    data modify storage tmf:tmp cg.id set from storage tmf:tmp cf.e[0].id
+    data modify storage tmf:tmp cf.rest set value []
+    scoreboard players set #gc tmf.tmp 0
+    scoreboard players set #gmin tmf.tmp 2147483647
+    scoreboard players set #gmax tmf.tmp -1
+    function tmf:campfire/group_scan
+    data modify storage tmf:tmp cf.e set from storage tmf:tmp cf.rest
+    data modify storage tmf:tmp it set value {}
+    data modify storage tmf:tmp it.id set from storage tmf:tmp cg.id
+    function tmf:util/item_name
+    execute store result storage tmf:tmp it.c int 1 run scoreboard players get #gc tmf.tmp
+    scoreboard players operation #sec tmf.tmp = #gmin tmf.tmp
+    function tmf:util/fmt_time
+    data modify storage tmf:tmp it.a set from storage tmf:tmp tf.t
+    scoreboard players operation #sec tmf.tmp = #gmax tmf.tmp
+    function tmf:util/fmt_time
+    data modify storage tmf:tmp it.b set from storage tmf:tmp tf.t
+    execute if score #gc tmf.tmp matches 1 run function tmf:campfire/out_one with storage tmf:tmp it
+    execute if score #gc tmf.tmp matches 2.. if score #gmin tmf.tmp = #gmax tmf.tmp run function tmf:campfire/out_same with storage tmf:tmp it
+    execute if score #gc tmf.tmp matches 2.. unless score #gmin tmf.tmp = #gmax tmf.tmp run function tmf:campfire/out_range with storage tmf:tmp it
+    function tmf:campfire/group
+""")
+fn("campfire/group_scan", """
+    execute unless data storage tmf:tmp cf.e[0] run return 0
+    data modify storage tmf:tmp cg.cur set from storage tmf:tmp cf.e[0]
+    data remove storage tmf:tmp cf.e[0]
+    data modify storage tmf:tmp cg.cmp set from storage tmf:tmp cg.id
+    execute store success score #diff tmf.tmp run data modify storage tmf:tmp cg.cmp set from storage tmf:tmp cg.cur.id
+    execute if score #diff tmf.tmp matches 1 run data modify storage tmf:tmp cf.rest append from storage tmf:tmp cg.cur
+    execute if score #diff tmf.tmp matches 0 run function tmf:campfire/group_add
+    function tmf:campfire/group_scan
+""")
+fn("campfire/group_add", """
+    scoreboard players add #gc tmf.tmp 1
+    execute store result score #s tmf.tmp run data get storage tmf:tmp cg.cur.s
+    scoreboard players operation #gmin tmf.tmp < #s tmf.tmp
+    scoreboard players operation #gmax tmf.tmp > #s tmf.tmp
+""")
+_cf_name = '{translate:"$(p).minecraft.$(n)",fallback:"$(n)",color:"white"}'
+fn("campfire/out_one", '$data modify storage tmf:tmp cf.l append value {text:"",extra:[%s,{text:" $(a)",color:"yellow"}]}' % _cf_name)
+fn("campfire/out_same", '$data modify storage tmf:tmp cf.l append value {text:"",extra:[{text:"$(c)× ",color:"white"},%s,{text:" $(a)",color:"yellow"}]}' % _cf_name)
+fn("campfire/out_range", '$data modify storage tmf:tmp cf.l append value {text:"",extra:[{text:"$(c)× ",color:"white"},%s,{text:" $(a)–$(b)",color:"yellow"}]}' % _cf_name)
+
+# ---------------------------------------------------------------------------
+# Campfire regen: every 5 seconds, hurt players within 4 blocks of a lit campfire get a short Regeneration II
+# ---------------------------------------------------------------------------
+_rn = sorted(((dx, dy, dz) for dx in range(-4, 5) for dy in range(-2, 3) for dz in range(-4, 5) if dx * dx + dy * dy + dz * dz <= 20),
+             key=lambda v: v[0] * v[0] + v[1] * v[1] + v[2] * v[2])
+fn("regen/near", "\n".join([f"execute if block ~{dx} ~{dy} ~{dz} #minecraft:campfires[lit=true] run return 1" for dx, dy, dz in _rn] + ["return fail"]))
+fn("regen/check", """
+    execute unless function tmf:regen/near run return run tag @s remove tmf.warm
+    execute if entity @s[tag=!tmf.warm] run function tmf:regen/enter
+    execute unless score #m5 tmf.tmp matches 0 run return 0
+    execute store result score #h tmf.tmp run data get entity @s Health
+    execute store result score #mh tmf.tmp run attribute @s minecraft:max_health get
+    execute if score #h tmf.tmp >= #mh tmf.tmp run return 0
+    effect give @s minecraft:regeneration 3 1 true
+""")
+fn("regen/enter", """
+    tag @s add tmf.warm
+    scoreboard players set @s tmf.abt 60
+    title @s actionbar [{text:"🔥 ",color:"gold"},{text:"You feel the warmth of the campfire, which slowly heals you.",color:"#f3c98b",italic:true}]
+""")
+
+# --- furnaces, smokers, blast furnaces
+fn("furnace/show", """
+    data modify storage tmf:tmp fu set value {l:[]}
+    scoreboard players set #sp tmf.tmp 0
+    scoreboard players set #tt tmf.tmp 0
+    scoreboard players set #lit tmf.tmp 0
+    execute store result score #sp tmf.tmp run data get block ~ ~ ~ cooking_time_spent
+    execute store result score #tt tmf.tmp run data get block ~ ~ ~ cooking_total_time
+    execute store result score #lit tmf.tmp run data get block ~ ~ ~ lit_time_remaining
+    execute if data block ~ ~ ~ Items[{Slot:0b}] run function tmf:furnace/input
+    execute unless data block ~ ~ ~ Items[{Slot:0b}] run data modify storage tmf:tmp fu.l append value {text:"idle",color:"gray"}
+    execute if score #lit tmf.tmp matches 1.. run function tmf:furnace/fuel
+    execute if score #lit tmf.tmp matches ..0 if data block ~ ~ ~ Items[{Slot:0b}] unless data block ~ ~ ~ Items[{Slot:1b}] run data modify storage tmf:tmp fu.l append value {text:"needs fuel",color:"red"}
+    execute if score #lit tmf.tmp matches ..0 if data block ~ ~ ~ Items[{Slot:1b}] unless data block ~ ~ ~ Items[{Slot:0b}] run function tmf:furnace/fuel
+    execute if data block ~ ~ ~ Items[{Slot:2b}] run function tmf:furnace/output
+    scoreboard players set @s tmf.abt 10
+    title @s actionbar [{text:"🔥 ",color:"gold"},{nbt:"fu.l[]",storage:"tmf:tmp",interpret:true,separator:{text:"  ·  ",color:"dark_gray"}}]
+""")
+fn("furnace/input", """
+    data modify storage tmf:tmp it set value {pct:0,t:"?",all:""}
+    data modify storage tmf:tmp it.id set from block ~ ~ ~ Items[{Slot:0b}].id
+    execute store result score #cnt tmf.tmp run data get block ~ ~ ~ Items[{Slot:0b}].count
+    execute store result storage tmf:tmp it.c int 1 run scoreboard players get #cnt tmf.tmp
+    function tmf:util/item_name
+    execute if score #tt tmf.tmp matches 1.. run function tmf:furnace/progress
+    function tmf:furnace/input_m with storage tmf:tmp it
+""")
+fn("furnace/progress", """
+    scoreboard players operation #pct tmf.tmp = #sp tmf.tmp
+    scoreboard players operation #pct tmf.tmp *= #100 tmf.c
+    scoreboard players operation #pct tmf.tmp /= #tt tmf.tmp
+    execute store result storage tmf:tmp it.pct int 1 run scoreboard players get #pct tmf.tmp
+    # time for this item
+    scoreboard players operation #left tmf.tmp = #tt tmf.tmp
+    scoreboard players operation #left tmf.tmp -= #sp tmf.tmp
+    scoreboard players operation #sec tmf.tmp = #left tmf.tmp
+    scoreboard players add #sec tmf.tmp 19
+    scoreboard players operation #sec tmf.tmp /= #20 tmf.c
+    function tmf:util/fmt_time
+    data modify storage tmf:tmp it.t set from storage tmf:tmp tf.t
+    # time for the whole stack
+    execute if score #cnt tmf.tmp matches ..1 run return 0
+    scoreboard players operation #sec tmf.tmp = #cnt tmf.tmp
+    scoreboard players remove #sec tmf.tmp 1
+    scoreboard players operation #sec tmf.tmp *= #tt tmf.tmp
+    scoreboard players operation #sec tmf.tmp += #left tmf.tmp
+    scoreboard players add #sec tmf.tmp 19
+    scoreboard players operation #sec tmf.tmp /= #20 tmf.c
+    function tmf:util/fmt_time
+    function tmf:furnace/all_m with storage tmf:tmp tf
+""")
+fn("furnace/all_m", '$data modify storage tmf:tmp it.all set value " (all: $(t))"')
+fn("furnace/input_m", """
+    $data modify storage tmf:tmp fu.l append value {text:"",extra:[{text:"$(c)× ",color:"white"},{translate:"$(p).minecraft.$(n)",fallback:"$(n)",color:"white"},{text:"  $(pct)%",color:"yellow"}]}
+    $data modify storage tmf:tmp fu.l append value {text:"$(t) left$(all)",color:"gray"}
+""")
+fn("furnace/fuel", """
+    scoreboard players operation #sec tmf.tmp = #lit tmf.tmp
+    scoreboard players add #sec tmf.tmp 19
+    scoreboard players operation #sec tmf.tmp /= #20 tmf.c
+    function tmf:util/fmt_time
+    data modify storage tmf:tmp it set value {c:0}
+    data modify storage tmf:tmp it.t set from storage tmf:tmp tf.t
+    execute store result storage tmf:tmp it.c int 1 run data get block ~ ~ ~ Items[{Slot:1b}].count
+    execute if score #lit tmf.tmp matches 1.. run function tmf:furnace/fuel_m with storage tmf:tmp it
+    execute unless score #lit tmf.tmp matches 1.. run function tmf:furnace/fuel_spare_m with storage tmf:tmp it
+""")
+fn("furnace/fuel_m", '$data modify storage tmf:tmp fu.l append value {text:"fuel $(t) (+$(c))",color:"gold"}')
+fn("furnace/fuel_spare_m", '$data modify storage tmf:tmp fu.l append value {text:"$(c) fuel waiting",color:"gold"}')
+fn("furnace/output", """
+    data modify storage tmf:tmp it set value {}
+    data modify storage tmf:tmp it.id set from block ~ ~ ~ Items[{Slot:2b}].id
+    execute store result storage tmf:tmp it.c int 1 run data get block ~ ~ ~ Items[{Slot:2b}].count
+    function tmf:util/item_name
+    function tmf:furnace/output_m with storage tmf:tmp it
+""")
+fn("furnace/output_m", '$data modify storage tmf:tmp fu.l append value {text:"",extra:[{text:"→ $(c)× ",color:"green"},{translate:"$(p).minecraft.$(n)",fallback:"$(n)",color:"green"}]}')
+
+# ---------------------------------------------------------------------------
+# Held-item info (twice a second): arrows, compasses, slime chunks
+# ---------------------------------------------------------------------------
+fn("held/check", """
+    execute if score #arrow_counter tmf.cfg matches 1 if entity @s[tag=!tmf.off.arrow_counter] if items entity @s weapon.* #tmf:launchers run return run function tmf:arrows/show
+    execute if score #lodestone_coords tmf.cfg matches 1 if entity @s[tag=!tmf.off.lodestone_coords] if items entity @s weapon.* minecraft:compass[minecraft:lodestone_tracker] run return run function tmf:compass/lodestone
+    execute if score #lodestone_coords tmf.cfg matches 1 if entity @s[tag=!tmf.off.lodestone_coords] if items entity @s weapon.* minecraft:recovery_compass run return run function tmf:compass/recovery
+    execute if score #slime_chunks tmf.cfg matches 1 if entity @s[tag=!tmf.off.slime_chunks] if items entity @s weapon.* minecraft:slime_ball run return run function tmf:slime/show
+""")
+js(f"data/{NS}/tags/item/launchers.json", {"values": ["minecraft:bow", "minecraft:crossbow"]})
+fn("arrows/show", """
+    execute store result score #a tmf.tmp run clear @s minecraft:arrow 0
+    execute store result score #s tmf.tmp run clear @s minecraft:spectral_arrow 0
+    execute store result score #t tmf.tmp run clear @s minecraft:tipped_arrow 0
+    data modify storage tmf:tmp ar set value {l:[]}
+    execute if score #a tmf.tmp matches 1.. run data modify storage tmf:tmp ar.l append value {text:"",extra:[{score:{name:"#a",objective:"tmf.tmp"},color:"white"},{text:" arrows",color:"gray"}]}
+    execute if score #s tmf.tmp matches 1.. run data modify storage tmf:tmp ar.l append value {text:"",extra:[{score:{name:"#s",objective:"tmf.tmp"},color:"yellow"},{text:" spectral",color:"gray"}]}
+    execute if score #t tmf.tmp matches 1.. run data modify storage tmf:tmp ar.l append value {text:"",extra:[{score:{name:"#t",objective:"tmf.tmp"},color:"aqua"},{text:" tipped",color:"gray"}]}
+    execute unless data storage tmf:tmp ar.l[0] run data modify storage tmf:tmp ar.l append value {text:"no arrows!",color:"red"}
+    execute if items entity @s weapon.* #tmf:launchers[minecraft:enchantments~[{enchantments:"minecraft:infinity"}]] run data modify storage tmf:tmp ar.l append value {text:"∞ Infinity",color:"light_purple"}
+    title @s actionbar [{text:"🏹 ",color:"gold"},{nbt:"ar.l[]",storage:"tmf:tmp",interpret:true,separator:{text:"  ·  ",color:"dark_gray"}}]
+""")
+fn("compass/lodestone", """
+    data modify storage tmf:tmp cp set value {i:"🧭",n:"Lodestone"}
+    execute if items entity @s weapon.mainhand minecraft:compass[minecraft:lodestone_tracker] run data modify storage tmf:tmp cp.t set from entity @s SelectedItem.components."minecraft:lodestone_tracker".target
+    execute unless data storage tmf:tmp cp.t run data modify storage tmf:tmp cp.t set from entity @s equipment.offhand.components."minecraft:lodestone_tracker".target
+    execute unless data storage tmf:tmp cp.t run return run title @s actionbar [{text:"🧭 ",color:"gold"},{text:"This compass lost its lodestone",color:"gray"}]
+    function tmf:compass/show
+""")
+fn("compass/recovery", """
+    data modify storage tmf:tmp cp set value {i:"💀",n:"Last death"}
+    execute unless data entity @s LastDeathLocation run return run title @s actionbar [{text:"💀 ",color:"gray"},{text:"You haven't died yet",color:"gray"}]
+    data modify storage tmf:tmp cp.t set from entity @s LastDeathLocation
+    function tmf:compass/show
+""")
+fn("compass/show", "\n".join([
+    "execute store result score #tx tmf.tmp run data get storage tmf:tmp cp.t.pos[0]",
+    "execute store result score #ty tmf.tmp run data get storage tmf:tmp cp.t.pos[1]",
+    "execute store result score #tz tmf.tmp run data get storage tmf:tmp cp.t.pos[2]",
+    "execute store result storage tmf:tmp cp.x int 1 run scoreboard players get #tx tmf.tmp",
+    "execute store result storage tmf:tmp cp.y int 1 run scoreboard players get #ty tmf.tmp",
+    "execute store result storage tmf:tmp cp.z int 1 run scoreboard players get #tz tmf.tmp",
+    "data modify storage tmf:tmp dm.s set from storage tmf:tmp cp.t.dimension",
+    "function tmf:util/dim_from_string",
+    "function tmf:util/dim_code",
+    "execute unless score #dc tmf.tmp = #cd tmf.tmp run return run function tmf:compass/other",
+    "function tmf:nav/compute",
+    "data modify storage tmf:tmp cp.d set from storage tmf:tmp nv.d",
+    "function tmf:compass/show_m with storage tmf:tmp cp",
+]))
+fn("compass/show_m", '$title @s actionbar [{text:"$(i) $(n): ",color:"gold"},{text:"$(x) $(y) $(z)",color:"white"},{text:"  ·  $(d) m away",color:"gray"}]')
+fn("compass/other", "\n".join(
+    [f'execute if score #dc tmf.tmp matches {i} run data modify storage tmf:tmp cp.dn set value "{d}"' for i, d in enumerate(DIM_NAMES)] +
+    ["function tmf:compass/other_m with storage tmf:tmp cp"]))
+fn("compass/other_m", '$title @s actionbar [{text:"$(i) $(n): ",color:"gold"},{text:"$(x) $(y) $(z)",color:"white"},{text:"  in $(dn)",color:"gray"}]')
+
+# ---------------------------------------------------------------------------
+# Slime chunk checker (Java's Random reimplemented with 12-bit limbs)
+# ---------------------------------------------------------------------------
+SL_HASH = SL_build_hash()
+SL_NEXT = SL_build_next()
+SL_PARSE = SL_build_parse_digit()
+SL_NEG = SL_build_negate()
+SL_LOW = SL_build_low32()
+_slc = set()
+for _p in (SL_HASH, SL_NEXT, SL_PARSE, SL_NEG, SL_LOW):
+    _slc |= _p.consts
+fn("slime/init", "\n".join(f"scoreboard players set #k{v} tmf.sl {v}".replace("#k-", "#km") for v in sorted(_slc)))
+fn("slime/hash", "\n".join(SL_HASH.emit()))
+fn("slime/next", "\n".join(SL_NEXT.emit() + [
+    "# Random.nextInt(10) rejects the top few values of next(31) and draws again",
+    "execute if score #u tmf.sl matches 2147483640.. run function tmf:slime/next"]))
+fn("slime/show", """
+    execute unless dimension minecraft:overworld run return run title @s actionbar [{text:"🟢 ",color:"green"},{text:"Slime chunks only exist in the Overworld",color:"gray"}]
+    execute unless score #seed_set tmf.cfg matches 1 run return run title @s actionbar [{text:"🟢 ",color:"green"},{text:"Slime chunk checker is not set up yet – an admin has to enter the world seed",color:"gray"}]
+    execute store result score #cx tmf.sl run data get entity @s Pos[0] 0.0625
+    execute store result score #cz tmf.sl run data get entity @s Pos[2] 0.0625
+    execute unless score @s tmf.slx = #cx tmf.sl run function tmf:slime/compute
+    execute unless score @s tmf.slz = #cz tmf.sl run function tmf:slime/compute
+    execute if score @s tmf.slr matches 1 run return run title @s actionbar [{text:"🟢 ",color:"green"},{text:"Slime chunk!",color:"green",bold:true},{text:"  slimes spawn here below Y 40",color:"gray"}]
+    title @s actionbar [{text:"⬛ ",color:"dark_gray"},{text:"Not a slime chunk",color:"gray"}]
+""")
+fn("slime/compute", """
+    scoreboard players operation @s tmf.slx = #cx tmf.sl
+    scoreboard players operation @s tmf.slz = #cz tmf.sl
+    scoreboard players operation #s0 tmf.sl = #seed0 tmf.cfg
+    scoreboard players operation #s1 tmf.sl = #seed1 tmf.cfg
+    scoreboard players operation #s2 tmf.sl = #seed2 tmf.cfg
+    scoreboard players operation #s3 tmf.sl = #seed3 tmf.cfg
+    function tmf:slime/hash
+    function tmf:slime/next
+    scoreboard players set @s tmf.slr 0
+    execute if score #out tmf.sl matches 0 run scoreboard players set @s tmf.slr 1
+""")
+# seed entry (admins, via dialog text input -> /function with the typed text)
+_seed_dialog = ('dialog show @s {type:"minecraft:multi_action",title:{text:"🟢 Slime chunk seed",color:"gold",bold:true},body:[{type:"minecraft:plain_message",contents:{text:"The slime chunk checker needs the world seed, which datapacks cannot read by themselves. Run /seed, copy the number and paste it here. TMF checks it against the world before saving it.\\n\\nStatus: %s",color:"gray"},width:340}],'
+                'inputs:[{type:"minecraft:text",key:"seed",label:{text:"World seed"},width:300,max_length:21}],columns:1,pause:false,'
+                'actions:[{label:{text:"Save seed",color:"green"},width:200,action:{type:"minecraft:dynamic/run_command",template:"/function tmf:slime/set_seed {s:\\"$(seed)\\"}"}}],'
+                'exit_action:{label:{text:"Back"},width:150,action:{type:"minecraft:run_command",command:"/trigger tmf set 2"}}}')
+fn("admin/slime_seed", "\n".join([
+    "execute if score #seed_set tmf.cfg matches 1 run return run " + _seed_dialog % "a seed is set and verified.",
+    _seed_dialog % "not set yet.",
+]))
+_digits = "\n".join(f'execute if data storage tmf:tmp sl{{c:"{d}"}} run scoreboard players set #d tmf.sl {d}' for d in range(10))
+fn("slime/set_seed", """
+    execute unless entity @s[tag=tmf.admin] run return fail
+    $data modify storage tmf:tmp sl set value {s:"$(s)"}
+    scoreboard players set #p0 tmf.sl 0
+    scoreboard players set #p1 tmf.sl 0
+    scoreboard players set #p2 tmf.sl 0
+    scoreboard players set #p3 tmf.sl 0
+    scoreboard players set #len tmf.sl 0
+    scoreboard players set #bad tmf.sl 0
+    scoreboard players set #neg tmf.sl 0
+    data modify storage tmf:tmp sl.c set string storage tmf:tmp sl.s 0 1
+    execute if data storage tmf:tmp sl{c:"-"} run scoreboard players set #neg tmf.sl 1
+    execute if score #neg tmf.sl matches 1 run data modify storage tmf:tmp sl.s set string storage tmf:tmp sl.s 1
+    function tmf:slime/parse
+    execute if score #len tmf.sl matches 0 run scoreboard players set #bad tmf.sl 1
+    execute if score #len tmf.sl matches 20.. run scoreboard players set #bad tmf.sl 1
+    execute if score #bad tmf.sl matches 1 run return run tellraw @s [{text:"[TMF] ",color:"gold"},{text:"That is not a number. Copy the number that /seed shows.",color:"red"}]
+    execute if score #neg tmf.sl matches 1 run function tmf:slime/negate
+    function tmf:slime/low32
+    execute store result score #real tmf.sl run seed
+    execute unless score #lo tmf.sl = #real tmf.sl run return run tellraw @s [{text:"[TMF] ",color:"gold"},{text:"That is not this world's seed. Copy the number that /seed shows.",color:"red"}]
+    scoreboard players operation #seed0 tmf.cfg = #p0 tmf.sl
+    scoreboard players operation #seed1 tmf.cfg = #p1 tmf.sl
+    scoreboard players operation #seed2 tmf.cfg = #p2 tmf.sl
+    scoreboard players operation #seed3 tmf.cfg = #p3 tmf.sl
+    scoreboard players set #seed_set tmf.cfg 1
+    scoreboard players reset * tmf.slx
+    tellraw @s [{text:"[TMF] ",color:"gold"},{text:"Seed saved. Hold a slimeball to check for slime chunks.",color:"green"}]
+    function tmf:admin/open
+""")
+fn("slime/parse", "\n".join([
+    'execute if data storage tmf:tmp sl{s:""} run return 0',
+    "execute if score #len tmf.sl matches 25.. run return 0",
+    "data modify storage tmf:tmp sl.c set string storage tmf:tmp sl.s 0 1",
+    "data modify storage tmf:tmp sl.s set string storage tmf:tmp sl.s 1",
+    "scoreboard players set #d tmf.sl -1",
+    _digits,
+    "execute if score #d tmf.sl matches -1 run return run scoreboard players set #bad tmf.sl 1",
+    "scoreboard players add #len tmf.sl 1",
+] + SL_PARSE.emit() + ["function tmf:slime/parse"]))
+fn("slime/negate", "\n".join(SL_NEG.emit()))
+fn("slime/low32", "\n".join(SL_LOW.emit()))
+
+# ---------------------------------------------------------------------------
+# Biome change info
+# ---------------------------------------------------------------------------
+BIOMES = _BIOME_LIST
+fn("biome/check", "\n".join(
+    ["scoreboard players set #b tmf.tmp 0"] +
+    [f"execute if biome ~ ~ ~ minecraft:{b} run scoreboard players set #b tmf.tmp {i + 1}" for i, b in enumerate(BIOMES)] + [
+    "execute if score #b tmf.tmp matches 0 run return 0",
+    "execute if score #b tmf.tmp = @s tmf.bio run return run scoreboard players set @s tmf.bic 0",
+    "# a new biome must be seen twice in a row (2 seconds) so walking along a border doesn't spam",
+    "execute unless score #b tmf.tmp = @s tmf.bic run return run scoreboard players operation @s tmf.bic = #b tmf.tmp",
+    "execute unless score @s tmf.bio matches 1.. run return run scoreboard players operation @s tmf.bio = #b tmf.tmp",
+    "scoreboard players operation @s tmf.bio = #b tmf.tmp",
+    "scoreboard players set @s tmf.bic 0",
+    "execute if score @s tmf.abt matches 1.. run return 0",
+    "scoreboard players set @s tmf.abt 40",
+] + [f'execute if score #b tmf.tmp matches {i + 1} run return run title @s actionbar [{{text:"Entering ",color:"gray"}},{{translate:"biome.minecraft.{b}",color:"white"}}]' for i, b in enumerate(BIOMES)]))
+
+# ---------------------------------------------------------------------------
+# Entity crowd warning (every 30 seconds, the 3x3 chunks around each player)
+# ---------------------------------------------------------------------------
+fn("ew/player", "\n".join([
+    "execute store result score #ecx tmf.tmp run data get entity @s Pos[0] 0.0625",
+    "execute store result score #ecz tmf.tmp run data get entity @s Pos[2] 0.0625",
+    "execute store result storage tmf:tmp ew.y int 1 run data get entity @s Pos[1]",
+    "function tmf:util/dim_code",
+    "execute store result storage tmf:tmp ew.d int 1 run scoreboard players get #cd tmf.tmp",
+    'data modify storage tmf:tmp ew.dim set value "minecraft:overworld"',
+    'execute if dimension minecraft:the_nether run data modify storage tmf:tmp ew.dim set value "minecraft:the_nether"',
+    'execute if dimension minecraft:the_end run data modify storage tmf:tmp ew.dim set value "minecraft:the_end"',
+    "execute if score #cd tmf.tmp matches 3 run return 0",
+] + [l for dx in (-1, 0, 1) for dz in (-1, 0, 1) for l in (
+    "scoreboard players operation #t tmf.tmp = #ecx tmf.tmp",
+    f"scoreboard players add #t tmf.tmp {dx}" if dx >= 0 else "scoreboard players remove #t tmf.tmp 1",
+    "execute store result storage tmf:tmp ew.cx int 1 run scoreboard players get #t tmf.tmp",
+    "scoreboard players operation #t tmf.tmp *= #16 tmf.c",
+    "execute store result storage tmf:tmp ew.x int 1 run scoreboard players get #t tmf.tmp",
+    "scoreboard players operation #t tmf.tmp = #ecz tmf.tmp",
+    f"scoreboard players add #t tmf.tmp {dz}" if dz >= 0 else "scoreboard players remove #t tmf.tmp 1",
+    "execute store result storage tmf:tmp ew.cz int 1 run scoreboard players get #t tmf.tmp",
+    "scoreboard players operation #t tmf.tmp *= #16 tmf.c",
+    "execute store result storage tmf:tmp ew.z int 1 run scoreboard players get #t tmf.tmp",
+    "function tmf:ew/chunk with storage tmf:tmp ew")]))
+fn("ew/chunk", """
+    $execute positioned $(x) -64 $(z) store result score #n tmf.tmp if entity @e[type=!minecraft:player,dx=15,dy=383,dz=15]
+    execute if score #n tmf.tmp < #ew_limit tmf.cfg run return 0
+    # warn about the same chunk at most every 5 minutes
+    scoreboard players set #last tmf.tmp -100000
+    $execute if data storage tmf:data ewc."$(d)_$(cx)_$(cz)" store result score #last tmf.tmp run data get storage tmf:data ewc."$(d)_$(cx)_$(cz)"
+    scoreboard players operation #age tmf.tmp = #tick tmf.c
+    scoreboard players operation #age tmf.tmp -= #last tmf.tmp
+    execute if score #age tmf.tmp matches 0..5999 run return 0
+    $execute store result storage tmf:data ewc."$(d)_$(cx)_$(cz)" int 1 run scoreboard players get #tick tmf.c
+    $execute positioned $(x) -64 $(z) store result score #ni tmf.tmp if entity @e[type=minecraft:item,dx=15,dy=383,dz=15]
+    $execute positioned $(x) -64 $(z) store result score #nx tmf.tmp if entity @e[type=minecraft:experience_orb,dx=15,dy=383,dz=15]
+    $execute positioned $(x) -64 $(z) store result score #nm tmf.tmp if entity @e[type=!#tmf:no_blast,type=!minecraft:player,dx=15,dy=383,dz=15]
+    $tellraw @a[tag=tmf.admin] [{text:"[TMF] ",color:"gold"},{text:"⚠ ",color:"yellow"},{score:{name:"#n",objective:"tmf.tmp"},color:"red",bold:true},{text:" entities in chunk ",color:"yellow"},{text:"$(cx), $(cz)",color:"white"},{text:" (blocks $(x) $(z)) near ",color:"yellow"},{selector:"@s",color:"white"},{text:" – mobs ",color:"gray"},{score:{name:"#nm",objective:"tmf.tmp"},color:"white"},{text:", items ",color:"gray"},{score:{name:"#ni",objective:"tmf.tmp"},color:"white"},{text:", XP orbs ",color:"gray"},{score:{name:"#nx",objective:"tmf.tmp"},color:"white"},{text:"  [Teleport]",color:"aqua",click_event:{action:"run_command",command:"/execute in $(dim) run tp @s $(x) $(y) $(z)"},hover_event:{action:"show_text",value:"Teleport there (operators only)"}}]
+""")
+cycle("ew_limit", "ew_limit", [100, 150, 200, 300, 500])
+
+# ---------------------------------------------------------------------------
+# Admin: lag helper
+# ---------------------------------------------------------------------------
+HOSTILE = ["zombie", "husk", "drowned", "zombie_villager", "skeleton", "stray", "bogged", "parched", "wither_skeleton",
+           "creeper", "spider", "cave_spider", "enderman", "endermite", "silverfish", "witch", "slime", "magma_cube",
+           "phantom", "blaze", "ghast", "zoglin", "pillager", "vindicator", "evoker", "vex", "ravager", "guardian",
+           "breeze", "creaking", "zombified_piglin", "hoglin"]
+js(f"data/{NS}/tags/entity_type/hostile.json", {"values": ["minecraft:" + h for h in HOSTILE]})
+js(f"data/{NS}/tags/entity_type/decor.json", {"values": ["minecraft:item_frame", "minecraft:glow_item_frame", "minecraft:painting",
+                                                        "minecraft:armor_stand", "minecraft:leash_knot"]})
+js(f"data/{NS}/tags/entity_type/vehicles.json", {"values": ["#minecraft:boat", "minecraft:minecart", "minecraft:chest_minecart",
+    "minecraft:hopper_minecart", "minecraft:tnt_minecart", "minecraft:furnace_minecart", "minecraft:spawner_minecart",
+    "minecraft:command_block_minecart"]})
+js(f"data/{NS}/tags/entity_type/technical.json", {"values": ["minecraft:marker", "minecraft:interaction", "minecraft:text_display",
+    "minecraft:item_display", "minecraft:block_display", "minecraft:area_effect_cloud"]})
+_lag_counts = [("all", "@e"), ("pl", "@a"), ("it", "@e[type=minecraft:item]"), ("xp", "@e[type=minecraft:experience_orb]"),
+               ("ar", "@e[type=#minecraft:arrows]"), ("ho", "@e[type=#tmf:hostile]"), ("an", "@e[type=#tmf:breedable]"),
+               ("vi", "@e[type=minecraft:villager]"), ("de", "@e[type=#tmf:decor]"), ("ve", "@e[type=#tmf:vehicles]"),
+               ("te", "@e[type=#tmf:technical]")]
+fn("lag/open", "\n".join(
+    ["playsound minecraft:ui.button.click master @s ~ ~ ~ 0.4 1.2", "data modify storage tmf:tmp lg set value {l:[]}"] +
+    [f"execute store result storage tmf:tmp lg.{k} int 1 if entity {sel}" for k, sel in _lag_counts] + [
+    "execute as @a at @s run function tmf:lag/near",
+    "function tmf:lag/show with storage tmf:tmp lg",
+]))
+fn("lag/near", """
+    execute store result storage tmf:tmp ln.n int 1 if entity @e[type=!minecraft:player,distance=..64]
+    execute store result storage tmf:tmp ln.id int 1 run scoreboard players get @s tmf.id
+    function tmf:lag/near_m with storage tmf:tmp ln
+""")
+fn("lag/near_m", """
+    $data modify storage tmf:tmp ln.name set from storage tmf:data names[{id:$(id)}].name
+    function tmf:lag/near_m2 with storage tmf:tmp ln
+""")
+fn("lag/near_m2", '$data modify storage tmf:tmp lg.l append value {text:"\\n  $(name): $(n)",color:"white"}')
+fn("lag/show", "\n".join([
+    '$data modify storage tmf:tmp d set value {dialog:{type:"minecraft:multi_action",title:{text:"🧹 Lag helper",color:"gold",bold:true},'
+    'body:[{type:"minecraft:plain_message",contents:{text:"Loaded entities: $(all)\\n",color:"white",extra:[{text:"Players $(pl) · dropped items $(it) · XP orbs $(xp) · arrows $(ar)\\nhostile mobs $(ho) · animals $(an) · villagers $(vi)\\nframes, stands & paintings $(de) · boats & minecarts $(ve) · technical $(te)\\n\\nEntities within 64 blocks of each player:",color:"gray"}]},width:340}],'
+    'columns:2,pause:false,actions:[],exit_action:{label:{text:"Back"},width:150,action:{type:"minecraft:run_command",command:"/trigger tmf set 2"}}}}',
+    "data modify storage tmf:tmp d.dialog.body[0].contents.extra append from storage tmf:tmp lg.l[]",
+    APPEND + button('{text:"Clear old items",color:"yellow"}', "Removes dropped items that have been lying around for 2+ minutes (death drops are kept)", "/trigger tmf set 5001"),
+    APPEND + button('{text:"Clear XP orbs",color:"yellow"}', "Removes all experience orbs", "/trigger tmf set 5002"),
+    APPEND + button('{text:"Clear stuck arrows",color:"yellow"}', "Removes arrows stuck in blocks", "/trigger tmf set 5003"),
+    APPEND + button('{text:"Remove hostile mobs",color:"red"}', "Removes hostile mobs that are not name-tagged or otherwise persistent", "/trigger tmf set 5004"),
+    APPEND + button('{text:"↻ Refresh",color:"aqua"}', "Count again", "/trigger tmf set 5000"),
+    "function tmf:util/show_dialog with storage tmf:tmp d",
+]))
+fn("lag/trigger", """
+    execute if score #v tmf.tmp matches 5000 run return run function tmf:lag/open
+    scoreboard players set #n tmf.tmp 0
+    execute if score #v tmf.tmp matches 5001 as @e[type=minecraft:item,tag=!tmf.dg] if function tmf:lag/old_item run tag @s add tmf.lagk
+    execute if score #v tmf.tmp matches 5002 run tag @e[type=minecraft:experience_orb] add tmf.lagk
+    execute if score #v tmf.tmp matches 5003 as @e[type=#minecraft:arrows] if data entity @s {inGround:1b} run tag @s add tmf.lagk
+    execute if score #v tmf.tmp matches 5004 as @e[type=#tmf:hostile] unless data entity @s {PersistenceRequired:1b} unless data entity @s CustomName run tag @s add tmf.lagk
+    execute store result score #n tmf.tmp if entity @e[tag=tmf.lagk]
+    execute if score #v tmf.tmp matches 5004 as @e[tag=tmf.lagk] at @s run tp @s ~ -1000 ~
+    execute unless score #v tmf.tmp matches 5004 run kill @e[tag=tmf.lagk]
+    tag @e[tag=tmf.lagk] remove tmf.lagk
+    tellraw @a[tag=tmf.admin] [{text:"[TMF] ",color:"gold"},{selector:"@s",color:"white"},{text:" removed ",color:"gray"},{score:{name:"#n",objective:"tmf.tmp"},color:"white"},{text:" entities with the lag helper.",color:"gray"}]
+    function tmf:lag/open
+""")
+fn("lag/old_item", """
+    execute store result score #age tmf.tmp run data get entity @s Age
+    execute if score #age tmf.tmp matches 2400.. run return 1
+    return fail
+""")
+
+# ---------------------------------------------------------------------------
+# Admin: player inspector
+# ---------------------------------------------------------------------------
+fn("insp/list", "\n".join([
+    "playsound minecraft:ui.button.click master @s ~ ~ ~ 0.4 1.2",
+    dialog_base('{text:"🔍 Player inspector",color:"gold",bold:true}',
+                '{text:"Pick a player to see their details. ● online, ○ offline.",color:"gray"}', columns=3,
+                exit_label="Back", exit_cmd="/trigger tmf set 2"),
+    "data modify storage tmf:tmp il set from storage tmf:data names",
+    "function tmf:insp/list_next",
+    "function tmf:util/show_dialog with storage tmf:tmp d",
+]))
+fn("insp/list_next", """
+    execute unless data storage tmf:tmp il[0] run return 0
+    data modify storage tmf:tmp ie set from storage tmf:tmp il[0]
+    data remove storage tmf:tmp il[0]
+    execute store result score #c tmf.tmp run data get storage tmf:tmp ie.id
+    scoreboard players add #c tmf.tmp 100000
+    execute store result storage tmf:tmp ie.code int 1 run scoreboard players get #c tmf.tmp
+    data modify storage tmf:tmp ie merge value {dot:"○",col:"gray"}
+    function tmf:insp/list_m with storage tmf:tmp ie
+    function tmf:insp/list_next
+""")
+fn("insp/list_m", """
+    $execute if entity @a[scores={tmf.id=$(id)}] run data modify storage tmf:tmp ie merge value {dot:"●",col:"green"}
+    function tmf:insp/list_add with storage tmf:tmp ie
+""")
+fn("insp/list_add", "$" + APPEND + '{label:{text:"$(dot) $(name)",color:"$(col)"},width:110,action:{type:"minecraft:run_command",command:"/trigger tmf set $(code)"}}')
+fn("insp/show", "\n".join([
+    "scoreboard players operation #iid tmf.tmp = #v tmf.tmp",
+    "scoreboard players remove #iid tmf.tmp 100000",
+    'data modify storage tmf:tmp ip set value {name:"?",st:"",tp:"",left:-1}',
+    "execute store result storage tmf:tmp ip.id int 1 run scoreboard players get #iid tmf.tmp",
+    "execute store result storage tmf:tmp ip.code int 1 run scoreboard players get #v tmf.tmp",
+    "function tmf:insp/load with storage tmf:tmp ip",
+    "execute if data storage tmf:tmp ip{name:\"?\"} run return run function tmf:insp/list",
+    "function tmf:insp/scores with storage tmf:tmp ip",
+    "scoreboard players set #on tmf.tmp 0",
+    "function tmf:insp/online_m with storage tmf:tmp ip",
+    "execute if score #on tmf.tmp matches 0 run function tmf:insp/offline",
+    "function tmf:insp/dialog with storage tmf:tmp ip",
+]))
+fn("insp/load", """
+    $data modify storage tmf:tmp ip.name set from storage tmf:data names[{id:$(id)}].name
+    $data modify storage tmf:tmp ip.left set from storage tmf:data names[{id:$(id)}].left
+""")
+_sc = [("tmf.s.play", "pt"), ("tmf.s.deaths", "de"), ("tmf.s.mobs", "mk"), ("tmf.s.pk", "pk"),
+       ("tmf.px", "lx"), ("tmf.py", "ly"), ("tmf.pz", "lz"), ("tmf.dim", "ld")]
+fn("insp/scores", "\n".join(
+    [l for obj, k in _sc for l in (f"scoreboard players set #{k} tmf.tmp 0",
+                                   f"$scoreboard players operation #{k} tmf.tmp = $(name) {obj}")] + [
+    "scoreboard players operation #h tmf.tmp = #pt tmf.tmp",
+    "scoreboard players operation #h tmf.tmp /= #72000 tmf.c",
+    "scoreboard players operation #m tmf.tmp = #pt tmf.tmp",
+    "scoreboard players operation #m tmf.tmp /= #1200 tmf.c",
+    "scoreboard players operation #m tmf.tmp %= #60 tmf.c",
+    "execute store result storage tmf:tmp ip.h int 1 run scoreboard players get #h tmf.tmp",
+    "execute store result storage tmf:tmp ip.m int 1 run scoreboard players get #m tmf.tmp",
+    "execute store result storage tmf:tmp ip.de int 1 run scoreboard players get #de tmf.tmp",
+    "execute store result storage tmf:tmp ip.mk int 1 run scoreboard players get #mk tmf.tmp",
+    "execute store result storage tmf:tmp ip.pk int 1 run scoreboard players get #pk tmf.tmp",
+    "scoreboard players operation #lx tmf.tmp /= #10 tmf.c",
+    "scoreboard players operation #ly tmf.tmp /= #10 tmf.c",
+    "scoreboard players operation #lz tmf.tmp /= #10 tmf.c",
+    "execute store result storage tmf:tmp ip.x int 1 run scoreboard players get #lx tmf.tmp",
+    "execute store result storage tmf:tmp ip.y int 1 run scoreboard players get #ly tmf.tmp",
+    "execute store result storage tmf:tmp ip.z int 1 run scoreboard players get #lz tmf.tmp",
+] + [f'execute if score #ld tmf.tmp matches {i} run data modify storage tmf:tmp ip merge value {{dn:"{n}",dim:"{d}"}}' for i, (n, d) in enumerate(zip(DIM_NAMES, DIM_IDS))]
+  + ['execute if score #ld tmf.tmp matches 3.. run data modify storage tmf:tmp ip merge value {dn:"another dimension",dim:"minecraft:overworld"}']))
+fn("insp/online_m", "$execute as @a[scores={tmf.id=$(id)},limit=1] at @s run function tmf:insp/online")
+fn("insp/online", "\n".join([
+    "scoreboard players set #on tmf.tmp 1",
+    "execute store result storage tmf:tmp ip.hp int 1 run data get entity @s Health",
+    "execute store result storage tmf:tmp ip.fo int 1 run data get entity @s foodLevel",
+    "execute store result storage tmf:tmp ip.lv int 1 run data get entity @s XpLevel",
+    "execute store result storage tmf:tmp ip.x int 1 run data get entity @s Pos[0]",
+    "execute store result storage tmf:tmp ip.y int 1 run data get entity @s Pos[1]",
+    "execute store result storage tmf:tmp ip.z int 1 run data get entity @s Pos[2]",
+    "function tmf:util/dim_code",
+] + [f'execute if score #cd tmf.tmp matches {i} run data modify storage tmf:tmp ip.dn set value "{n}"' for i, n in enumerate(DIM_NAMES)] + [
+    'data modify storage tmf:tmp ip.gm set value "Survival"',
+    'execute if entity @s[gamemode=creative] run data modify storage tmf:tmp ip.gm set value "Creative"',
+    'execute if entity @s[gamemode=adventure] run data modify storage tmf:tmp ip.gm set value "Adventure"',
+    'execute if entity @s[gamemode=spectator] run data modify storage tmf:tmp ip.gm set value "Spectator"',
+    'data modify storage tmf:tmp ip.afk set value ""',
+    'execute if entity @s[tag=tmf.afk] run data modify storage tmf:tmp ip.afk set value "  (AFK)"',
+    "execute store result storage tmf:tmp ip.oid int 1 run scoreboard players get @s tmf.id",
+    "function tmf:insp/session with storage tmf:tmp ip",
+    "function tmf:insp/online_text with storage tmf:tmp ip",
+]))
+fn("insp/session", """
+    scoreboard players set #st tmf.tmp 0
+    $execute store result score #st tmf.tmp run data get storage tmf:data online[{id:$(oid)}].start
+    scoreboard players operation #len tmf.tmp = #tick tmf.c
+    scoreboard players operation #len tmf.tmp -= #st tmf.tmp
+    scoreboard players operation #len tmf.tmp /= #1200 tmf.c
+    execute store result storage tmf:tmp ip.ses int 1 run scoreboard players get #len tmf.tmp
+""")
+fn("insp/online_text", """
+    $data modify storage tmf:tmp ip.st set value "● Online$(afk) – $(gm), session $(ses) min\\\\n❤ $(hp)/20   🍗 $(fo)/20   ✦ level $(lv)\\\\nPosition: $(x) $(y) $(z) in $(dn)"
+    $data modify storage tmf:tmp ip.tp set value "/tp @s $(name)"
+""")
+fn("insp/offline", """
+    data modify storage tmf:tmp ip.ago set value "unknown"
+    execute store result score #lt tmf.tmp run data get storage tmf:tmp ip.left
+    execute if score #lt tmf.tmp matches 0.. run function tmf:insp/ago
+    function tmf:insp/offline_text with storage tmf:tmp ip
+""")
+fn("insp/ago", """
+    scoreboard players operation #len tmf.tmp = #tick tmf.c
+    scoreboard players operation #len tmf.tmp -= #lt tmf.tmp
+    scoreboard players operation #len tmf.tmp /= #20 tmf.c
+    scoreboard players operation #sec tmf.tmp = #len tmf.tmp
+    scoreboard players operation #sec tmf.tmp /= #60 tmf.c
+    scoreboard players operation #hh tmf.tmp = #sec tmf.tmp
+    scoreboard players operation #hh tmf.tmp /= #60 tmf.c
+    scoreboard players operation #sec tmf.tmp %= #60 tmf.c
+    execute store result storage tmf:tmp ag.h int 1 run scoreboard players get #hh tmf.tmp
+    execute store result storage tmf:tmp ag.m int 1 run scoreboard players get #sec tmf.tmp
+    function tmf:insp/ago_m with storage tmf:tmp ag
+""")
+fn("insp/ago_m", '$data modify storage tmf:tmp ip.ago set value "$(h)h $(m)m of server time ago"')
+fn("insp/offline_text", """
+    $data modify storage tmf:tmp ip.st set value "○ Offline – last seen $(ago)\\\\nLast known position: $(x) $(y) $(z) in $(dn)"
+    $data modify storage tmf:tmp ip.tp set value "/execute in $(dim) run tp @s $(x) $(y) $(z)"
+""")
+fn("insp/dialog", """
+    $dialog show @s {type:"minecraft:multi_action",title:{text:"🔍 $(name)",color:"gold",bold:true},body:[{type:"minecraft:plain_message",contents:{text:"$(st)\\n\\nPlaytime: $(h)h $(m)m\\nDeaths: $(de)   Mob kills: $(mk)   Player kills: $(pk)",color:"white"},width:340}],columns:2,pause:false,actions:[{label:{text:"Teleport there",color:"aqua"},tooltip:{text:"Operators only"},width:150,action:{type:"minecraft:run_command",command:"$(tp)"}},{label:{text:"↻ Refresh"},width:150,action:{type:"minecraft:run_command",command:"/trigger tmf set $(code)"}}],exit_action:{label:{text:"Back"},width:150,action:{type:"minecraft:run_command",command:"/trigger tmf set 6000"}}}
+""")
+
+
+# ---------------------------------------------------------------------------
 # Uninstall
 # ---------------------------------------------------------------------------
 fn("uninstall", f"""
@@ -2739,18 +4357,27 @@ fn("uninstall", f"""
     tag @e[type=minecraft:armor_stand,tag=tmf.edit] remove tmf.edit
     kill @e[type=minecraft:item_display,tag=tmf.swap]
     kill @e[type=minecraft:item_display,tag=tmf.namebuf]
+    function tmf:griefing/restore_all
+    kill @e[type=minecraft:marker,tag=tmf.nav]
+    function tmf:hud/remove_all
     tag @e[tag=tmf.dg] remove tmf.dg
     tag @e[tag=tmf.eg] remove tmf.eg
     {chr(10).join(f'tag @a remove tmf.off.{k}' for k, *_ in PERSONAL)}
     {chr(10).join(f'tag @a remove tmf.on.{k}' for k, *_ in PERSONAL)}
     tag @a remove tmf.known
     tag @a remove tmf.sneaking
+    tag @a remove tmf.warm
     tag @a[tag=tmf.admin] remove tmf.admin
     team remove tmf.afk
     schedule clear tmf:loop/t5
     schedule clear tmf:loop/t20
     {chr(10).join(f'scoreboard objectives remove {o}' for o in DUMMIES + ["tmf", "tmf.stats", "tmf.deaths", "tmf.leave"] + list(STAT_OBJ))}
     data remove storage tmf:data online
+    data remove storage tmf:data names
+    data remove storage tmf:data wp
+    data remove storage tmf:data ewc
+    data remove storage tmf:data bk
+    data remove storage tmf:data rank
     data remove storage tmf:data bars
     data remove storage tmf:data version
     data remove storage tmf:tmp d

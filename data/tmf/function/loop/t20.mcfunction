@@ -22,5 +22,25 @@ scoreboard players operation #m60 tmf.tmp = #t20 tmf.c
 scoreboard players operation #m60 tmf.tmp %= #60 tmf.c
 execute if score #milestones tmf.cfg matches 1 if score #m60 tmf.tmp matches 0 as @a run function tmf:milestone/check
 
+# mob griefing: zombies and door breaking; undo changes on mobs that load after a feature was switched off
+execute if score #zombie_doors tmf.cfg matches 1 as @e[type=#tmf:door_breakers,tag=!tmf.zd] run function tmf:zombie/setup
+execute unless score #zombie_doors tmf.cfg matches 1 as @e[type=#tmf:door_breakers,tag=tmf.zd] run function tmf:zombie/restore
+execute unless score #creeper_nogrief tmf.cfg matches 1 as @e[type=minecraft:creeper,tag=tmf.cng] run function tmf:creeper/restore
+execute unless score #ghast_nogrief tmf.cfg matches 1 as @e[type=minecraft:fireball,tag=tmf.gng] run function tmf:ghast/restore
+
+# campfire regen (warmth message as soon as you are near, healing every 5 seconds)
+scoreboard players operation #m5 tmf.tmp = #t20 tmf.c
+scoreboard players operation #m5 tmf.tmp %= #5 tmf.c
+execute if score #campfire_regen tmf.cfg matches 1 as @a[gamemode=!spectator,gamemode=!creative] at @s run function tmf:regen/check
+
+# biome change info
+execute if score #biome_info tmf.cfg matches 1 as @a[tag=tmf.on.biome_info,gamemode=!spectator] at @s run function tmf:biome/check
+
+# entity crowd warning (every 30 seconds)
+scoreboard players operation #m30 tmf.tmp = #t20 tmf.c
+scoreboard players set #k tmf.tmp 30
+scoreboard players operation #m30 tmf.tmp %= #k tmf.tmp
+execute if score #entity_warning tmf.cfg matches 1 if score #m30 tmf.tmp matches 0 as @a at @s run function tmf:ew/player
+
 # leave detection
 function tmf:join/check_leaves

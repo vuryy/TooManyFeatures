@@ -1,2 +1,2 @@
 tag @s remove tmf.on.magnet
-function tmf:menu/open
+function tmf:menu/cat/inventory

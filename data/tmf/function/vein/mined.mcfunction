@@ -18,7 +18,8 @@ scoreboard players set @s tmf.or.16 0
 scoreboard players set @s tmf.or.17 0
 scoreboard players set @s tmf.or.18 0
 execute if entity @s[tag=tmf.off.veinminer] run return 0
-execute unless entity @s[predicate=tmf:sneaking,gamemode=!creative,gamemode=!spectator] run return 0
+execute unless entity @s[gamemode=!creative,gamemode=!spectator] run return 0
+execute if entity @s[tag=!tmf.on.veinminer,predicate=!tmf:sneaking] run return 0
 execute unless items entity @s weapon.mainhand #minecraft:pickaxes run return 0
 $data modify storage tmf:tmp vm set value {tag:"$(tag)",xp:$(xp)}
 scoreboard players set #r tmf.tmp 0

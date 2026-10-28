@@ -36,6 +36,21 @@ scoreboard players set #copper_info tmf.cfg 1
 scoreboard players set #milestones tmf.cfg 1
 scoreboard players set #day_counter tmf.cfg 1
 scoreboard players set #fence_jump tmf.cfg 1
+scoreboard players set #creeper_nogrief tmf.cfg 1
+scoreboard players set #ghast_nogrief tmf.cfg 1
+scoreboard players set #zombie_doors tmf.cfg 1
+scoreboard players set #pet_health tmf.cfg 1
+scoreboard players set #animal_owners tmf.cfg 1
+scoreboard players set #crop_info tmf.cfg 1
+scoreboard players set #biome_info tmf.cfg 1
+scoreboard players set #campfire_info tmf.cfg 1
+scoreboard players set #furnace_info tmf.cfg 1
+scoreboard players set #slime_chunks tmf.cfg 1
+scoreboard players set #arrow_counter tmf.cfg 1
+scoreboard players set #lodestone_coords tmf.cfg 1
+scoreboard players set #waypoints tmf.cfg 1
+scoreboard players set #entity_warning tmf.cfg 1
+scoreboard players set #campfire_regen tmf.cfg 1
 function tmf:config/apply
 tellraw @a[tag=tmf.admin] [{text:"[TMF] ",color:"gold"},{text:"Preset applied: ",color:"gray"},{text:"Everything on",color:"aqua"}]
 function tmf:admin/open

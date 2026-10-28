@@ -1,2 +1,2 @@
 tag @s remove tmf.on.coords_hud
-function tmf:menu/open
+function tmf:menu/cat/info

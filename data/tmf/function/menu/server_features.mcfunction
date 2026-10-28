@@ -75,5 +75,35 @@ execute if score #day_counter tmf.cfg matches 1.. run data modify storage tmf:tm
 execute if score #day_counter tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Day Counter\n",color:"red"}
 execute if score #fence_jump tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Fence Jumping\n",color:"green"}
 execute if score #fence_jump tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Fence Jumping\n",color:"red"}
+execute if score #creeper_nogrief tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Creeper No-Grief\n",color:"green"}
+execute if score #creeper_nogrief tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Creeper No-Grief\n",color:"red"}
+execute if score #ghast_nogrief tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Ghast No-Grief\n",color:"green"}
+execute if score #ghast_nogrief tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Ghast No-Grief\n",color:"red"}
+execute if score #zombie_doors tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ No Zombie Door Breaking\n",color:"green"}
+execute if score #zombie_doors tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ No Zombie Door Breaking\n",color:"red"}
+execute if score #pet_health tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Pet Health\n",color:"green"}
+execute if score #pet_health tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Pet Health\n",color:"red"}
+execute if score #animal_owners tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Animal Owners\n",color:"green"}
+execute if score #animal_owners tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Animal Owners\n",color:"red"}
+execute if score #crop_info tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Crop Growth Info\n",color:"green"}
+execute if score #crop_info tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Crop Growth Info\n",color:"red"}
+execute if score #biome_info tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Biome Change Info\n",color:"green"}
+execute if score #biome_info tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Biome Change Info\n",color:"red"}
+execute if score #campfire_info tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Campfire Timer\n",color:"green"}
+execute if score #campfire_info tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Campfire Timer\n",color:"red"}
+execute if score #furnace_info tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Furnace Progress\n",color:"green"}
+execute if score #furnace_info tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Furnace Progress\n",color:"red"}
+execute if score #slime_chunks tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Slime Chunk Checker\n",color:"green"}
+execute if score #slime_chunks tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Slime Chunk Checker\n",color:"red"}
+execute if score #arrow_counter tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Arrow Counter\n",color:"green"}
+execute if score #arrow_counter tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Arrow Counter\n",color:"red"}
+execute if score #lodestone_coords tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Compass Coordinates\n",color:"green"}
+execute if score #lodestone_coords tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Compass Coordinates\n",color:"red"}
+execute if score #waypoints tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Waypoints\n",color:"green"}
+execute if score #waypoints tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Waypoints\n",color:"red"}
+execute if score #entity_warning tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Entity Crowd Warning\n",color:"green"}
+execute if score #entity_warning tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Entity Crowd Warning\n",color:"red"}
+execute if score #campfire_regen tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Campfire Regen\n",color:"green"}
+execute if score #campfire_regen tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Campfire Regen\n",color:"red"}
 execute if score #perf tmf.cfg matches 1 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"\n⚡ Performance mode is on: health bars and damage numbers are paused.",color:"yellow"}
 function tmf:util/show_dialog with storage tmf:tmp d

@@ -1,4 +1,4 @@
-# TMF v1.10.0 – load
+# TMF v1.11.2 – load
 scoreboard objectives add tmf.cfg dummy
 scoreboard objectives add tmf.tmp dummy
 scoreboard objectives add tmf.c dummy
@@ -32,6 +32,19 @@ scoreboard objectives add tmf.awf dummy
 scoreboard objectives add tmf.awe dummy
 scoreboard objectives add tmf.btsup dummy
 scoreboard objectives add tmf.ms dummy
+scoreboard objectives add tmf.cr dummy
+scoreboard objectives add tmf.sl dummy
+scoreboard objectives add tmf.wx dummy
+scoreboard objectives add tmf.wy dummy
+scoreboard objectives add tmf.wz dummy
+scoreboard objectives add tmf.wd dummy
+scoreboard objectives add tmf.wn dummy
+scoreboard objectives add tmf.ws dummy
+scoreboard objectives add tmf.bio dummy
+scoreboard objectives add tmf.bic dummy
+scoreboard objectives add tmf.slx dummy
+scoreboard objectives add tmf.slz dummy
+scoreboard objectives add tmf.slr dummy
 scoreboard objectives add tmf trigger {text:"TMF menu"}
 scoreboard objectives add tmf.stats trigger {text:"TMF stats"}
 scoreboard objectives add tmf.deaths deathCount
@@ -144,6 +157,7 @@ scoreboard players set #20 tmf.c 20
 function tmf:sort/init_rank
 scoreboard players set #5 tmf.c 5
 scoreboard players set #10 tmf.c 10
+scoreboard players set #16 tmf.c 16
 scoreboard players set #24 tmf.c 24
 scoreboard players set #60 tmf.c 60
 scoreboard players set #100 tmf.c 100
@@ -156,7 +170,9 @@ scoreboard players set #100000 tmf.c 100000
 scoreboard players set #1728000 tmf.c 1728000
 
 data modify storage tmf:data bars set value [{f: "", e: "||||||||||||||||||||", c: "red"}, {f: "||", e: "||||||||||||||||||", c: "red"}, {f: "||||", e: "||||||||||||||||", c: "red"}, {f: "||||||", e: "||||||||||||||", c: "red"}, {f: "||||||||", e: "||||||||||||", c: "yellow"}, {f: "||||||||||", e: "||||||||||", c: "yellow"}, {f: "||||||||||||", e: "||||||||", c: "yellow"}, {f: "||||||||||||||", e: "||||||", c: "green"}, {f: "||||||||||||||||", e: "||||", c: "green"}, {f: "||||||||||||||||||", e: "||", c: "green"}, {f: "||||||||||||||||||||", e: "", c: "green"}]
-data modify storage tmf:data version set value "1.10.0"
+data modify storage tmf:data version set value "1.11.2"
+function tmf:slime/init
+function tmf:util/init_block_items
 
 execute unless score #installed tmf.cfg matches 1 run function tmf:config/install
 # upgrades: features added in a newer version start switched on
@@ -175,7 +191,7 @@ execute unless score #double_doors tmf.cfg matches -2147483648.. run scoreboard 
 execute unless score #cauldron_trash tmf.cfg matches -2147483648.. run scoreboard players set #cauldron_trash tmf.cfg 0
 execute unless score #health_bars tmf.cfg matches -2147483648.. run scoreboard players set #health_bars tmf.cfg 1
 execute unless score #damage_numbers tmf.cfg matches -2147483648.. run scoreboard players set #damage_numbers tmf.cfg 1
-execute unless score #afk tmf.cfg matches -2147483648.. run scoreboard players set #afk tmf.cfg 1
+execute unless score #afk tmf.cfg matches -2147483648.. run scoreboard players set #afk tmf.cfg 0
 execute unless score #stats_card tmf.cfg matches -2147483648.. run scoreboard players set #stats_card tmf.cfg 1
 execute unless score #join_leave tmf.cfg matches -2147483648.. run scoreboard players set #join_leave tmf.cfg 0
 execute unless score #harvest tmf.cfg matches -2147483648.. run scoreboard players set #harvest tmf.cfg 0
@@ -198,16 +214,41 @@ execute unless score #copper_info tmf.cfg matches -2147483648.. run scoreboard p
 execute unless score #milestones tmf.cfg matches -2147483648.. run scoreboard players set #milestones tmf.cfg 1
 execute unless score #day_counter tmf.cfg matches -2147483648.. run scoreboard players set #day_counter tmf.cfg 1
 execute unless score #fence_jump tmf.cfg matches -2147483648.. run scoreboard players set #fence_jump tmf.cfg 1
+execute unless score #creeper_nogrief tmf.cfg matches -2147483648.. run scoreboard players set #creeper_nogrief tmf.cfg 0
+execute unless score #ghast_nogrief tmf.cfg matches -2147483648.. run scoreboard players set #ghast_nogrief tmf.cfg 0
+execute unless score #zombie_doors tmf.cfg matches -2147483648.. run scoreboard players set #zombie_doors tmf.cfg 0
+execute unless score #pet_health tmf.cfg matches -2147483648.. run scoreboard players set #pet_health tmf.cfg 1
+execute unless score #animal_owners tmf.cfg matches -2147483648.. run scoreboard players set #animal_owners tmf.cfg 1
+execute unless score #crop_info tmf.cfg matches -2147483648.. run scoreboard players set #crop_info tmf.cfg 1
+execute unless score #biome_info tmf.cfg matches -2147483648.. run scoreboard players set #biome_info tmf.cfg 1
+execute unless score #campfire_info tmf.cfg matches -2147483648.. run scoreboard players set #campfire_info tmf.cfg 1
+execute unless score #furnace_info tmf.cfg matches -2147483648.. run scoreboard players set #furnace_info tmf.cfg 1
+execute unless score #slime_chunks tmf.cfg matches -2147483648.. run scoreboard players set #slime_chunks tmf.cfg 0
+execute unless score #arrow_counter tmf.cfg matches -2147483648.. run scoreboard players set #arrow_counter tmf.cfg 1
+execute unless score #lodestone_coords tmf.cfg matches -2147483648.. run scoreboard players set #lodestone_coords tmf.cfg 0
+execute unless score #waypoints tmf.cfg matches -2147483648.. run scoreboard players set #waypoints tmf.cfg 0
+execute unless score #entity_warning tmf.cfg matches -2147483648.. run scoreboard players set #entity_warning tmf.cfg 1
+execute unless score #campfire_regen tmf.cfg matches -2147483648.. run scoreboard players set #campfire_regen tmf.cfg 1
 # v1.4.0: switch to the new default feature set once
 execute unless score #defaults_v tmf.cfg matches 2.. run function tmf:admin/preset/recommended_silent
 scoreboard players set #defaults_v tmf.cfg 2
 # v1.9.2: Item Magnet is now off by default
 execute unless score #defaults_v3 tmf.cfg matches 1 run scoreboard players set #magnet tmf.cfg 0
 scoreboard players set #defaults_v3 tmf.cfg 1
+# v1.11.1: features that give an edge over vanilla start off (Slime Chunk Checker, Waypoints, Compass Coordinates)
+execute unless score #defaults_v4 tmf.cfg matches 1 run function tmf:config/defaults_v4
+scoreboard players set #defaults_v4 tmf.cfg 1
+# v1.11.2: AFK Detection off by default; Faster Paths, Fence Jumping and Biome Change Info are now opt-in per player
+execute unless score #defaults_v5 tmf.cfg matches 1 run function tmf:config/defaults_v5
+scoreboard players set #defaults_v5 tmf.cfg 1
+execute unless score #ew_limit tmf.cfg matches 1.. run scoreboard players set #ew_limit tmf.cfg 200
 function tmf:config/apply
 
 execute unless data storage tmf:data online run data modify storage tmf:data online set value []
 execute as @a at @s run function tmf:join/ensure_online
+execute unless data storage tmf:data names run data modify storage tmf:data names set value []
+execute unless data storage tmf:data wp run data modify storage tmf:data wp set value []
+execute as @a at @s run function tmf:names/ensure
 
 schedule function tmf:loop/t5 5t replace
 schedule function tmf:loop/t20 20t replace

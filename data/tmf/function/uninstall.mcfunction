@@ -18,56 +18,80 @@ execute as @a[tag=tmf.fj] run function tmf:fence/remove
 tag @e[type=minecraft:armor_stand,tag=tmf.edit] remove tmf.edit
 kill @e[type=minecraft:item_display,tag=tmf.swap]
 kill @e[type=minecraft:item_display,tag=tmf.namebuf]
+function tmf:griefing/restore_all
+kill @e[type=minecraft:marker,tag=tmf.nav]
+function tmf:hud/remove_all
 tag @e[tag=tmf.dg] remove tmf.dg
 tag @e[tag=tmf.eg] remove tmf.eg
-tag @a remove tmf.off.tool_swap
-tag @a remove tmf.off.shulker_preview
-tag @a remove tmf.off.fast_paths
-tag @a remove tmf.off.horse_stats
-tag @a remove tmf.off.pet_teleport
-tag @a remove tmf.off.ladder_drop
-tag @a remove tmf.off.double_doors
-tag @a remove tmf.off.harvest
-tag @a remove tmf.off.invisible_frames
-tag @a remove tmf.off.armor_warning
 tag @a remove tmf.off.best_tool
-tag @a remove tmf.off.coords_hud
-tag @a remove tmf.off.spawn_checker
+tag @a remove tmf.off.tool_swap
 tag @a remove tmf.off.veinminer
 tag @a remove tmf.off.tree_feller
-tag @a remove tmf.off.trader_alert
+tag @a remove tmf.off.armor_warning
+tag @a remove tmf.off.harvest
+tag @a remove tmf.off.ladder_drop
+tag @a remove tmf.off.double_doors
+tag @a remove tmf.off.invisible_frames
+tag @a remove tmf.off.spawn_checker
 tag @a remove tmf.off.sort_chest
-tag @a remove tmf.off.pickup_notices
 tag @a remove tmf.off.magnet
+tag @a remove tmf.off.pickup_notices
+tag @a remove tmf.off.shulker_preview
+tag @a remove tmf.off.pet_teleport
+tag @a remove tmf.off.pet_health
+tag @a remove tmf.off.animal_owners
+tag @a remove tmf.off.horse_stats
 tag @a remove tmf.off.breed_info
-tag @a remove tmf.off.copper_info
+tag @a remove tmf.off.trader_alert
+tag @a remove tmf.off.arrow_counter
+tag @a remove tmf.off.coords_hud
+tag @a remove tmf.off.waypoints
+tag @a remove tmf.off.biome_info
 tag @a remove tmf.off.day_counter
+tag @a remove tmf.off.crop_info
+tag @a remove tmf.off.campfire_info
+tag @a remove tmf.off.furnace_info
+tag @a remove tmf.off.copper_info
+tag @a remove tmf.off.slime_chunks
+tag @a remove tmf.off.lodestone_coords
+tag @a remove tmf.off.fast_paths
 tag @a remove tmf.off.fence_jump
-tag @a remove tmf.on.tool_swap
-tag @a remove tmf.on.shulker_preview
-tag @a remove tmf.on.fast_paths
-tag @a remove tmf.on.horse_stats
-tag @a remove tmf.on.pet_teleport
-tag @a remove tmf.on.ladder_drop
-tag @a remove tmf.on.double_doors
-tag @a remove tmf.on.harvest
-tag @a remove tmf.on.invisible_frames
-tag @a remove tmf.on.armor_warning
 tag @a remove tmf.on.best_tool
-tag @a remove tmf.on.coords_hud
-tag @a remove tmf.on.spawn_checker
+tag @a remove tmf.on.tool_swap
 tag @a remove tmf.on.veinminer
 tag @a remove tmf.on.tree_feller
-tag @a remove tmf.on.trader_alert
+tag @a remove tmf.on.armor_warning
+tag @a remove tmf.on.harvest
+tag @a remove tmf.on.ladder_drop
+tag @a remove tmf.on.double_doors
+tag @a remove tmf.on.invisible_frames
+tag @a remove tmf.on.spawn_checker
 tag @a remove tmf.on.sort_chest
-tag @a remove tmf.on.pickup_notices
 tag @a remove tmf.on.magnet
+tag @a remove tmf.on.pickup_notices
+tag @a remove tmf.on.shulker_preview
+tag @a remove tmf.on.pet_teleport
+tag @a remove tmf.on.pet_health
+tag @a remove tmf.on.animal_owners
+tag @a remove tmf.on.horse_stats
 tag @a remove tmf.on.breed_info
-tag @a remove tmf.on.copper_info
+tag @a remove tmf.on.trader_alert
+tag @a remove tmf.on.arrow_counter
+tag @a remove tmf.on.coords_hud
+tag @a remove tmf.on.waypoints
+tag @a remove tmf.on.biome_info
 tag @a remove tmf.on.day_counter
+tag @a remove tmf.on.crop_info
+tag @a remove tmf.on.campfire_info
+tag @a remove tmf.on.furnace_info
+tag @a remove tmf.on.copper_info
+tag @a remove tmf.on.slime_chunks
+tag @a remove tmf.on.lodestone_coords
+tag @a remove tmf.on.fast_paths
 tag @a remove tmf.on.fence_jump
 tag @a remove tmf.known
 tag @a remove tmf.sneaking
+tag @a remove tmf.warm
 tag @a[tag=tmf.admin] remove tmf.admin
 team remove tmf.afk
 schedule clear tmf:loop/t5
@@ -105,6 +129,19 @@ scoreboard objectives remove tmf.awf
 scoreboard objectives remove tmf.awe
 scoreboard objectives remove tmf.btsup
 scoreboard objectives remove tmf.ms
+scoreboard objectives remove tmf.cr
+scoreboard objectives remove tmf.sl
+scoreboard objectives remove tmf.wx
+scoreboard objectives remove tmf.wy
+scoreboard objectives remove tmf.wz
+scoreboard objectives remove tmf.wd
+scoreboard objectives remove tmf.wn
+scoreboard objectives remove tmf.ws
+scoreboard objectives remove tmf.bio
+scoreboard objectives remove tmf.bic
+scoreboard objectives remove tmf.slx
+scoreboard objectives remove tmf.slz
+scoreboard objectives remove tmf.slr
 scoreboard objectives remove tmf
 scoreboard objectives remove tmf.stats
 scoreboard objectives remove tmf.deaths
@@ -206,6 +243,11 @@ scoreboard objectives remove tmf.or.16
 scoreboard objectives remove tmf.or.17
 scoreboard objectives remove tmf.or.18
 data remove storage tmf:data online
+data remove storage tmf:data names
+data remove storage tmf:data wp
+data remove storage tmf:data ewc
+data remove storage tmf:data bk
+data remove storage tmf:data rank
 data remove storage tmf:data bars
 data remove storage tmf:data version
 data remove storage tmf:tmp d

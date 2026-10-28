@@ -1,2 +1,2 @@
 tag @s remove tmf.off.pet_teleport
-function tmf:menu/open
+function tmf:menu/cat/mobs

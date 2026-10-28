@@ -20,7 +20,7 @@ tag @a[tag=tmf.sneaking,predicate=!tmf:sneaking] remove tmf.sneaking
 tag @a[tag=!tmf.sneaking,predicate=tmf:sneaking] add tmf.sneaking
 
 # --- faster paths ---
-execute if score #fast_paths tmf.cfg matches 1 as @a[tag=!tmf.onpath,tag=!tmf.off.fast_paths,gamemode=!spectator] at @s if function tmf:paths/on_path run function tmf:paths/add
+execute if score #fast_paths tmf.cfg matches 1 as @a[tag=!tmf.onpath,tag=tmf.on.fast_paths,gamemode=!spectator] at @s if function tmf:paths/on_path run function tmf:paths/add
 execute as @a[tag=tmf.onpath] at @s unless function tmf:paths/keep run function tmf:paths/remove
 
 # --- click overlays (ladder dropping, right-click harvest, tool auto-swap) ---
@@ -40,7 +40,7 @@ execute unless score #leaf_decay tmf.cfg matches 1 if score #tree_feller tmf.cfg
 execute if score #veinminer tmf.cfg matches 1 run function tmf:vein/check
 
 # --- fence jumping ---
-execute if score #fence_jump tmf.cfg matches 1 as @a[tag=!tmf.fj,tag=!tmf.off.fence_jump,gamemode=!spectator,predicate=tmf:on_ground] at @s if function tmf:fence/facing run function tmf:fence/add
+execute if score #fence_jump tmf.cfg matches 1 as @a[tag=!tmf.fj,tag=tmf.on.fence_jump,gamemode=!spectator,predicate=tmf:on_ground] at @s if function tmf:fence/facing run function tmf:fence/add
 execute as @a[tag=tmf.fj] at @s unless function tmf:fence/keep run function tmf:fence/remove
 
 
@@ -49,6 +49,10 @@ execute if score #pickup_notices tmf.cfg matches 1 as @a[tag=tmf.invdirty,tag=!t
 tag @a[tag=tmf.invdirty] remove tmf.invdirty
 execute as @a[scores={tmf.drop=1..}] at @s run function tmf:magnet/dropped
 execute if score #magnet tmf.cfg matches 1 as @a[tag=tmf.on.magnet,gamemode=!spectator,predicate=!tmf:sneaking] at @s run function tmf:magnet/pull
+
+# --- creeper / ghast no-grief: explosions are detected when the carried marker loses its ride ---
+execute if score #ghast_nogrief tmf.cfg matches 1 as @e[type=minecraft:fireball,tag=!tmf.gng] at @s run function tmf:ghast/setup
+execute as @e[type=minecraft:item_display,tag=tmf.bl] unless function tmf:blast/riding at @s run function tmf:blast/gone
 
 # --- damage number animation ---
 execute as @e[type=minecraft:text_display,tag=tmf.dn_new] run function tmf:combat/animate_number

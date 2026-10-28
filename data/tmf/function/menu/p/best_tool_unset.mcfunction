@@ -1,2 +1,2 @@
 tag @s remove tmf.on.best_tool
-function tmf:menu/open
+function tmf:menu/cat/mining

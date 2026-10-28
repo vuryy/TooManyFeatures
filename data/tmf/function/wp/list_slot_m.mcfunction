@@ -1,0 +1,3 @@
+$data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"$(slot). $(n) – $(x) $(y) $(z) ($(dn))$(act)\n",color:"white"}
+$data modify storage tmf:tmp d.dialog.actions append value {label:{text:"🧭 Guide to $(n)",color:"aqua"},tooltip:{text:"Show direction and distance to this waypoint"},width:200,action:{type:"minecraft:run_command",command:"/trigger tmf set 400$(slot)"}}
+$data modify storage tmf:tmp d.dialog.actions append value {label:{text:"✖ Delete $(n)",color:"red"},tooltip:{text:"Forget this waypoint"},width:150,action:{type:"minecraft:run_command",command:"/trigger tmf set 401$(slot)"}}

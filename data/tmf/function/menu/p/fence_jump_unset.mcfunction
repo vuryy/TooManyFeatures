@@ -1,2 +1,2 @@
-tag @s remove tmf.off.fence_jump
-function tmf:menu/open
+tag @s remove tmf.on.fence_jump
+function tmf:menu/cat/movement
