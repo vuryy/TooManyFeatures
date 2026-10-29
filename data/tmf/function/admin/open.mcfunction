@@ -63,6 +63,7 @@ execute store result storage tmf:tmp a.c_info int 1 run scoreboard players get #
 scoreboard players set #cnt tmf.tmp 0
 execute if score #fast_paths tmf.cfg matches 1.. run scoreboard players add #cnt tmf.tmp 1
 execute if score #fence_jump tmf.cfg matches 1.. run scoreboard players add #cnt tmf.tmp 1
+execute if score #spawn_tp tmf.cfg matches 1.. run scoreboard players add #cnt tmf.tmp 1
 execute store result storage tmf:tmp a.c_movement int 1 run scoreboard players get #cnt tmf.tmp
 scoreboard players set #cnt tmf.tmp 0
 execute if score #afk tmf.cfg matches 1.. run scoreboard players add #cnt tmf.tmp 1
@@ -70,6 +71,7 @@ execute if score #stats_card tmf.cfg matches 1.. run scoreboard players add #cnt
 execute if score #join_leave tmf.cfg matches 1.. run scoreboard players add #cnt tmf.tmp 1
 execute if score #milestones tmf.cfg matches 1.. run scoreboard players add #cnt tmf.tmp 1
 execute if score #entity_warning tmf.cfg matches 1.. run scoreboard players add #cnt tmf.tmp 1
+execute if score #tpa tmf.cfg matches 1.. run scoreboard players add #cnt tmf.tmp 1
 execute store result storage tmf:tmp a.c_multiplayer int 1 run scoreboard players get #cnt tmf.tmp
 function tmf:admin/open_categories with storage tmf:tmp a
 execute if score #perf tmf.cfg matches 1 run data modify storage tmf:tmp d.dialog.actions append value {label:{text:"",extra:[{text:"⚡ Performance mode: ",color:"white"},{text:"ON",color:"yellow"}]},tooltip:{text:"Pauses health bars and damage numbers and slows down the enderman and cauldron scans."},width:200,action:{type:"minecraft:run_command",command:"/trigger tmf set 1210"}}
@@ -77,6 +79,9 @@ execute if score #perf tmf.cfg matches 0 run data modify storage tmf:tmp d.dialo
 execute store result storage tmf:tmp a.afk int 1 run scoreboard players get #afk_min tmf.cfg
 execute store result storage tmf:tmp a.sleep int 1 run scoreboard players get #sleep_pct tmf.cfg
 execute store result storage tmf:tmp a.ew int 1 run scoreboard players get #ew_limit tmf.cfg
+execute store result storage tmf:tmp a.tpc int 1 run scoreboard players get #tp_cd tmf.cfg
+data modify storage tmf:tmp a.sp set value "World spawn"
+execute if data storage tmf:data spawn.dim run function tmf:admin/spawn_label with storage tmf:data spawn
 function tmf:admin/open_settings with storage tmf:tmp a
 data modify storage tmf:tmp d.dialog.actions append value {label:{text:"🔍 Player inspector…",color:"aqua"},tooltip:{text:"Look up playtime, position and status of any player"},width:200,action:{type:"minecraft:run_command",command:"/trigger tmf set 6000"}}
 data modify storage tmf:tmp d.dialog.actions append value {label:{text:"🧹 Lag helper…",color:"aqua"},tooltip:{text:"Count loaded entities and clear dropped items, XP orbs, arrows or hostile mobs"},width:200,action:{type:"minecraft:run_command",command:"/trigger tmf set 5000"}}

@@ -29,3 +29,4 @@ execute if score #lock_slime_chunks tmf.cfg matches 1 run tag @s remove tmf.off.
 execute if score #lock_lodestone_coords tmf.cfg matches 1 run tag @s remove tmf.off.lodestone_coords
 execute if score #lock_fast_paths tmf.cfg matches 1 run tag @s add tmf.on.fast_paths
 execute if score #lock_fence_jump tmf.cfg matches 1 run tag @s add tmf.on.fence_jump
+execute if score #lock_tpa tmf.cfg matches 1 run tag @s remove tmf.off.tpa

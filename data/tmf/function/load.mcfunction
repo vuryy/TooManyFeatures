@@ -1,4 +1,4 @@
-# TMF v1.11.2 – load
+# TMF v1.12.0 – load
 scoreboard objectives add tmf.cfg dummy
 scoreboard objectives add tmf.tmp dummy
 scoreboard objectives add tmf.c dummy
@@ -45,6 +45,10 @@ scoreboard objectives add tmf.bic dummy
 scoreboard objectives add tmf.slx dummy
 scoreboard objectives add tmf.slz dummy
 scoreboard objectives add tmf.slr dummy
+scoreboard objectives add tmf.tpt dummy
+scoreboard objectives add tmf.tpm dummy
+scoreboard objectives add tmf.tpx dummy
+scoreboard objectives add tmf.tpc dummy
 scoreboard objectives add tmf trigger {text:"TMF menu"}
 scoreboard objectives add tmf.stats trigger {text:"TMF stats"}
 scoreboard objectives add tmf.deaths deathCount
@@ -170,7 +174,7 @@ scoreboard players set #100000 tmf.c 100000
 scoreboard players set #1728000 tmf.c 1728000
 
 data modify storage tmf:data bars set value [{f: "", e: "||||||||||||||||||||", c: "red"}, {f: "||", e: "||||||||||||||||||", c: "red"}, {f: "||||", e: "||||||||||||||||", c: "red"}, {f: "||||||", e: "||||||||||||||", c: "red"}, {f: "||||||||", e: "||||||||||||", c: "yellow"}, {f: "||||||||||", e: "||||||||||", c: "yellow"}, {f: "||||||||||||", e: "||||||||", c: "yellow"}, {f: "||||||||||||||", e: "||||||", c: "green"}, {f: "||||||||||||||||", e: "||||", c: "green"}, {f: "||||||||||||||||||", e: "||", c: "green"}, {f: "||||||||||||||||||||", e: "", c: "green"}]
-data modify storage tmf:data version set value "1.11.2"
+data modify storage tmf:data version set value "1.12.0"
 function tmf:slime/init
 function tmf:util/init_block_items
 
@@ -229,6 +233,8 @@ execute unless score #lodestone_coords tmf.cfg matches -2147483648.. run scorebo
 execute unless score #waypoints tmf.cfg matches -2147483648.. run scoreboard players set #waypoints tmf.cfg 0
 execute unless score #entity_warning tmf.cfg matches -2147483648.. run scoreboard players set #entity_warning tmf.cfg 1
 execute unless score #campfire_regen tmf.cfg matches -2147483648.. run scoreboard players set #campfire_regen tmf.cfg 1
+execute unless score #tpa tmf.cfg matches -2147483648.. run scoreboard players set #tpa tmf.cfg 0
+execute unless score #spawn_tp tmf.cfg matches -2147483648.. run scoreboard players set #spawn_tp tmf.cfg 0
 # v1.4.0: switch to the new default feature set once
 execute unless score #defaults_v tmf.cfg matches 2.. run function tmf:admin/preset/recommended_silent
 scoreboard players set #defaults_v tmf.cfg 2
@@ -242,6 +248,7 @@ scoreboard players set #defaults_v4 tmf.cfg 1
 execute unless score #defaults_v5 tmf.cfg matches 1 run function tmf:config/defaults_v5
 scoreboard players set #defaults_v5 tmf.cfg 1
 execute unless score #ew_limit tmf.cfg matches 1.. run scoreboard players set #ew_limit tmf.cfg 200
+execute unless score #tp_cd tmf.cfg matches 0.. run scoreboard players set #tp_cd tmf.cfg 30
 function tmf:config/apply
 
 execute unless data storage tmf:data online run data modify storage tmf:data online set value []

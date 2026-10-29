@@ -1,6 +1,6 @@
 # TMF — Too Many Features
 
-53 toggleable quality-of-life features, a player settings menu, and an admin panel.
+55 toggleable quality-of-life features, a player settings menu, and an admin panel.
 Data pack format **121** (Minecraft Java Edition 26.3).
 
 ## Install
@@ -70,14 +70,16 @@ Admins can reopen the admin panel with `/trigger tmf set 2`, or with the ⚙ but
 | 51 | Waypoints | *📍 Waypoints…* in `/trigger tmf`: save up to 3 places (named Home, Base, Farm, Mine, Portal, …), then pick one to be guided there. The bar at the top of the screen shows an arrow, the distance and the height difference. You can also be guided to your last death point. | – | ✔ |
 | 52 | Entity Crowd Warning | Every 30 seconds TMF counts the entities in the chunks around each player. Admins get a chat warning (with a teleport button) when a chunk has more than the limit (default 200), at most every 5 minutes per chunk. | ✔ | – |
 | 53 | Campfire Regen | Every 5 seconds, players within 4 blocks of a lit campfire (or soul campfire) who aren't at full health get Regeneration II for 3 seconds, which heals about one heart. A message tells you when you step into a campfire's warmth. | ✔ | – |
+| 54 | Teleport Requests | *🌀 Teleport requests…* in `/trigger tmf`: pick an online player, then *Teleport me to them* or *Ask them to come to me*. They get a chat message with **[Accept]** and **[Deny]** and have 60 seconds to answer. Players who switch it off can't send or receive requests. | – | ✔ |
+| 55 | Spawn Teleport | *🏠 Teleport to spawn* in `/trigger tmf` takes you to the world spawn, or to a spawn point an admin set in the admin panel. | – | – |
 
 ## Admin panel
 
-* A switch for each of the 53 features, saved per world, grouped into nine categories (Mining & tools, Farming & building, Inventory, Pets & mobs, Mob griefing, Combat, Info & HUD, Movement, Multiplayer); each category button shows how many of its features are on. The Mob griefing page also has a switch for the vanilla `mob_griefing` game rule. A fresh install turns on the features marked *On by default*.
+* A switch for each of the 55 features, saved per world, grouped into nine categories (Mining & tools, Farming & building, Inventory, Pets & mobs, Mob griefing, Combat, Info & HUD, Movement, Multiplayer); each category button shows how many of its features are on. The Mob griefing page also has a switch for the vanilla `mob_griefing` game rule. A fresh install turns on the features marked *On by default*.
 * **Presets:** Everything on · Recommended (the default selection) · Minimal (info features only) · All off.
 * **Player locks:** force a personal feature on for everyone, so players can't turn it off.
 * **Performance mode:** pauses health bars and damage numbers, and runs the enderman and cauldron scans 4× less often.
-* **Settings:** AFK timeout (2–30 min), the base percentage of players needed to sleep, and the Entity Crowd Warning limit (100–500).
+* **Settings:** AFK timeout (2–30 min), the base percentage of players needed to sleep, the Entity Crowd Warning limit (100–500), the teleport cooldown for Teleport Requests and Spawn Teleport (0–300 s, default 30 s), and the Spawn Teleport spawn point (the world spawn, or click to use the spot you are standing on).
 * **Player inspector:** pick any player who has joined since v1.11 to see whether they're online, their position, health, food, level, game mode, AFK state, playtime, deaths and kills. For offline players it shows their last known position and how long ago they left. A button teleports you there.
 * **Lag helper:** counts loaded entities by kind (items, XP orbs, arrows, hostile mobs, animals, villagers, …) and how many are near each player, with buttons to clear old dropped items (2+ minutes, death drops are kept), XP orbs, arrows stuck in blocks, or hostile mobs that aren't name-tagged.
 * **Slime chunk seed:** paste the number from `/seed` once so the Slime Chunk Checker works.
@@ -110,6 +112,9 @@ Admins can reopen the admin panel with `/trigger tmf set 2`, or with the ⚙ but
 * The Slime Chunk Checker uses the same formula as the game. The world seed has to be typed in once: `/seed` only gives datapacks the lower 32 bits of the seed, and the slime chunk formula needs 48. TMF checks the part it can read before saving.
 * Biome Change Info waits until you've been in a new biome for 2 seconds, so walking along a border doesn't spam you.
 * The Entity Crowd Warning counts everything except players: mobs, items, XP orbs, item frames, armor stands and so on.
+* Teleport Requests and Spawn Teleport start switched off on every server, including worlds updated from an older TMF version. An admin switches them on under Multiplayer and Movement.
+* The teleport cooldown starts when a teleport happens. For Teleport Requests it applies to the player who sent the request, in both directions. A player has one open request at a time; sending a new one replaces it.
+* Spawn Teleport goes to the exact world spawn block, not to a random spot around it like respawning does.
 
 ## Trigger reference
 
@@ -121,6 +126,8 @@ Admins can reopen the admin panel with `/trigger tmf set 2`, or with the ⚙ but
 | `/function tmf:admin` | operators | become an TMF admin and open the admin panel |
 | `/trigger tmf set 2` | TMF admins | open the admin panel |
 | `/trigger tmf set 4000` | everyone | open your waypoints |
+| `/trigger tmf set 7000` | everyone | open teleport requests |
+| `/trigger tmf set 7010` | everyone | teleport to spawn |
 
 ## Editing
 

@@ -7,7 +7,7 @@ import json, os, shutil, textwrap, sys
 # Only <output>/data and <output>/pack.mcmeta are replaced; everything else is left alone.
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 NS = "tmf"
-VERSION = "1.11.2"
+VERSION = "1.12.0"
 
 if os.path.isdir(os.path.join(OUT, "data")):
     shutil.rmtree(os.path.join(OUT, "data"))
@@ -88,6 +88,8 @@ FEATURES = [
     ("waypoints",       53, "Waypoints",            "Save up to 3 places from the menu and get direction and distance to the one you pick in the top bar.", "out"),
     ("entity_warning",  54, "Entity Crowd Warning", "Admins get a chat warning when a chunk near a player holds more entities than the limit (checked every 30 seconds).", None),
     ("campfire_regen",  55, "Campfire Regen",       "Standing within 4 blocks of a lit campfire heals you a little every 5 seconds (Regeneration II for 3 seconds).", None),
+    ("tpa",             56, "Teleport Requests",    "Ask another player from the menu to teleport you to them, or them to you. They have 60 seconds to accept.", "out"),
+    ("spawn_tp",        57, "Spawn Teleport",       "A button in the menu teleports you to the spawn point.", None),
 ]
 FKEYS = [f[0] for f in FEATURES]
 DEFAULT_ON = {"shulker_preview", "horse_stats", "pet_protect", "silence_mobs", "pet_teleport", "double_doors", "ladder_drop",
@@ -108,8 +110,8 @@ CATEGORIES = [
     ("combat", "⚔ Combat", ["health_bars", "damage_numbers", "death_glow", "arrow_counter", "campfire_regen"]),
     ("info", "🔍 Info & HUD", ["coords_hud", "waypoints", "biome_info", "day_counter", "crop_info", "campfire_info",
                               "furnace_info", "copper_info", "slime_chunks", "lodestone_coords"]),
-    ("movement", "🧭 Movement", ["fast_paths", "fence_jump"]),
-    ("multiplayer", "👥 Multiplayer", ["afk", "stats_card", "join_leave", "milestones", "entity_warning"]),
+    ("movement", "🧭 Movement", ["fast_paths", "fence_jump", "spawn_tp"]),
+    ("multiplayer", "👥 Multiplayer", ["afk", "stats_card", "join_leave", "milestones", "entity_warning", "tpa"]),
 ]
 _all = [k for _, _, ks in CATEGORIES for k in ks]
 assert sorted(_all) == sorted(FKEYS), set(_all) ^ set(FKEYS)
@@ -332,7 +334,8 @@ DUMMIES = ["tmf.cfg", "tmf.tmp", "tmf.c", "tmf.id", "tmf.oid", "tmf.cd", "tmf.hp
            "tmf.dnt", "tmf.hitt", "tmf.afk", "tmf.px", "tmf.py", "tmf.pz", "tmf.rx", "tmf.ry", "tmf.dim",
            "tmf.sess", "tmf.abt", "tmf.swapcd", "tmf.share", "tmf.mine", "tmf.fight", "tmf.ldt", "tmf.pcd",
            "tmf.awh", "tmf.awc", "tmf.awl", "tmf.awf", "tmf.awe", "tmf.btsup", "tmf.ms", "tmf.cr", "tmf.sl",
-           "tmf.wx", "tmf.wy", "tmf.wz", "tmf.wd", "tmf.wn", "tmf.ws", "tmf.bio", "tmf.bic", "tmf.slx", "tmf.slz", "tmf.slr"]
+           "tmf.wx", "tmf.wy", "tmf.wz", "tmf.wd", "tmf.wn", "tmf.ws", "tmf.bio", "tmf.bic", "tmf.slx", "tmf.slz", "tmf.slr",
+           "tmf.tpt", "tmf.tpm", "tmf.tpx", "tmf.tpc"]
 LOGS = ['dark_oak_log', 'dark_oak_wood', 'stripped_dark_oak_log', 'stripped_dark_oak_wood', 'pale_oak_log', 'pale_oak_wood',
         'stripped_pale_oak_log', 'stripped_pale_oak_wood', 'oak_log', 'oak_wood', 'stripped_oak_log', 'stripped_oak_wood',
         'acacia_log', 'acacia_wood', 'stripped_acacia_log', 'stripped_acacia_wood', 'birch_log', 'birch_wood',
@@ -422,6 +425,7 @@ fn("load", f"""
     execute unless score #defaults_v5 tmf.cfg matches 1 run function tmf:config/defaults_v5
     scoreboard players set #defaults_v5 tmf.cfg 1
     execute unless score #ew_limit tmf.cfg matches 1.. run scoreboard players set #ew_limit tmf.cfg 200
+    execute unless score #tp_cd tmf.cfg matches 0.. run scoreboard players set #tp_cd tmf.cfg 30
     function tmf:config/apply
 
     execute unless data storage tmf:data online run data modify storage tmf:data online set value []
@@ -467,6 +471,7 @@ fn("config/defaults_values", """
     scoreboard players set #perf tmf.cfg 0
     scoreboard players set #afk_min tmf.cfg 5
     scoreboard players set #ew_limit tmf.cfg 200
+    scoreboard players set #tp_cd tmf.cfg 30
 """)
 
 # apply: keep game rules in sync with toggles
@@ -623,6 +628,10 @@ fn("loop/t20", """
     scoreboard players set #k tmf.tmp 30
     scoreboard players operation #m30 tmf.tmp %= #k tmf.tmp
     execute if score #entity_warning tmf.cfg matches 1 if score #m30 tmf.tmp matches 0 as @a at @s run function tmf:ew/player
+
+    # teleport requests expire after 60 seconds; teleport cooldowns
+    execute as @a[scores={tmf.tpx=1..}] run function tmf:tpa/tick
+    scoreboard players remove @a[scores={tmf.tpc=1..}] tmf.tpc 1
 
     # leave detection
     function tmf:join/check_leaves
@@ -1571,6 +1580,8 @@ for i, cid, cname, ks in PCATS:
     lines.append(f"execute store result storage tmf:tmp pm.o_{cid} int 1 run scoreboard players get #con tmf.tmp")
 lines.append("function tmf:menu/open_categories with storage tmf:tmp pm")
 lines.append(f"execute if score #waypoints tmf.cfg matches 1 if entity @s[tag=!tmf.off.waypoints] run {APPEND}{button('{text:\"📍 Waypoints…\",color:\"aqua\"}', 'Save places and get guided back to them', '/trigger tmf set 4000')}")
+lines.append(f"execute if score #tpa tmf.cfg matches 1 if entity @s[tag=!tmf.off.tpa] run {APPEND}{button('{text:\"🌀 Teleport requests…\",color:\"aqua\"}', 'Ask another player to teleport you to them, or them to you', '/trigger tmf set 7000')}")
+lines.append(f"execute if score #spawn_tp tmf.cfg matches 1 run {APPEND}{button('{text:\"🏠 Teleport to spawn\",color:\"aqua\"}', 'Teleport to the spawn point', '/trigger tmf set 7010')}")
 lines.append(f"execute if score #stats_card tmf.cfg matches 1 run {APPEND}{button('{text:\"📊 My stats\",color:\"aqua\"}', 'Show your playtime and statistics', '/trigger tmf.stats')}")
 lines.append(f"{APPEND}{button('{text:\"🖥 Server features\",color:\"aqua\"}', 'See which TMF features are enabled on this server', '/trigger tmf set 3')}")
 lines.append(f"execute if entity @s[tag=tmf.admin] run {APPEND}{button('{text:\"⚙ Admin panel\",color:\"gold\"}', 'Server-wide settings', '/trigger tmf set 2')}")
@@ -1625,6 +1636,8 @@ for key, num, name, desc, mode in PERSONAL:
     lines.append(f"execute if score #v tmf.tmp matches {100 + num} run return run function tmf:menu/p/{key}")
 lines += [
     "execute if score #v tmf.tmp matches 4000..4999 run return run function tmf:wp/trigger",
+    "execute if score #v tmf.tmp matches 7000..7099 run return run function tmf:tpa/trigger",
+    "execute if score #v tmf.tmp matches 200001..699999 run return run function tmf:tpa/trigger",
     'execute if score #v tmf.tmp matches 2.. unless score #v tmf.tmp matches 3..999 unless entity @s[tag=tmf.admin] run return run tellraw @s [{text:"[TMF] ",color:"gold"},{text:"Only TMF admins can do that. An operator becomes an admin by running ",color:"red"},{text:"/function tmf:admin",color:"yellow"},{text:" once.",color:"red"}]',
     "execute if score #v tmf.tmp matches 2 run return run function tmf:admin/open",
 ]
@@ -1643,6 +1656,8 @@ lines += [
     "execute if score #v tmf.tmp matches 1213 run return run function tmf:admin/set/sleep_pct",
     "execute if score #v tmf.tmp matches 1214 run return run function tmf:admin/set/mob_griefing",
     "execute if score #v tmf.tmp matches 1215 run return run function tmf:admin/set/ew_limit",
+    "execute if score #v tmf.tmp matches 1216 run return run function tmf:admin/set/tp_cd",
+    "execute if score #v tmf.tmp matches 1217 run return run function tmf:admin/set/spawn",
     "execute if score #v tmf.tmp matches 5000..5004 run return run function tmf:lag/trigger",
     "execute if score #v tmf.tmp matches 5100 run return run function tmf:admin/slime_seed",
     "execute if score #v tmf.tmp matches 6000 run return run function tmf:insp/list",
@@ -1685,6 +1700,9 @@ for key, num, name, desc, mode in PERSONAL:
             extra = "execute if entity @s[tag=tmf.onpath] run function tmf:paths/remove\n"
         else:
             off_extra = "execute if entity @s[tag=tmf.onpath] run function tmf:paths/remove\n"
+    if key == "tpa":
+        # switching it off also drops your pending request
+        extra = "scoreboard players set @s tmf.tpx 0\n"
     fn(f"menu/p/{key}", f"""
         execute if score #{key} tmf.cfg matches 0 run return run function tmf:menu/cat/{PCAT_OF[key]}
         execute if score #lock_{key} tmf.cfg matches 1 run return run function tmf:menu/cat/{PCAT_OF[key]}
@@ -1720,6 +1738,8 @@ ON_DISABLE = {
     "creeper_nogrief": "execute as @e[type=minecraft:creeper,tag=tmf.cng] run function tmf:creeper/restore",
     "ghast_nogrief": "execute as @e[type=minecraft:fireball,tag=tmf.gng] run function tmf:ghast/restore",
     "zombie_doors": "execute as @e[type=#tmf:door_breakers,tag=tmf.zd] run function tmf:zombie/restore",
+    "tpa": "scoreboard players set @a tmf.tpx 0",
+    "spawn_tp": "tag @a remove tmf.tpspawn",
 }
 
 # main admin page: one button per category (with how many of its features are on) + settings
@@ -1737,6 +1757,9 @@ lines.append(f"execute if score #perf tmf.cfg matches 0 run {APPEND}{button(labe
 lines.append("execute store result storage tmf:tmp a.afk int 1 run scoreboard players get #afk_min tmf.cfg")
 lines.append("execute store result storage tmf:tmp a.sleep int 1 run scoreboard players get #sleep_pct tmf.cfg")
 lines.append("execute store result storage tmf:tmp a.ew int 1 run scoreboard players get #ew_limit tmf.cfg")
+lines.append("execute store result storage tmf:tmp a.tpc int 1 run scoreboard players get #tp_cd tmf.cfg")
+lines.append('data modify storage tmf:tmp a.sp set value "World spawn"')
+lines.append("execute if data storage tmf:data spawn.dim run function tmf:admin/spawn_label with storage tmf:data spawn")
 lines.append("function tmf:admin/open_settings with storage tmf:tmp a")
 lines.append(f"{APPEND}{button('{text:\"🔍 Player inspector…\",color:\"aqua\"}', 'Look up playtime, position and status of any player', '/trigger tmf set 6000')}")
 lines.append(f"{APPEND}{button('{text:\"🧹 Lag helper…\",color:\"aqua\"}', 'Count loaded entities and clear dropped items, XP orbs, arrows or hostile mobs', '/trigger tmf set 5000')}")
@@ -1777,7 +1800,31 @@ fn("admin/open_settings", "\n".join([
     "$" + APPEND + button(label("💤 AFK after", "$(afk) min", "yellow"), "How long a player must be idle before being marked AFK. Click to cycle.", "/trigger tmf set 1211"),
     "$" + APPEND + button(label("🛏 Players needed to sleep", "$(sleep)%", "yellow"), "Base players_sleeping_percentage. AFK players are left out of the count. Click to cycle.", "/trigger tmf set 1213"),
     "$" + APPEND + button(label("⚠ Entity warning at", "$(ew)", "yellow"), "Entity Crowd Warning: how many entities in one chunk trigger a warning. Click to cycle.", "/trigger tmf set 1215"),
+    "$execute if score #tpa tmf.cfg matches 1.. run " + APPEND + button(label("🌀 Teleport cooldown", "$(tpc) s", "yellow"), "Teleport Requests and Spawn Teleport: how long a player has to wait between teleports. Click to cycle.", "/trigger tmf set 1216"),
+    "$execute unless score #tpa tmf.cfg matches 1.. if score #spawn_tp tmf.cfg matches 1.. run " + APPEND + button(label("🌀 Teleport cooldown", "$(tpc) s", "yellow"), "Teleport Requests and Spawn Teleport: how long a player has to wait between teleports. Click to cycle.", "/trigger tmf set 1216"),
+    "$execute if score #spawn_tp tmf.cfg matches 1.. run " + APPEND + button(label("🏠 Spawn point", "$(sp)", "yellow"), "Where Spawn Teleport takes players. Click to use the spot you are standing on; click again to go back to the world spawn.", "/trigger tmf set 1217"),
 ]))
+fn("admin/spawn_label", '$data modify storage tmf:tmp a.sp set value "$(bx) $(by) $(bz)"')
+fn("admin/set/spawn", """
+    execute if data storage tmf:data spawn.dim run return run function tmf:admin/set/spawn_reset
+    data modify storage tmf:data spawn set value {}
+    data modify storage tmf:data spawn.x set from entity @s Pos[0]
+    data modify storage tmf:data spawn.y set from entity @s Pos[1]
+    data modify storage tmf:data spawn.z set from entity @s Pos[2]
+    data modify storage tmf:data spawn.yaw set from entity @s Rotation[0]
+    data modify storage tmf:data spawn.pitch set from entity @s Rotation[1]
+    data modify storage tmf:data spawn.dim set from entity @s Dimension
+    execute store result storage tmf:data spawn.bx int 1 run data get entity @s Pos[0]
+    execute store result storage tmf:data spawn.by int 1 run data get entity @s Pos[1]
+    execute store result storage tmf:data spawn.bz int 1 run data get entity @s Pos[2]
+    tellraw @a[tag=tmf.admin] [{text:"[TMF] ",color:"gold"},{text:"Spawn Teleport now takes players to ",color:"gray"},{selector:"@s",color:"white"},{text:"'s position.",color:"gray"}]
+    function tmf:admin/open
+""")
+fn("admin/set/spawn_reset", """
+    data remove storage tmf:data spawn
+    tellraw @a[tag=tmf.admin] [{text:"[TMF] ",color:"gold"},{text:"Spawn Teleport now takes players to the world spawn.",color:"gray"}]
+    function tmf:admin/open
+""")
 
 for key, num, name, desc, mode in FEATURES:
     off_hook = ON_DISABLE.get(key, "")
@@ -1827,6 +1874,7 @@ def cycle(name, score, values):
     """)
 cycle("afk_min", "afk_min", [2, 3, 5, 10, 15, 30])
 cycle("sleep_pct", "sleep_pct", [0, 25, 50, 75, 100])
+cycle("tp_cd", "tp_cd", [0, 5, 10, 30, 60, 120, 300])
 # make the sleep setting apply immediately
 fn("admin/set/sleep_pct_to", """
     $scoreboard players set #sleep_pct tmf.cfg $(v)
@@ -1890,6 +1938,10 @@ for key, num, name, desc, mode in LOCKABLE:
     """)
 
 CHANGELOG = (f"TMF v{VERSION} (for Minecraft Java 26.3)\n\n"
+             "v1.12.0\n"
+             "• New: Teleport Requests. Ask another player from /trigger tmf to teleport you to them, or them to you; they accept or deny in chat.\n"
+             "• New: Spawn Teleport. A menu button takes you to the world spawn, or to a spawn point an admin sets.\n"
+             "• Both start switched off; an admin switches them on (Multiplayer and Movement). The admin panel has a teleport cooldown setting (default 30 s).\n\n"
              "v1.11.2\n"
              "• AFK Detection is now off by default.\n"
              "• Faster Paths, Fence Jumping and Biome Change Info are now opt-in: each player switches them on in /trigger tmf.\n"
@@ -4136,6 +4188,163 @@ fn("ew/chunk", """
 cycle("ew_limit", "ew_limit", [100, 150, 200, 300, 500])
 
 # ---------------------------------------------------------------------------
+# Teleport requests (TPA) and spawn teleport
+#   7000 request list, 7001 cancel own request, 7010 teleport to spawn
+#   200000+id pick a player, 300000+id "teleport me to them", 400000+id "ask them to come to me",
+#   500000+id accept the request of player id, 600000+id deny it
+# ---------------------------------------------------------------------------
+TP_PREFIX = '{text:"[TMF] ",color:"gold"}'
+fn("tpa/trigger", "\n".join([
+    "execute if score #v tmf.tmp matches 7010 run return run function tmf:spawn_tp/go",
+    "execute unless score #tpa tmf.cfg matches 1 run return run function tmf:menu/open",
+    "execute if entity @s[tag=tmf.off.tpa] run return run function tmf:menu/open",
+    "execute if score #v tmf.tmp matches 7000 run return run function tmf:tpa/open",
+    "execute if score #v tmf.tmp matches 7001 run return run function tmf:tpa/cancel",
+    "scoreboard players operation #tid tmf.tmp = #v tmf.tmp",
+    "scoreboard players operation #tid tmf.tmp %= #100000 tmf.c",
+    "scoreboard players operation #me tmf.tmp = @s tmf.id",
+    'data modify storage tmf:tmp tp set value {name:"?"}',
+    "execute store result storage tmf:tmp tp.id int 1 run scoreboard players get #tid tmf.tmp",
+] + [l for k, src, base in (("go", "#tid", 300000), ("here", "#tid", 400000), ("acc", "#me", 500000), ("den", "#me", 600000))
+       for l in (f"scoreboard players operation #c tmf.tmp = {src} tmf.tmp",
+                 f"execute store result storage tmf:tmp tp.{k} int 1 run scoreboard players add #c tmf.tmp {base}")] + [
+    "execute if score #v tmf.tmp matches 500001..599999 run return run function tmf:tpa/accept with storage tmf:tmp tp",
+    "execute if score #v tmf.tmp matches 600001..699999 run return run function tmf:tpa/deny with storage tmf:tmp tp",
+    "execute if score #tid tmf.tmp = #me tmf.tmp run return run function tmf:tpa/open",
+    "execute if score #v tmf.tmp matches 200001..299999 run return run function tmf:tpa/pick with storage tmf:tmp tp",
+    "data modify storage tmf:tmp tp.mode set value 1",
+    'data modify storage tmf:tmp tp.what set value "wants to teleport to you"',
+    "execute if score #v tmf.tmp matches 400001..499999 run data modify storage tmf:tmp tp.mode set value 2",
+    'execute if score #v tmf.tmp matches 400001..499999 run data modify storage tmf:tmp tp.what set value "asks you to teleport to them"',
+    "function tmf:tpa/send with storage tmf:tmp tp",
+]))
+fn("tpa/open", "\n".join([
+    "playsound minecraft:ui.button.click master @s ~ ~ ~ 0.4 1.3",
+    dialog_base('{text:"🌀 Teleport requests",color:"gold",bold:true}',
+                '{text:"Pick a player to send them a teleport request. They have 60 seconds to accept it.",color:"gray"}', columns=3,
+                exit_label="Back", exit_cmd="/trigger tmf set 1"),
+    "execute if score @s tmf.tpx matches 1.. run " + APPEND + button('{text:"✖ Cancel my request",color:"red"}', "Withdraw the request you sent", "/trigger tmf set 7001", 110),
+    "scoreboard players operation #cm tmf.tmp = @s tmf.id",
+    "scoreboard players add #cm tmf.tmp 200000",
+    "scoreboard players set #n tmf.tmp 0",
+    "data modify storage tmf:tmp tl set from storage tmf:data online",
+    "function tmf:tpa/list_next",
+    'execute if score #n tmf.tmp matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.text set value "Nobody else who accepts teleport requests is online right now."',
+    "function tmf:util/show_dialog with storage tmf:tmp d",
+]))
+fn("tpa/list_next", """
+    execute unless data storage tmf:tmp tl[0] run return 0
+    data modify storage tmf:tmp te set from storage tmf:tmp tl[0]
+    data remove storage tmf:tmp tl[0]
+    execute store result score #c tmf.tmp run data get storage tmf:tmp te.id
+    execute store result storage tmf:tmp te.code int 1 run scoreboard players add #c tmf.tmp 200000
+    execute unless score #c tmf.tmp = #cm tmf.tmp run function tmf:tpa/list_m with storage tmf:tmp te
+    function tmf:tpa/list_next
+""")
+fn("tpa/list_m", "\n".join([
+    "$execute unless entity @a[scores={tmf.id=$(id)},tag=!tmf.off.tpa] run return 0",
+    "scoreboard players add #n tmf.tmp 1",
+    "$" + APPEND + '{label:{text:"$(name)",color:"white"},tooltip:{text:"Send $(name) a teleport request"},width:110,action:{type:"minecraft:run_command",command:"/trigger tmf set $(code)"}}',
+]))
+fn("tpa/gone", f"""
+    tellraw @s [{TP_PREFIX},{{text:"That player is offline or doesn't accept teleport requests.",color:"red"}}]
+    function tmf:tpa/open
+""")
+fn("tpa/pick", """
+    $execute unless entity @a[scores={tmf.id=$(id)},tag=!tmf.off.tpa] run return run function tmf:tpa/gone
+    $data modify storage tmf:tmp tp.name set from storage tmf:data online[{id:$(id)}].name
+    function tmf:tpa/pick_dialog with storage tmf:tmp tp
+""")
+fn("tpa/pick_dialog", """
+    $dialog show @s {type:"minecraft:multi_action",title:{text:"🌀 $(name)",color:"gold",bold:true},body:[{type:"minecraft:plain_message",contents:{text:"Send $(name) a teleport request. They have 60 seconds to accept it in chat.",color:"gray"},width:340}],columns:1,pause:false,actions:[{label:{text:"➜ Teleport me to $(name)",color:"aqua"},width:250,action:{type:"minecraft:run_command",command:"/trigger tmf set $(go)"}},{label:{text:"⬅ Ask $(name) to come to me",color:"aqua"},width:250,action:{type:"minecraft:run_command",command:"/trigger tmf set $(here)"}}],exit_action:{label:{text:"Back"},width:150,action:{type:"minecraft:run_command",command:"/trigger tmf set 7000"}}}
+""")
+fn("tpa/cooldown", f"""
+    tellraw @s [{TP_PREFIX},{{text:"You can teleport again in ",color:"gray"}},{{score:{{name:"@s",objective:"tmf.tpc"}},color:"yellow"}},{{text:" s.",color:"gray"}}]
+""")
+fn("tpa/send", """
+    $execute unless entity @a[scores={tmf.id=$(id)},tag=!tmf.off.tpa] run return run function tmf:tpa/gone
+    execute if score @s tmf.tpc matches 1.. run return run function tmf:tpa/cooldown
+    $data modify storage tmf:tmp tp.name set from storage tmf:data online[{id:$(id)}].name
+    $scoreboard players set @s tmf.tpt $(id)
+    $scoreboard players set @s tmf.tpm $(mode)
+    scoreboard players set @s tmf.tpx 60
+    function tmf:tpa/notify with storage tmf:tmp tp
+""")
+fn("tpa/notify", f"""
+    $tellraw @s [{TP_PREFIX},{{text:"Teleport request sent to ",color:"gray"}},{{text:"$(name)",color:"white"}},{{text:". It expires in 60 s. ",color:"gray"}},{{text:"[Cancel]",color:"red",click_event:{{action:"run_command",command:"/trigger tmf set 7001"}},hover_event:{{action:"show_text",value:"Withdraw the request"}}}}]
+    $tellraw @a[scores={{tmf.id=$(id)}}] [{TP_PREFIX},{{selector:"@s",color:"white"}},{{text:" $(what). ",color:"yellow"}},{{text:"[Accept]",color:"green",bold:true,click_event:{{action:"run_command",command:"/trigger tmf set $(acc)"}},hover_event:{{action:"show_text",value:"Accept the teleport request"}}}},{{text:" "}},{{text:"[Deny]",color:"red",bold:true,click_event:{{action:"run_command",command:"/trigger tmf set $(den)"}},hover_event:{{action:"show_text",value:"Deny the teleport request"}}}},{{text:"  (60 s)",color:"dark_gray"}}]
+    $execute as @a[scores={{tmf.id=$(id)}}] at @s run playsound minecraft:block.note_block.pling master @s ~ ~ ~ 0.6 1.5
+""")
+fn("tpa/check", """
+    # is there a live request from player $(id) to me (#me)?
+    scoreboard players set #ok tmf.tmp 0
+    $execute as @a[scores={tmf.id=$(id),tmf.tpx=1..}] if score @s tmf.tpt = #me tmf.tmp run scoreboard players set #ok tmf.tmp 1
+""")
+fn("tpa/expired", f"""
+    tellraw @s [{TP_PREFIX},{{text:"That teleport request has expired or was withdrawn.",color:"red"}}]
+""")
+fn("tpa/accept", f"""
+    $function tmf:tpa/check {{id:$(id)}}
+    execute if score #ok tmf.tmp matches 0 run return run function tmf:tpa/expired
+    $execute store result score #mode tmf.tmp run scoreboard players get @a[scores={{tmf.id=$(id)}},limit=1] tmf.tpm
+    $scoreboard players set @a[scores={{tmf.id=$(id)}}] tmf.tpx 0
+    $scoreboard players reset @a[scores={{tmf.id=$(id)}}] tmf.tpt
+    # the cooldown applies to the player who sent the request
+    $scoreboard players operation @a[scores={{tmf.id=$(id)}}] tmf.tpc = #tp_cd tmf.cfg
+    $execute if score #mode tmf.tmp matches 1 run tp @a[scores={{tmf.id=$(id)}},limit=1] @s
+    $execute if score #mode tmf.tmp matches 2 run tp @s @a[scores={{tmf.id=$(id)}},limit=1]
+    execute at @s run playsound minecraft:entity.enderman.teleport player @a ~ ~ ~ 0.8 1
+    $tellraw @a[scores={{tmf.id=$(id)}}] [{TP_PREFIX},{{selector:"@s",color:"white"}},{{text:" accepted your teleport request.",color:"green"}}]
+    tellraw @s [{TP_PREFIX},{{text:"Teleport request accepted.",color:"green"}}]
+""")
+fn("tpa/deny", f"""
+    $function tmf:tpa/check {{id:$(id)}}
+    execute if score #ok tmf.tmp matches 0 run return run function tmf:tpa/expired
+    $scoreboard players set @a[scores={{tmf.id=$(id)}}] tmf.tpx 0
+    $scoreboard players reset @a[scores={{tmf.id=$(id)}}] tmf.tpt
+    $tellraw @a[scores={{tmf.id=$(id)}}] [{TP_PREFIX},{{selector:"@s",color:"white"}},{{text:" declined your teleport request.",color:"gray"}}]
+    tellraw @s [{TP_PREFIX},{{text:"Teleport request declined.",color:"gray"}}]
+""")
+fn("tpa/cancel", f"""
+    execute unless score @s tmf.tpx matches 1.. run return run tellraw @s [{TP_PREFIX},{{text:"You have no open teleport request.",color:"gray"}}]
+    scoreboard players set @s tmf.tpx 0
+    scoreboard players reset @s tmf.tpt
+    tellraw @s [{TP_PREFIX},{{text:"Teleport request withdrawn.",color:"gray"}}]
+""")
+fn("tpa/tick", f"""
+    scoreboard players remove @s tmf.tpx 1
+    execute if score @s tmf.tpx matches 0 run scoreboard players reset @s tmf.tpt
+    execute if score @s tmf.tpx matches 0 run tellraw @s [{TP_PREFIX},{{text:"Your teleport request expired.",color:"gray"}}]
+""")
+
+fn("spawn_tp/go", """
+    execute unless score #spawn_tp tmf.cfg matches 1 run return run function tmf:menu/open
+    execute if score @s tmf.tpc matches 1.. run return run function tmf:tpa/cooldown
+    scoreboard players operation @s tmf.tpc = #tp_cd tmf.cfg
+    execute if data storage tmf:data spawn.dim run return run function tmf:spawn_tp/custom with storage tmf:data spawn
+    # the world spawn is only known to functions the server runs itself, so teleport from a scheduled function
+    tag @s add tmf.tpspawn
+    schedule function tmf:spawn_tp/world 1t replace
+""")
+fn("spawn_tp/custom", """
+    $execute in $(dim) run tp @s $(x) $(y) $(z) $(yaw) $(pitch)
+    function tmf:spawn_tp/arrived
+""")
+fn("spawn_tp/world", """
+    # scheduled functions run at the world spawn (in the spawn dimension), so ~ ~ ~ here is the spawn point
+    execute as @a[tag=tmf.tpspawn] run function tmf:spawn_tp/world_one
+""")
+fn("spawn_tp/world_one", """
+    tag @s remove tmf.tpspawn
+    tp @s ~0.5 ~ ~0.5
+    function tmf:spawn_tp/arrived
+""")
+fn("spawn_tp/arrived", f"""
+    execute at @s run playsound minecraft:entity.enderman.teleport player @a ~ ~ ~ 0.8 1
+    tellraw @s [{TP_PREFIX},{{text:"Teleported to spawn.",color:"green"}}]
+""")
+
+# ---------------------------------------------------------------------------
 # Admin: lag helper
 # ---------------------------------------------------------------------------
 HOSTILE = ["zombie", "husk", "drowned", "zombie_villager", "skeleton", "stray", "bogged", "parched", "wither_skeleton",
@@ -4375,6 +4584,9 @@ fn("uninstall", f"""
     data remove storage tmf:data online
     data remove storage tmf:data names
     data remove storage tmf:data wp
+    data remove storage tmf:data spawn
+    tag @a remove tmf.tpspawn
+    schedule clear tmf:spawn_tp/world
     data remove storage tmf:data ewc
     data remove storage tmf:data bk
     data remove storage tmf:data rank

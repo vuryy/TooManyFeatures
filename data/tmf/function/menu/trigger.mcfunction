@@ -9,6 +9,7 @@ execute if score #v tmf.tmp matches 303 run return run function tmf:menu/cat/mob
 execute if score #v tmf.tmp matches 305 run return run function tmf:menu/cat/combat
 execute if score #v tmf.tmp matches 306 run return run function tmf:menu/cat/info
 execute if score #v tmf.tmp matches 307 run return run function tmf:menu/cat/movement
+execute if score #v tmf.tmp matches 308 run return run function tmf:menu/cat/multiplayer
 execute if score #v tmf.tmp matches 126 run return run function tmf:menu/p/best_tool
 execute if score #v tmf.tmp matches 101 run return run function tmf:menu/p/tool_swap
 execute if score #v tmf.tmp matches 129 run return run function tmf:menu/p/veinminer
@@ -42,7 +43,10 @@ execute if score #v tmf.tmp matches 150 run return run function tmf:menu/p/slime
 execute if score #v tmf.tmp matches 152 run return run function tmf:menu/p/lodestone_coords
 execute if score #v tmf.tmp matches 104 run return run function tmf:menu/p/fast_paths
 execute if score #v tmf.tmp matches 131 run return run function tmf:menu/p/fence_jump
+execute if score #v tmf.tmp matches 156 run return run function tmf:menu/p/tpa
 execute if score #v tmf.tmp matches 4000..4999 run return run function tmf:wp/trigger
+execute if score #v tmf.tmp matches 7000..7099 run return run function tmf:tpa/trigger
+execute if score #v tmf.tmp matches 200001..699999 run return run function tmf:tpa/trigger
 execute if score #v tmf.tmp matches 2.. unless score #v tmf.tmp matches 3..999 unless entity @s[tag=tmf.admin] run return run tellraw @s [{text:"[TMF] ",color:"gold"},{text:"Only TMF admins can do that. An operator becomes an admin by running ",color:"red"},{text:"/function tmf:admin",color:"yellow"},{text:" once.",color:"red"}]
 execute if score #v tmf.tmp matches 2 run return run function tmf:admin/open
 execute if score #v tmf.tmp matches 1001 run return run function tmf:admin/t/tool_swap
@@ -98,6 +102,8 @@ execute if score #v tmf.tmp matches 1052 run return run function tmf:admin/t/lod
 execute if score #v tmf.tmp matches 1053 run return run function tmf:admin/t/waypoints
 execute if score #v tmf.tmp matches 1054 run return run function tmf:admin/t/entity_warning
 execute if score #v tmf.tmp matches 1055 run return run function tmf:admin/t/campfire_regen
+execute if score #v tmf.tmp matches 1056 run return run function tmf:admin/t/tpa
+execute if score #v tmf.tmp matches 1057 run return run function tmf:admin/t/spawn_tp
 execute if score #v tmf.tmp matches 1126 run return run function tmf:admin/l/best_tool
 execute if score #v tmf.tmp matches 1101 run return run function tmf:admin/l/tool_swap
 execute if score #v tmf.tmp matches 1125 run return run function tmf:admin/l/armor_warning
@@ -129,6 +135,7 @@ execute if score #v tmf.tmp matches 1150 run return run function tmf:admin/l/sli
 execute if score #v tmf.tmp matches 1152 run return run function tmf:admin/l/lodestone_coords
 execute if score #v tmf.tmp matches 1104 run return run function tmf:admin/l/fast_paths
 execute if score #v tmf.tmp matches 1131 run return run function tmf:admin/l/fence_jump
+execute if score #v tmf.tmp matches 1156 run return run function tmf:admin/l/tpa
 execute if score #v tmf.tmp matches 1200 run return run function tmf:admin/presets
 execute if score #v tmf.tmp matches 1201 run return run function tmf:admin/preset/everything
 execute if score #v tmf.tmp matches 1202 run return run function tmf:admin/preset/recommended
@@ -139,6 +146,8 @@ execute if score #v tmf.tmp matches 1211 run return run function tmf:admin/set/a
 execute if score #v tmf.tmp matches 1213 run return run function tmf:admin/set/sleep_pct
 execute if score #v tmf.tmp matches 1214 run return run function tmf:admin/set/mob_griefing
 execute if score #v tmf.tmp matches 1215 run return run function tmf:admin/set/ew_limit
+execute if score #v tmf.tmp matches 1216 run return run function tmf:admin/set/tp_cd
+execute if score #v tmf.tmp matches 1217 run return run function tmf:admin/set/spawn
 execute if score #v tmf.tmp matches 5000..5004 run return run function tmf:lag/trigger
 execute if score #v tmf.tmp matches 5100 run return run function tmf:admin/slime_seed
 execute if score #v tmf.tmp matches 6000 run return run function tmf:insp/list

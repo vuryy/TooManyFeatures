@@ -51,6 +51,8 @@ scoreboard players set #lodestone_coords tmf.cfg 1
 scoreboard players set #waypoints tmf.cfg 1
 scoreboard players set #entity_warning tmf.cfg 1
 scoreboard players set #campfire_regen tmf.cfg 1
+scoreboard players set #tpa tmf.cfg 1
+scoreboard players set #spawn_tp tmf.cfg 1
 function tmf:config/apply
 tellraw @a[tag=tmf.admin] [{text:"[TMF] ",color:"gold"},{text:"Preset applied: ",color:"gray"},{text:"Everything on",color:"aqua"}]
 function tmf:admin/open

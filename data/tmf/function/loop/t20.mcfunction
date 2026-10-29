@@ -42,5 +42,9 @@ scoreboard players set #k tmf.tmp 30
 scoreboard players operation #m30 tmf.tmp %= #k tmf.tmp
 execute if score #entity_warning tmf.cfg matches 1 if score #m30 tmf.tmp matches 0 as @a at @s run function tmf:ew/player
 
+# teleport requests expire after 60 seconds; teleport cooldowns
+execute as @a[scores={tmf.tpx=1..}] run function tmf:tpa/tick
+scoreboard players remove @a[scores={tmf.tpc=1..}] tmf.tpc 1
+
 # leave detection
 function tmf:join/check_leaves

@@ -94,8 +94,16 @@ execute if score #fence_jump tmf.cfg matches 1.. run scoreboard players add #cnt
 execute if score #fence_jump tmf.cfg matches 1.. if entity @s[tag=tmf.on.fence_jump] run scoreboard players add #con tmf.tmp 1
 execute store result storage tmf:tmp pm.n_movement int 1 run scoreboard players get #cnt tmf.tmp
 execute store result storage tmf:tmp pm.o_movement int 1 run scoreboard players get #con tmf.tmp
+scoreboard players set #cnt tmf.tmp 0
+scoreboard players set #con tmf.tmp 0
+execute if score #tpa tmf.cfg matches 1.. run scoreboard players add #cnt tmf.tmp 1
+execute if score #tpa tmf.cfg matches 1.. if entity @s[tag=!tmf.off.tpa] run scoreboard players add #con tmf.tmp 1
+execute store result storage tmf:tmp pm.n_multiplayer int 1 run scoreboard players get #cnt tmf.tmp
+execute store result storage tmf:tmp pm.o_multiplayer int 1 run scoreboard players get #con tmf.tmp
 function tmf:menu/open_categories with storage tmf:tmp pm
 execute if score #waypoints tmf.cfg matches 1 if entity @s[tag=!tmf.off.waypoints] run data modify storage tmf:tmp d.dialog.actions append value {label:{text:"📍 Waypoints…",color:"aqua"},tooltip:{text:"Save places and get guided back to them"},width:200,action:{type:"minecraft:run_command",command:"/trigger tmf set 4000"}}
+execute if score #tpa tmf.cfg matches 1 if entity @s[tag=!tmf.off.tpa] run data modify storage tmf:tmp d.dialog.actions append value {label:{text:"🌀 Teleport requests…",color:"aqua"},tooltip:{text:"Ask another player to teleport you to them, or them to you"},width:200,action:{type:"minecraft:run_command",command:"/trigger tmf set 7000"}}
+execute if score #spawn_tp tmf.cfg matches 1 run data modify storage tmf:tmp d.dialog.actions append value {label:{text:"🏠 Teleport to spawn",color:"aqua"},tooltip:{text:"Teleport to the spawn point"},width:200,action:{type:"minecraft:run_command",command:"/trigger tmf set 7010"}}
 execute if score #stats_card tmf.cfg matches 1 run data modify storage tmf:tmp d.dialog.actions append value {label:{text:"📊 My stats",color:"aqua"},tooltip:{text:"Show your playtime and statistics"},width:200,action:{type:"minecraft:run_command",command:"/trigger tmf.stats"}}
 data modify storage tmf:tmp d.dialog.actions append value {label:{text:"🖥 Server features",color:"aqua"},tooltip:{text:"See which TMF features are enabled on this server"},width:200,action:{type:"minecraft:run_command",command:"/trigger tmf set 3"}}
 execute if entity @s[tag=tmf.admin] run data modify storage tmf:tmp d.dialog.actions append value {label:{text:"⚙ Admin panel",color:"gold"},tooltip:{text:"Server-wide settings"},width:200,action:{type:"minecraft:run_command",command:"/trigger tmf set 2"}}
