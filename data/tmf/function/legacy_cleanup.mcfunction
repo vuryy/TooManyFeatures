@@ -45,6 +45,10 @@ scoreboard objectives remove qol.bic
 scoreboard objectives remove qol.slx
 scoreboard objectives remove qol.slz
 scoreboard objectives remove qol.slr
+scoreboard objectives remove qol.tpt
+scoreboard objectives remove qol.tpm
+scoreboard objectives remove qol.tpx
+scoreboard objectives remove qol.tpc
 scoreboard objectives remove qol
 scoreboard objectives remove qol.stats
 scoreboard objectives remove qol.deaths
@@ -222,6 +226,8 @@ tag @a remove qol.off.lodestone_coords
 tag @a remove qol.off.waypoints
 tag @a remove qol.off.entity_warning
 tag @a remove qol.off.campfire_regen
+tag @a remove qol.off.tpa
+tag @a remove qol.off.spawn_tp
 tag @a remove qol.on.tool_swap
 tag @a remove qol.on.shulker_preview
 tag @a remove qol.on.death_glow
@@ -275,6 +281,8 @@ tag @a remove qol.on.lodestone_coords
 tag @a remove qol.on.waypoints
 tag @a remove qol.on.entity_warning
 tag @a remove qol.on.campfire_regen
+tag @a remove qol.on.tpa
+tag @a remove qol.on.spawn_tp
 scoreboard objectives remove atq.cfg
 scoreboard objectives remove atq.tmp
 scoreboard objectives remove atq.c
@@ -321,6 +329,10 @@ scoreboard objectives remove atq.bic
 scoreboard objectives remove atq.slx
 scoreboard objectives remove atq.slz
 scoreboard objectives remove atq.slr
+scoreboard objectives remove atq.tpt
+scoreboard objectives remove atq.tpm
+scoreboard objectives remove atq.tpx
+scoreboard objectives remove atq.tpc
 scoreboard objectives remove atq
 scoreboard objectives remove atq.stats
 scoreboard objectives remove atq.deaths
@@ -498,6 +510,8 @@ tag @a remove atq.off.lodestone_coords
 tag @a remove atq.off.waypoints
 tag @a remove atq.off.entity_warning
 tag @a remove atq.off.campfire_regen
+tag @a remove atq.off.tpa
+tag @a remove atq.off.spawn_tp
 tag @a remove atq.on.tool_swap
 tag @a remove atq.on.shulker_preview
 tag @a remove atq.on.death_glow
@@ -551,3 +565,5 @@ tag @a remove atq.on.lodestone_coords
 tag @a remove atq.on.waypoints
 tag @a remove atq.on.entity_warning
 tag @a remove atq.on.campfire_regen
+tag @a remove atq.on.tpa
+tag @a remove atq.on.spawn_tp

@@ -1,6 +1,6 @@
 # TMF – Too Many Features
 
-**53 quality-of-life features in one vanilla datapack, and every one of them can be switched on or off.**
+**55 quality-of-life features in one vanilla datapack, and every one of them can be switched on or off.**
 
 Players choose their own features from an in-game menu, and server admins control everything from an admin panel. No mods, no resource pack, no config files: just drop it in and play.
 
@@ -10,7 +10,7 @@ Players choose their own features from an in-game menu, and server admins contro
 
 ## ✨ Highlights
 
-- **53 features** in one pack, each with its own on/off switch
+- **55 features** in one pack, each with its own on/off switch
 - **Player menu** (`/trigger tmf`): every player picks the features they want for themselves
 - **Admin panel:** server-wide switches, presets, player locks, a player inspector, a lag helper, performance mode and a clean uninstall
 - **Sensible defaults:** convenience features start switched on, and anything that changes gameplay starts off
@@ -128,17 +128,18 @@ Click a category to open it.
 </details>
 
 <details>
-<summary><b>🧭 Movement</b> (2)</summary>
+<summary><b>🧭 Movement</b> (3)</summary>
 
 | Feature | How it works | |
 |---|---|---|
 | **Faster Paths** | +30 % walking speed on dirt paths. | opt-in |
 | **Fence Jumping** | Stand against a fence, wall or closed fence gate and jump to hop onto it and over. | opt-in |
+| **Spawn Teleport** | A button in the player menu takes you to the world spawn, or to a spawn point an admin sets. Off by default; an admin can switch it on. | |
 
 </details>
 
 <details>
-<summary><b>👥 Multiplayer</b> (5)</summary>
+<summary><b>👥 Multiplayer</b> (6)</summary>
 
 | Feature | How it works | |
 |---|---|---|
@@ -147,6 +148,7 @@ Click a category to open it.
 | **Join & Leave Messages** | A welcome message, a first-join announcement, and each player's session length when they leave. | |
 | **Playtime Milestones** | A server-wide announcement when a player reaches 1, 5, 10, 25, 50, 100, 250, 500 or 1000 hours played. | ✅ |
 | **Entity Crowd Warning** | Every 30 seconds the chunks around each player are counted. Admins get a chat warning with a teleport button when one holds more entities than the limit (200 by default). | ✅ |
+| **Teleport Requests** | Pick a player in the menu to teleport to them or ask them to come to you. They accept or deny in chat within 60 seconds. Off by default; an admin can switch it on. | 👤 |
 
 </details>
 
@@ -154,7 +156,7 @@ Click a category to open it.
 
 ## 🎛 Player menu
 
-Type **`/trigger tmf`** to open your personal settings, sorted into categories. Every feature with 👤 or *opt-in* can be switched on or off just for you. Tool Protector, Tool Auto-Swap, the Coordinates HUD, Faster Paths, Fence Jumping and Biome Change Info start switched off, so turn them on there if you want them. Veinminer and Tree Feller cycle between *Sneaking*, *Always* and *Off*, and *📍 Waypoints…* opens your waypoints. Features the server has switched off don't appear, and features an admin made mandatory show a 🔒.
+Type **`/trigger tmf`** to open your personal settings, sorted into categories. Every feature with 👤 or *opt-in* can be switched on or off just for you. Tool Protector, Tool Auto-Swap, the Coordinates HUD, Faster Paths, Fence Jumping and Biome Change Info start switched off, so turn them on there if you want them. Veinminer and Tree Feller cycle between *Sneaking*, *Always* and *Off*, *📍 Waypoints…* opens your waypoints, and *🌀 Teleport requests…* and *🏠 Teleport to spawn* appear when the server has those switched on. Features the server has switched off don't appear, and features an admin made mandatory show a 🔒.
 
 ## 🛡 Admin panel
 
@@ -164,7 +166,7 @@ Operators run **`/function tmf:admin`** once to become an TMF admin. After that,
 - **Presets:** *Everything on* · *Recommended* (the defaults) · *Minimal* (info features only) · *All off*
 - **Player locks:** force a personal feature on for everyone.
 - **Performance mode:** pauses health bars and damage numbers and slows down the background scans on busy servers.
-- **Settings:** AFK timeout (2–30 min), the percentage of players needed to sleep, and the entity warning limit.
+- **Settings:** AFK timeout (2–30 min), the percentage of players needed to sleep, the entity warning limit, the teleport cooldown and the Spawn Teleport spawn point.
 - **Player inspector:** online status, position, health, food, level, game mode, AFK state, playtime, deaths and kills of any player, with the last known position and time for offline players, and a teleport button.
 - **Lag helper:** counts loaded entities by kind and near each player, and clears old dropped items, XP orbs, stuck arrows or hostile mobs that aren't name-tagged.
 - **Slime chunk seed:** paste the number from `/seed` once for the Slime Chunk Checker.

@@ -58,6 +58,8 @@ scoreboard players set #lodestone_coords tmf.cfg 0
 scoreboard players set #waypoints tmf.cfg 0
 scoreboard players set #entity_warning tmf.cfg 1
 scoreboard players set #campfire_regen tmf.cfg 1
+scoreboard players set #tpa tmf.cfg 0
+scoreboard players set #spawn_tp tmf.cfg 0
 function tmf:config/defaults_values
 execute store result score #sleep_pct tmf.cfg run gamerule players_sleeping_percentage
 execute store result score #phantoms_orig tmf.cfg run gamerule spawn_phantoms

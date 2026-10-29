@@ -105,5 +105,9 @@ execute if score #entity_warning tmf.cfg matches 1.. run data modify storage tmf
 execute if score #entity_warning tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Entity Crowd Warning\n",color:"red"}
 execute if score #campfire_regen tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Campfire Regen\n",color:"green"}
 execute if score #campfire_regen tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Campfire Regen\n",color:"red"}
+execute if score #tpa tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Teleport Requests\n",color:"green"}
+execute if score #tpa tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Teleport Requests\n",color:"red"}
+execute if score #spawn_tp tmf.cfg matches 1.. run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✔ Spawn Teleport\n",color:"green"}
+execute if score #spawn_tp tmf.cfg matches 0 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"✘ Spawn Teleport\n",color:"red"}
 execute if score #perf tmf.cfg matches 1 run data modify storage tmf:tmp d.dialog.body[0].contents.extra append value {text:"\n⚡ Performance mode is on: health bars and damage numbers are paused.",color:"yellow"}
 function tmf:util/show_dialog with storage tmf:tmp d

@@ -58,3 +58,7 @@ scoreboard players set #lodestone_coords tmf.cfg 0
 scoreboard players set #waypoints tmf.cfg 0
 scoreboard players set #entity_warning tmf.cfg 1
 scoreboard players set #campfire_regen tmf.cfg 1
+execute if score #tpa tmf.cfg matches 1.. run scoreboard players set @a tmf.tpx 0
+scoreboard players set #tpa tmf.cfg 0
+execute if score #spawn_tp tmf.cfg matches 1.. run tag @a remove tmf.tpspawn
+scoreboard players set #spawn_tp tmf.cfg 0

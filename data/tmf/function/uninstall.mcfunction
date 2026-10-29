@@ -56,6 +56,7 @@ tag @a remove tmf.off.slime_chunks
 tag @a remove tmf.off.lodestone_coords
 tag @a remove tmf.off.fast_paths
 tag @a remove tmf.off.fence_jump
+tag @a remove tmf.off.tpa
 tag @a remove tmf.on.best_tool
 tag @a remove tmf.on.tool_swap
 tag @a remove tmf.on.veinminer
@@ -89,6 +90,7 @@ tag @a remove tmf.on.slime_chunks
 tag @a remove tmf.on.lodestone_coords
 tag @a remove tmf.on.fast_paths
 tag @a remove tmf.on.fence_jump
+tag @a remove tmf.on.tpa
 tag @a remove tmf.known
 tag @a remove tmf.sneaking
 tag @a remove tmf.warm
@@ -142,6 +144,10 @@ scoreboard objectives remove tmf.bic
 scoreboard objectives remove tmf.slx
 scoreboard objectives remove tmf.slz
 scoreboard objectives remove tmf.slr
+scoreboard objectives remove tmf.tpt
+scoreboard objectives remove tmf.tpm
+scoreboard objectives remove tmf.tpx
+scoreboard objectives remove tmf.tpc
 scoreboard objectives remove tmf
 scoreboard objectives remove tmf.stats
 scoreboard objectives remove tmf.deaths
@@ -245,6 +251,9 @@ scoreboard objectives remove tmf.or.18
 data remove storage tmf:data online
 data remove storage tmf:data names
 data remove storage tmf:data wp
+data remove storage tmf:data spawn
+tag @a remove tmf.tpspawn
+schedule clear tmf:spawn_tp/world
 data remove storage tmf:data ewc
 data remove storage tmf:data bk
 data remove storage tmf:data rank
